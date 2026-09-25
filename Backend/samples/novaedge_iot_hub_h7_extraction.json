@@ -1,0 +1,2093 @@
+{
+  "document": {
+    "document_id": "doc_2eccb4a7294abbee",
+    "document_name": "novaedge_iot_hub_h7.pdf",
+    "product_name": "NovaEdge IoT Hub H7",
+    "product_type": "Industrial IoT Gateway"
+  },
+  "features": [
+    {
+      "feature_name": "Storage",
+      "specifications": [
+        {
+          "parameter": "eMMC",
+          "value": "32",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Storage",
+            "chunk_id": "chk_f46671d9baed"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "MicroSD",
+          "value": "Up to 1",
+          "unit": "TB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Storage",
+            "chunk_id": "chk_f46671d9baed"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "NVMe Slot",
+          "value": "M.2 Key-M",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Storage",
+            "chunk_id": "chk_f46671d9baed"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "eMMC",
+          "value": "32 GB",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Storage",
+            "chunk_id": "chk_f46671d9baed"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "MicroSD",
+          "value": "Up to 1 TB",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Storage",
+            "chunk_id": "chk_f46671d9baed"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Processor",
+      "specifications": [
+        {
+          "parameter": "Architecture",
+          "value": "Quad-core ARM Cortex-A55",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Processor",
+            "chunk_id": "chk_84954eb476dd"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Clock Speed",
+          "value": "2.0",
+          "unit": "GHz",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Processor",
+            "chunk_id": "chk_84954eb476dd"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "AI Accelerator",
+          "value": "4 TOPS NPU",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Processor",
+            "chunk_id": "chk_84954eb476dd"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Memory",
+          "value": "4 GB LPDDR4",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Processor",
+            "chunk_id": "chk_84954eb476dd"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Ethernet Ports",
+      "specifications": [
+        {
+          "parameter": "Ethernet Ports",
+          "value": "4x 1GbE RJ45",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Network Interfaces",
+            "chunk_id": "chk_d9b89ecb3e47"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "SFP Cage",
+      "specifications": [
+        {
+          "parameter": "SFP Cage",
+          "value": "1x 1G/10G",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Network Interfaces",
+            "chunk_id": "chk_d9b89ecb3e47"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Cellular",
+      "specifications": [
+        {
+          "parameter": "Cellular",
+          "value": "5G Sub-6 optional module",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Network Interfaces",
+            "chunk_id": "chk_d9b89ecb3e47"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Wi-Fi",
+      "specifications": [
+        {
+          "parameter": "Wi-Fi",
+          "value": "Wi-Fi 6 (802.11ax)",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Network Interfaces",
+            "chunk_id": "chk_d9b89ecb3e47"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Bluetooth",
+      "specifications": [
+        {
+          "parameter": "Bluetooth",
+          "value": "Bluetooth 5.3",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Network Interfaces",
+            "chunk_id": "chk_d9b89ecb3e47"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "USB",
+      "specifications": [
+        {
+          "parameter": "USB",
+          "value": "USB 3.2 Gen 1 Type-A x2",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "I/O and Expansion",
+            "chunk_id": "chk_0a63aeac8920"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Serial",
+      "specifications": [
+        {
+          "parameter": "Serial",
+          "value": "RS-485 x2, RS-232 x1",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "I/O and Expansion",
+            "chunk_id": "chk_0a63aeac8920"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Digital I/O",
+      "specifications": [
+        {
+          "parameter": "Digital I/O",
+          "value": "8 DI / 8 DO",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "I/O and Expansion",
+            "chunk_id": "chk_0a63aeac8920"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "CAN Bus",
+      "specifications": [
+        {
+          "parameter": "CAN Bus",
+          "value": "CAN FD x1",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "I/O and Expansion",
+            "chunk_id": "chk_0a63aeac8920"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Power and Thermal",
+      "specifications": [
+        {
+          "parameter": "Input Voltage",
+          "value": "9·36",
+          "unit": "V DC",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Power and Thermal",
+            "chunk_id": "chk_8826b82d5d82"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Typical Power",
+          "value": "12",
+          "unit": "W",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Power and Thermal",
+            "chunk_id": "chk_8826b82d5d82"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "PoE Input",
+          "value": "802.3at supported",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Power and Thermal",
+            "chunk_id": "chk_8826b82d5d82"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Operating Temperature",
+          "value": "-40 to 70",
+          "unit": "°C",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Power and Thermal",
+            "chunk_id": "chk_8826b82d5d82"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Secure Element",
+      "specifications": [
+        {
+          "parameter": "Secure Element",
+          "value": "ATECC608",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Security",
+            "chunk_id": "chk_93af5b3d4161"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "TPM",
+      "specifications": [
+        {
+          "parameter": "TPM",
+          "value": "TPM 2.0",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Security",
+            "chunk_id": "chk_93af5b3d4161"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Secure Boot",
+      "specifications": [
+        {
+          "parameter": "Secure Boot",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "page": 1,
+            "section": "Security",
+            "chunk_id": "chk_93af5b3d4161"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "sections_discovered": 6,
+    "sections_processed": 6,
+    "sections_with_features": 3,
+    "coverage_complete": true,
+    "missed_sections": [],
+    "status": "COMPLETE"
+  },
+  "query_intent": "FULL_DOCUMENT_EXTRACTION",
+  "retries": 0,
+  "debug": {
+    "intent_confidence": 0.85,
+    "intent_notes": "matched cues for FULL_DOCUMENT_EXTRACTION",
+    "tasks": [
+      {
+        "task": "Storage",
+        "retrieval": {
+          "queries": [
+            "Storage specifications",
+            "Storage"
+          ],
+          "filters": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "section": "Storage"
+          },
+          "vector": [
+            {
+              "query": "Storage specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_f46671d9baed",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Storage",
+              "hits": [
+                {
+                  "chunk_id": "chk_f46671d9baed",
+                  "score": 0.0
+                }
+              ]
+            }
+          ],
+          "bm25": [
+            {
+              "query": "Storage specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_f46671d9baed",
+                  "score": 1.7792780941482513
+                }
+              ]
+            },
+            {
+              "query": "Storage",
+              "hits": [
+                {
+                  "chunk_id": "chk_f46671d9baed",
+                  "score": 1.7792780941482513
+                }
+              ]
+            }
+          ],
+          "rrf": [
+            {
+              "chunk_id": "chk_f46671d9baed",
+              "score": 0.06557377049180328
+            }
+          ],
+          "unfiltered_fallback": {
+            "queries": [
+              "Storage specifications",
+              "Storage"
+            ],
+            "filters": {
+              "document_id": "doc_2eccb4a7294abbee"
+            },
+            "vector": [
+              {
+                "query": "Storage specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": -0.032844312489032745
+                  }
+                ]
+              },
+              {
+                "query": "Storage",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  }
+                ]
+              }
+            ],
+            "bm25": [
+              {
+                "query": "Storage specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 1.7792780941482513
+                  }
+                ]
+              },
+              {
+                "query": "Storage",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 1.7792780941482513
+                  }
+                ]
+              }
+            ],
+            "rrf": [
+              {
+                "chunk_id": "chk_f46671d9baed",
+                "score": 0.06403688524590165
+              },
+              {
+                "chunk_id": "chk_c32c01dfa1c5",
+                "score": 0.03278688524590164
+              },
+              {
+                "chunk_id": "chk_ce780793cb4c",
+                "score": 0.03225806451612903
+              },
+              {
+                "chunk_id": "chk_84954eb476dd",
+                "score": 0.031746031746031744
+              },
+              {
+                "chunk_id": "chk_d9b89ecb3e47",
+                "score": 0.03076923076923077
+              },
+              {
+                "chunk_id": "chk_0a63aeac8920",
+                "score": 0.030303030303030304
+              },
+              {
+                "chunk_id": "chk_93af5b3d4161",
+                "score": 0.029631255487269532
+              },
+              {
+                "chunk_id": "chk_8826b82d5d82",
+                "score": 0.029631255487269532
+              }
+            ]
+          }
+        },
+        "grounding": {
+          "supported": 3,
+          "partially_supported": 0,
+          "unsupported": 0,
+          "removed": []
+        },
+        "usage": {
+          "prompt_tokens": 813,
+          "completion_tokens": 285,
+          "total_tokens": 1098
+        }
+      },
+      {
+        "task": "Processor",
+        "retrieval": {
+          "queries": [
+            "Processor specifications",
+            "Processor"
+          ],
+          "filters": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "section": "Processor"
+          },
+          "vector": [
+            {
+              "query": "Processor specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_84954eb476dd",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Processor",
+              "hits": [
+                {
+                  "chunk_id": "chk_84954eb476dd",
+                  "score": 0.0
+                }
+              ]
+            }
+          ],
+          "bm25": [
+            {
+              "query": "Processor specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_84954eb476dd",
+                  "score": 1.5461848940414935
+                }
+              ]
+            },
+            {
+              "query": "Processor",
+              "hits": [
+                {
+                  "chunk_id": "chk_84954eb476dd",
+                  "score": 1.5461848940414935
+                }
+              ]
+            }
+          ],
+          "rrf": [
+            {
+              "chunk_id": "chk_84954eb476dd",
+              "score": 0.06557377049180328
+            }
+          ],
+          "unfiltered_fallback": {
+            "queries": [
+              "Processor specifications",
+              "Processor"
+            ],
+            "filters": {
+              "document_id": "doc_2eccb4a7294abbee"
+            },
+            "vector": [
+              {
+                "query": "Processor specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  }
+                ]
+              },
+              {
+                "query": "Processor",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  }
+                ]
+              }
+            ],
+            "bm25": [
+              {
+                "query": "Processor specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 1.5461848940414935
+                  }
+                ]
+              },
+              {
+                "query": "Processor",
+                "hits": [
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 1.5461848940414935
+                  }
+                ]
+              }
+            ],
+            "rrf": [
+              {
+                "chunk_id": "chk_84954eb476dd",
+                "score": 0.06453291699193339
+              },
+              {
+                "chunk_id": "chk_c32c01dfa1c5",
+                "score": 0.03278688524590164
+              },
+              {
+                "chunk_id": "chk_ce780793cb4c",
+                "score": 0.03225806451612903
+              },
+              {
+                "chunk_id": "chk_f46671d9baed",
+                "score": 0.03125
+              },
+              {
+                "chunk_id": "chk_d9b89ecb3e47",
+                "score": 0.03076923076923077
+              },
+              {
+                "chunk_id": "chk_0a63aeac8920",
+                "score": 0.030303030303030304
+              },
+              {
+                "chunk_id": "chk_8826b82d5d82",
+                "score": 0.029850746268656716
+              },
+              {
+                "chunk_id": "chk_93af5b3d4161",
+                "score": 0.029411764705882353
+              }
+            ]
+          }
+        },
+        "grounding": {
+          "supported": 4,
+          "partially_supported": 0,
+          "unsupported": 0,
+          "removed": []
+        },
+        "usage": {
+          "prompt_tokens": 813,
+          "completion_tokens": 367,
+          "total_tokens": 1180
+        }
+      },
+      {
+        "task": "Network Interfaces",
+        "retrieval": {
+          "queries": [
+            "Network Interfaces specifications",
+            "Network Interfaces"
+          ],
+          "filters": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "section": "Network Interfaces"
+          },
+          "vector": [
+            {
+              "query": "Network Interfaces specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_d9b89ecb3e47",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Network Interfaces",
+              "hits": [
+                {
+                  "chunk_id": "chk_d9b89ecb3e47",
+                  "score": 0.0
+                }
+              ]
+            }
+          ],
+          "bm25": [
+            {
+              "query": "Network Interfaces specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_d9b89ecb3e47",
+                  "score": 2.734180237339784
+                }
+              ]
+            },
+            {
+              "query": "Network Interfaces",
+              "hits": [
+                {
+                  "chunk_id": "chk_d9b89ecb3e47",
+                  "score": 2.734180237339784
+                }
+              ]
+            }
+          ],
+          "rrf": [
+            {
+              "chunk_id": "chk_d9b89ecb3e47",
+              "score": 0.06557377049180328
+            }
+          ],
+          "unfiltered_fallback": {
+            "queries": [
+              "Network Interfaces specifications",
+              "Network Interfaces"
+            ],
+            "filters": {
+              "document_id": "doc_2eccb4a7294abbee"
+            },
+            "vector": [
+              {
+                "query": "Network Interfaces specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": -0.026593491435050964
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": -0.06256113201379776
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": -0.133630633354187
+                  }
+                ]
+              },
+              {
+                "query": "Network Interfaces",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": -0.07802743464708328
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": -0.1666666716337204
+                  }
+                ]
+              }
+            ],
+            "bm25": [
+              {
+                "query": "Network Interfaces specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 2.734180237339784
+                  }
+                ]
+              },
+              {
+                "query": "Network Interfaces",
+                "hits": [
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 2.734180237339784
+                  }
+                ]
+              }
+            ],
+            "rrf": [
+              {
+                "chunk_id": "chk_d9b89ecb3e47",
+                "score": 0.06428490111891752
+              },
+              {
+                "chunk_id": "chk_c32c01dfa1c5",
+                "score": 0.03278688524590164
+              },
+              {
+                "chunk_id": "chk_ce780793cb4c",
+                "score": 0.03225806451612903
+              },
+              {
+                "chunk_id": "chk_84954eb476dd",
+                "score": 0.031024531024531024
+              },
+              {
+                "chunk_id": "chk_0a63aeac8920",
+                "score": 0.031009615384615385
+              },
+              {
+                "chunk_id": "chk_8826b82d5d82",
+                "score": 0.030536130536130537
+              },
+              {
+                "chunk_id": "chk_93af5b3d4161",
+                "score": 0.029850746268656716
+              },
+              {
+                "chunk_id": "chk_f46671d9baed",
+                "score": 0.029411764705882353
+              }
+            ]
+          }
+        },
+        "grounding": {
+          "supported": 5,
+          "partially_supported": 0,
+          "unsupported": 0,
+          "removed": []
+        },
+        "usage": {
+          "prompt_tokens": 814,
+          "completion_tokens": 573,
+          "total_tokens": 1387
+        }
+      },
+      {
+        "task": "I/O and Expansion",
+        "retrieval": {
+          "queries": [
+            "I/O and Expansion specifications",
+            "I/O and Expansion",
+            "Expansion",
+            "Expansion specifications"
+          ],
+          "filters": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "section": "I/O and Expansion"
+          },
+          "vector": [
+            {
+              "query": "I/O and Expansion specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 0.0703815370798111
+                }
+              ]
+            },
+            {
+              "query": "I/O and Expansion",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 0.0819920152425766
+                }
+              ]
+            },
+            {
+              "query": "Expansion",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Expansion specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 0.0
+                }
+              ]
+            }
+          ],
+          "bm25": [
+            {
+              "query": "I/O and Expansion specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 3.977288226810044
+                }
+              ]
+            },
+            {
+              "query": "I/O and Expansion",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 3.977288226810044
+                }
+              ]
+            },
+            {
+              "query": "Expansion",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 1.2782539376732927
+                }
+              ]
+            },
+            {
+              "query": "Expansion specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_0a63aeac8920",
+                  "score": 1.2782539376732927
+                }
+              ]
+            }
+          ],
+          "rrf": [
+            {
+              "chunk_id": "chk_0a63aeac8920",
+              "score": 0.13114754098360656
+            }
+          ],
+          "unfiltered_fallback": {
+            "queries": [
+              "I/O and Expansion specifications",
+              "I/O and Expansion",
+              "Expansion",
+              "Expansion specifications"
+            ],
+            "filters": {
+              "document_id": "doc_2eccb4a7294abbee"
+            },
+            "vector": [
+              {
+                "query": "I/O and Expansion specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.17206180095672607
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.09042002260684967
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0703815370798111
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.021486753597855568
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": -0.13109472393989563
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": -0.13109472393989563
+                  }
+                ]
+              },
+              {
+                "query": "I/O and Expansion",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.133630633354187
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.10533614456653595
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0819920152425766
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.025031311437487602
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": -0.07636036723852158
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": -0.15272073447704315
+                  }
+                ]
+              },
+              {
+                "query": "Expansion",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  }
+                ]
+              },
+              {
+                "query": "Expansion specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0833333358168602
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": -0.0952381044626236
+                  }
+                ]
+              }
+            ],
+            "bm25": [
+              {
+                "query": "I/O and Expansion specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 3.977288226810044
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.8116313432665482
+                  }
+                ]
+              },
+              {
+                "query": "I/O and Expansion",
+                "hits": [
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 3.977288226810044
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.8116313432665482
+                  }
+                ]
+              },
+              {
+                "query": "Expansion",
+                "hits": [
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 1.2782539376732927
+                  }
+                ]
+              },
+              {
+                "query": "Expansion specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 1.2782539376732927
+                  }
+                ]
+              }
+            ],
+            "rrf": [
+              {
+                "chunk_id": "chk_0a63aeac8920",
+                "score": 0.12785593277396556
+              },
+              {
+                "chunk_id": "chk_8826b82d5d82",
+                "score": 0.09459301731810157
+              },
+              {
+                "chunk_id": "chk_f46671d9baed",
+                "score": 0.06480532786885246
+              },
+              {
+                "chunk_id": "chk_84954eb476dd",
+                "score": 0.06251526251526252
+              },
+              {
+                "chunk_id": "chk_d9b89ecb3e47",
+                "score": 0.062259615384615385
+              },
+              {
+                "chunk_id": "chk_ce780793cb4c",
+                "score": 0.061669829222011384
+              },
+              {
+                "chunk_id": "chk_c32c01dfa1c5",
+                "score": 0.06095007124454871
+              },
+              {
+                "chunk_id": "chk_93af5b3d4161",
+                "score": 0.05993428579029984
+              }
+            ]
+          }
+        },
+        "grounding": {
+          "supported": 12,
+          "partially_supported": 0,
+          "unsupported": 0,
+          "removed": []
+        },
+        "usage": {
+          "prompt_tokens": 816,
+          "completion_tokens": 1304,
+          "total_tokens": 2120
+        }
+      },
+      {
+        "task": "Power and Thermal",
+        "retrieval": {
+          "queries": [
+            "Power and Thermal specifications",
+            "Power and Thermal",
+            "Power",
+            "Power specifications",
+            "Thermal",
+            "Thermal specifications"
+          ],
+          "filters": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "section": "Power and Thermal"
+          },
+          "vector": [
+            {
+              "query": "Power and Thermal specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 0.09042002260684967
+                }
+              ]
+            },
+            {
+              "query": "Power and Thermal",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 0.10533614456653595
+                }
+              ]
+            },
+            {
+              "query": "Power",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Power specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Thermal",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 0.0
+                }
+              ]
+            },
+            {
+              "query": "Thermal specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 0.0
+                }
+              ]
+            }
+          ],
+          "bm25": [
+            {
+              "query": "Power and Thermal specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 4.219507287501294
+                }
+              ]
+            },
+            {
+              "query": "Power and Thermal",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 4.219507287501294
+                }
+              ]
+            },
+            {
+              "query": "Power",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 2.0407858255648534
+                }
+              ]
+            },
+            {
+              "query": "Power specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 2.0407858255648534
+                }
+              ]
+            },
+            {
+              "query": "Thermal",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 1.367090118669892
+                }
+              ]
+            },
+            {
+              "query": "Thermal specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_8826b82d5d82",
+                  "score": 1.367090118669892
+                }
+              ]
+            }
+          ],
+          "rrf": [
+            {
+              "chunk_id": "chk_8826b82d5d82",
+              "score": 0.1967213114754098
+            }
+          ],
+          "unfiltered_fallback": {
+            "queries": [
+              "Power and Thermal specifications",
+              "Power and Thermal",
+              "Power",
+              "Power specifications",
+              "Thermal",
+              "Thermal specifications"
+            ],
+            "filters": {
+              "document_id": "doc_2eccb4a7294abbee"
+            },
+            "vector": [
+              {
+                "query": "Power and Thermal specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.11470787227153778
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.09042002260684967
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.045655444264411926
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.03519076853990555
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": -0.021486753597855568
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": -0.02685108222067356
+                  }
+                ]
+              },
+              {
+                "query": "Power and Thermal",
+                "hits": [
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.133630633354187
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.10533614456653595
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.05318698287010193
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0409960076212883
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": -0.025031311437487602
+                  }
+                ]
+              },
+              {
+                "query": "Power",
+                "hits": [
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.09950372576713562
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": -0.0766965001821518
+                  }
+                ]
+              },
+              {
+                "query": "Power specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.06633581966161728
+                  },
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": -0.051131002604961395
+                  }
+                ]
+              },
+              {
+                "query": "Thermal",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  }
+                ]
+              },
+              {
+                "query": "Thermal specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": -0.03901371732354164
+                  }
+                ]
+              }
+            ],
+            "bm25": [
+              {
+                "query": "Power and Thermal specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 4.219507287501294
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.75888995633948
+                  }
+                ]
+              },
+              {
+                "query": "Power and Thermal",
+                "hits": [
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 4.219507287501294
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.75888995633948
+                  }
+                ]
+              },
+              {
+                "query": "Power",
+                "hits": [
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 2.0407858255648534
+                  }
+                ]
+              },
+              {
+                "query": "Power specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 2.0407858255648534
+                  }
+                ]
+              },
+              {
+                "query": "Thermal",
+                "hits": [
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 1.367090118669892
+                  }
+                ]
+              },
+              {
+                "query": "Thermal specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 1.367090118669892
+                  }
+                ]
+              }
+            ],
+            "rrf": [
+              {
+                "chunk_id": "chk_8826b82d5d82",
+                "score": 0.19077249682552094
+              },
+              {
+                "chunk_id": "chk_0a63aeac8920",
+                "score": 0.1232228595250417
+              },
+              {
+                "chunk_id": "chk_84954eb476dd",
+                "score": 0.09627894873796514
+              },
+              {
+                "chunk_id": "chk_c32c01dfa1c5",
+                "score": 0.09581418053126145
+              },
+              {
+                "chunk_id": "chk_f46671d9baed",
+                "score": 0.09528688524590165
+              },
+              {
+                "chunk_id": "chk_ce780793cb4c",
+                "score": 0.09430712656519108
+              },
+              {
+                "chunk_id": "chk_d9b89ecb3e47",
+                "score": 0.09116971702573107
+              },
+              {
+                "chunk_id": "chk_93af5b3d4161",
+                "score": 0.0888937664618086
+              }
+            ]
+          }
+        },
+        "grounding": {
+          "supported": 4,
+          "partially_supported": 0,
+          "unsupported": 0,
+          "removed": []
+        },
+        "usage": {
+          "prompt_tokens": 815,
+          "completion_tokens": 390,
+          "total_tokens": 1205
+        }
+      },
+      {
+        "task": "Security",
+        "retrieval": {
+          "queries": [
+            "Security specifications",
+            "Security"
+          ],
+          "filters": {
+            "document_id": "doc_2eccb4a7294abbee",
+            "section": "Security"
+          },
+          "vector": [
+            {
+              "query": "Security specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_93af5b3d4161",
+                  "score": -0.23408231139183044
+                }
+              ]
+            },
+            {
+              "query": "Security",
+              "hits": [
+                {
+                  "chunk_id": "chk_93af5b3d4161",
+                  "score": 0.0
+                }
+              ]
+            }
+          ],
+          "bm25": [
+            {
+              "query": "Security specifications",
+              "hits": [
+                {
+                  "chunk_id": "chk_93af5b3d4161",
+                  "score": 1.956222876991724
+                }
+              ]
+            },
+            {
+              "query": "Security",
+              "hits": [
+                {
+                  "chunk_id": "chk_93af5b3d4161",
+                  "score": 1.956222876991724
+                }
+              ]
+            }
+          ],
+          "rrf": [
+            {
+              "chunk_id": "chk_93af5b3d4161",
+              "score": 0.06557377049180328
+            }
+          ],
+          "unfiltered_fallback": {
+            "queries": [
+              "Security specifications",
+              "Security"
+            ],
+            "filters": {
+              "document_id": "doc_2eccb4a7294abbee"
+            },
+            "vector": [
+              {
+                "query": "Security specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": -0.032844312489032745
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": -0.23408231139183044
+                  }
+                ]
+              },
+              {
+                "query": "Security",
+                "hits": [
+                  {
+                    "chunk_id": "chk_c32c01dfa1c5",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_ce780793cb4c",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_84954eb476dd",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_f46671d9baed",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_d9b89ecb3e47",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_0a63aeac8920",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_8826b82d5d82",
+                    "score": 0.0
+                  },
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 0.0
+                  }
+                ]
+              }
+            ],
+            "bm25": [
+              {
+                "query": "Security specifications",
+                "hits": [
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 1.956222876991724
+                  }
+                ]
+              },
+              {
+                "query": "Security",
+                "hits": [
+                  {
+                    "chunk_id": "chk_93af5b3d4161",
+                    "score": 1.956222876991724
+                  }
+                ]
+              }
+            ],
+            "rrf": [
+              {
+                "chunk_id": "chk_93af5b3d4161",
+                "score": 0.062198649951783994
+              },
+              {
+                "chunk_id": "chk_c32c01dfa1c5",
+                "score": 0.03278688524590164
+              },
+              {
+                "chunk_id": "chk_ce780793cb4c",
+                "score": 0.03225806451612903
+              },
+              {
+                "chunk_id": "chk_84954eb476dd",
+                "score": 0.031746031746031744
+              },
+              {
+                "chunk_id": "chk_f46671d9baed",
+                "score": 0.03125
+              },
+              {
+                "chunk_id": "chk_d9b89ecb3e47",
+                "score": 0.03076923076923077
+              },
+              {
+                "chunk_id": "chk_0a63aeac8920",
+                "score": 0.030303030303030304
+              },
+              {
+                "chunk_id": "chk_8826b82d5d82",
+                "score": 0.029850746268656716
+              }
+            ]
+          }
+        },
+        "grounding": {
+          "supported": 3,
+          "partially_supported": 0,
+          "unsupported": 0,
+          "removed": []
+        },
+        "usage": {
+          "prompt_tokens": 813,
+          "completion_tokens": 331,
+          "total_tokens": 1144
+        }
+      }
+    ],
+    "trace_id": "2a348cef-4941-4e20-a6f5-f65debc306ef"
+  }
+}

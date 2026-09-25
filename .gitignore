@@ -1,0 +1,81 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Virtualenvs
+.venv/
+venv/
+dt_venv/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Runtime data (Backend)
+Backend/data/uploads/
+Backend/data/documents/
+Backend/data/cache/
+Backend/data/indexes/
+Backend/data/logs/
+Backend/data/traces/
+Backend/uploads/
+*.log
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/out/
+Frontend/.cache/
+
+# Android camera harness (build / local SDK)
+cameratest-harness/.gradle/
+cameratest-harness/.kotlin/
+cameratest-harness/local.properties
+cameratest-harness/**/build/
+cameratest-harness/*.apk
+cameratest-harness/*.aab
+cameratest-harness/*.ap_
+cameratest-harness/captures/
+cameratest-harness/.cxx/
+cameratest-harness/externalNativeBuild/
+
+# APK / AAB anywhere in the repo
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Android emulator / AVD / SDK local artifacts
+.android/
+*.avd/
+**/avd/
+emulator/
+emulator-user.ini
+hardware-qemu.ini
+modem-nv-ram-*
+*.img
+*.qcow2
+snapshots/
+system-images/
+
+# IDE / editors
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini

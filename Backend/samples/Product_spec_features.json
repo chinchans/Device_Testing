@@ -1,0 +1,1818 @@
+{
+  "document": {
+    "document_id": "doc_e4a95c08981d936d",
+    "document_name": "Samsung_Galaxy_S25_Specs_PageBreak_Fixed.pdf",
+    "product_name": "Galaxy S25",
+    "product_type": null
+  },
+  "coverage": {
+    "sections_discovered": 28,
+    "sections_processed": 23,
+    "sections_with_features": 23,
+    "coverage_complete": true,
+    "missed_sections": [],
+    "status": "COMPLETE"
+  },
+  "features": [
+    {
+      "feature_name": "Design",
+      "specifications": [
+        {
+          "parameter": "Dimension (HxWxD, mm)",
+          "value": "146.9 x 70.5 x 7.2",
+          "unit": "mm",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Weight (g)",
+          "value": "162",
+          "unit": "g",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "2340 x 1080 (FHD+)",
+      "specifications": [
+        {
+          "parameter": "Technology",
+          "value": "Dynamic AMOLED 2X",
+          "unit": null,
+          "qualifiers": [
+            "Main Display"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "2340 x 1080 (FHD+)",
+            "chunk_id": "chk_8eafc25dc683"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Colour Depth",
+          "value": "16M",
+          "unit": null,
+          "qualifiers": [
+            "Main Display"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "16M",
+            "chunk_id": "chk_8822619338dc"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Max Refresh Rate",
+          "value": "120 Hz",
+          "unit": null,
+          "qualifiers": [
+            "Main Display"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "120 Hz",
+            "chunk_id": "chk_fad9733063e4"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Reviews",
+      "specifications": [
+        {
+          "parameter": "Processor CPU Speed",
+          "value": "4.47GHz, 3.5GHz",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Processor CPU Type",
+          "value": "Octa-Core",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Display Size (Main Display)",
+          "value": "15.64 cm full rectangle / 15.23 cm rounded corners",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Display Resolution (Main Display)",
+          "value": "2340 x 1080 (FHD+)",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "2340 x 1080 (FHD+)",
+            "chunk_id": "chk_8eafc25dc683"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Display Technology (Main Display)",
+          "value": "Dynamic AMOLED 2X",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "2340 x 1080 (FHD+)",
+            "chunk_id": "chk_8eafc25dc683"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Network Number of SIM",
+          "value": "Dual-SIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Network SIM size",
+          "value": "Nano-SIM (4FF), Embedded-SIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Network SIM Slot Type",
+          "value": "SIM 1 + SIM 2 / SIM 1 + eSIM / Dual eSIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Network Infra",
+          "value": "2G Gsm, 3G Wcdma, 4G Lte Fdd, 4G LTE TDD, 5G Sub6 FDD, 5G Sub6 TDD",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "2G Gsm, 3G Wcdma, 4G Lte Fdd, 4G",
+            "chunk_id": "chk_f3bc8ac18f3c"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Storage Memory (GB)",
+          "value": "12",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Storage (GB)",
+          "value": "256",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Available Storage (GB)",
+          "value": "223.5",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Weight (g)",
+          "value": "162",
+          "unit": "g",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Video Playback Time (Hours)",
+          "value": "Up to 29",
+          "unit": "Hours",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Capacity (mAh, Typical)",
+          "value": "4000",
+          "unit": "mAh",
+          "qualifiers": [
+            "Typical"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Removable",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Audio and Video Stereo Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Playing Resolution",
+          "value": "UHD 8K (7680 x 4320)@60fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Webm",
+            "chunk_id": "chk_efae5ecc052d"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "NFC",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Nfc",
+            "chunk_id": "chk_57cff56ad7e1"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "OS",
+          "value": "Android",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Nfc",
+            "chunk_id": "chk_57cff56ad7e1"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "General Information Form Factor",
+          "value": "Touchscreen Bar",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Nfc",
+            "chunk_id": "chk_57cff56ad7e1"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Sensors",
+          "value": "Accelerometer, Barometer, Fingerprint Sensor, Gyro Sensor, Geomagnetic Sensor, Hall Sensor, Light Sensor, Proximity Sensor",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Nfc",
+            "chunk_id": "chk_57cff56ad7e1"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Samsung DeX Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SmartThings Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Bluetooth® Hearing Aid Support",
+          "value": "Android Audio Streaming for Hearing Aid(ASHA)",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Mobile TV",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Manufacturer's Information Manufactured by",
+          "value": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "Reviews",
+            "chunk_id": "chk_fb5ad1c25b31"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Country of Origin",
+          "value": "India",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "Reviews",
+            "chunk_id": "chk_fb5ad1c25b31"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Physical specification Dimension (HxWxD, mm)",
+          "value": "146.9 x 70.5 x 7.2",
+          "unit": "mm",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Contact us",
+          "value": "For All Product Related Complaints/assistance, please contact Manager, Customer Care Samsung India Electronics Pvt. Ltd., 6th Floor, DLF Centre, Sansad Marg, New Delhi - 110001. Email: support.india@samsung.com. Tel (Toll Free):",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "Reviews",
+            "chunk_id": "chk_0bd4f5c7a438"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Services and Applications Gear Support",
+          "value": "Galaxy Ring, Galaxy Buds3 Pro, Galaxy Buds2 Pro, Galaxy Buds Pro, Galaxy Buds Live, Galaxy Buds+, Galaxy Buds3, Galaxy Buds2, Galaxy Buds, Galaxy Buds FE, Galaxy Fit3, Galaxy Fit2, Galaxy Fit e, Galaxy Fit, Galaxy Watch FE, Galaxy Watch Ultra, Galaxy Watch7, Galaxy Watch6, Galaxy Watch5, Galaxy Watch4, Galaxy Watch3, Galaxy Watch, Galaxy Watch Active2, Galaxy Watch Active",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SIM size",
+          "value": "Nano-SIM (4FF), Embedded-SIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SIM Slot Type",
+          "value": "SIM 1 + SIM 2 / SIM 1 + eSIM / Dual eSIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Weight (g)",
+          "value": "162",
+          "unit": "g",
+          "qualifiers": [
+            "146.9 x 70.5 x 7.2"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Capacity (mAh, Typical)",
+          "value": "4000",
+          "unit": "mAh",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Weight",
+          "value": "162",
+          "unit": "g",
+          "qualifiers": [
+            "146.9 x 70.5 x 7.2"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Video Playback Time",
+          "value": "Up to 29",
+          "unit": "Hours",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Capacity",
+          "value": "4000",
+          "unit": "mAh",
+          "qualifiers": [
+            "Typical"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Removable Battery",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Stereo Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "CPU Speed",
+          "value": "4.47GHz, 3.5GHz",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "CPU Type",
+          "value": "Octa-Core",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Number of SIM",
+          "value": "Dual-SIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Memory",
+          "value": "12",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Storage",
+          "value": "256",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Available Storage",
+          "value": "223.5",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Form Factor",
+          "value": "Touchscreen Bar",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Nfc",
+            "chunk_id": "chk_57cff56ad7e1"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Manufactured by",
+          "value": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "Reviews",
+            "chunk_id": "chk_fb5ad1c25b31"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Weight",
+          "value": "162",
+          "unit": "g",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Capacity (Typical)",
+          "value": "4000",
+          "unit": "mAh",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "120 Hz",
+      "specifications": [
+        {
+          "parameter": "Max Refresh Rate (Main Display)",
+          "value": "120",
+          "unit": "Hz",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "16M",
+            "chunk_id": "chk_8822619338dc"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Specifications",
+      "specifications": [
+        {
+          "parameter": "CPU Speed",
+          "value": "4.47GHz, 3.5GHz",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "CPU Type",
+          "value": "Octa-Core",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Size (Main Display)",
+          "value": "15.64 cm full rectangle / 15.23 cm rounded corners",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "Reviews",
+            "chunk_id": "chk_26bcba68fdd4"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Resolution (Main Display)",
+          "value": "2340 x 1080 (FHD+)",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "2340 x 1080 (FHD+)",
+            "chunk_id": "chk_8eafc25dc683"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Technology (Main Display)",
+          "value": "Dynamic AMOLED 2X",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "2340 x 1080 (FHD+)",
+            "chunk_id": "chk_8eafc25dc683"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Colour Depth (Main Display)",
+          "value": "16M",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "16M",
+            "chunk_id": "chk_8822619338dc"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Max Refresh Rate (Main Display)",
+          "value": "120 Hz",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "120 Hz",
+            "chunk_id": "chk_19d8125bd943"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Memory (GB)",
+          "value": "12",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Storage (GB)",
+          "value": "256",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Available Storage (GB)",
+          "value": "223.5",
+          "unit": "GB",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "@Uhd",
+            "chunk_id": "chk_042a225b13e5"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Number of SIM",
+          "value": "Dual-SIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SIM size",
+          "value": "Nano-SIM (4FF), Embedded-SIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SIM Slot Type",
+          "value": "SIM 1 + SIM 2 / SIM 1 + eSIM / Dual eSIM",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Reviews",
+            "chunk_id": "chk_ea36fcf3fc5b"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Network Support",
+          "value": "2G Gsm, 3G Wcdma, 4G Lte Fdd, 4G LTE TDD, 5G Sub6 FDD, 5G Sub6 TDD",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "2G Gsm, 3G Wcdma, 4G Lte Fdd, 4G",
+            "chunk_id": "chk_f3bc8ac18f3c"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Auto Focus",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - OIS",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Zoom",
+          "value": "Optical Zoom 3x, Optical quality Zoom 2x (Enabled by Adaptive Pixel sensor), Digital Zoom up to 30x",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Front Camera - Auto Focus",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Flash",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Recording Resolution",
+          "value": "UHD 8K (7680 x 4320)@30fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Slow Motion",
+          "value": "240fps @FHD, 120fps @FHD, 120fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Playing Resolution",
+          "value": "UHD 8K (7680 x 4320)@60fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Webm",
+            "chunk_id": "chk_efae5ecc052d"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Samsung DeX Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SmartThings Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Bluetooth® Hearing Aid Support",
+          "value": "Android Audio Streaming for Hearing Aid(ASHA)",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Mobile TV",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Manufactured by",
+          "value": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "Reviews",
+            "chunk_id": "chk_fb5ad1c25b31"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Country of Origin",
+          "value": "India",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "Reviews",
+            "chunk_id": "chk_fb5ad1c25b31"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "F1.8, F2.4, F2.2",
+      "specifications": [
+        {
+          "parameter": "Front Camera - F Number",
+          "value": "F1.8, F2.4, F2.2",
+          "unit": null,
+          "qualifiers": [
+            "12.0 MP"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_33eb1e813fdc"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Front Camera - Auto Focus",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Flash",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Recording Resolution",
+          "value": "UHD 8K (7680 x 4320)@30fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Slow Motion",
+          "value": "240fps @FHD, 120fps @FHD, 120fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Auto Focus",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - OIS",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Zoom",
+          "value": "Optical Zoom 3x, Optical quality Zoom 2x (Enabled by Adaptive Pixel sensor), Digital Zoom up to 30x",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - F Number",
+          "value": "F1.8, F2.4, F2.2",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "120 Hz",
+            "chunk_id": "chk_19d8125bd943"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "F2.2",
+      "specifications": [
+        {
+          "parameter": "Front Camera - Auto Focus",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Flash",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Recording Resolution",
+          "value": "UHD 8K (7680 x 4320)@30fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Slow Motion",
+          "value": "240fps @FHD, 120fps @FHD, 120fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Auto Focus",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - OIS",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Rear Camera - Zoom",
+          "value": "Optical Zoom 3x, Optical quality Zoom 2x (Enabled by Adaptive Pixel sensor), Digital Zoom up to 30x",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F1.8, F2.4, F2.2",
+            "chunk_id": "chk_bb2f6a9573ae"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "@Uhd",
+      "specifications": [
+        {
+          "parameter": "Video Recording Resolution",
+          "value": "UHD 8K (7680 x 4320)@30fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 2,
+            "section": "F2.2",
+            "chunk_id": "chk_705e3b8a74a3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Playing Resolution",
+          "value": "UHD 8K (7680 x 4320)@60fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Webm",
+            "chunk_id": "chk_efae5ecc052d"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "B41(2500)",
+      "specifications": [
+        {
+          "parameter": "5G",
+          "value": "FDD Sub6",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "B41(2500)",
+            "chunk_id": "chk_3e6091ca367c"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "N66(Aws-3)",
+      "specifications": [
+        {
+          "parameter": "5G",
+          "value": "TDD Sub6",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "N66(Aws-3)",
+            "chunk_id": "chk_966cbb5a0e2b"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Mhl",
+      "specifications": [
+        {
+          "parameter": "Mhl",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Mhl",
+            "chunk_id": "chk_5f3d2b7d6f2a"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "4096-Qam",
+      "specifications": [
+        {
+          "parameter": "Wi-Fi Direct",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "4096-Qam",
+            "chunk_id": "chk_9fb2fdf76746"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Bluetooth Version",
+          "value": "Bluetooth v5.4",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "4096-Qam",
+            "chunk_id": "chk_9fb2fdf76746"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "N77(3700), N78(3500)",
+      "specifications": [
+        {
+          "parameter": "USB Interface",
+          "value": "USB Type-C",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "N77(3700), N78(3500)",
+            "chunk_id": "chk_23d0112810fc"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "USB Version",
+          "value": "USB 3.2 Gen 1",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "N77(3700), N78(3500)",
+            "chunk_id": "chk_23d0112810fc"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Location Technology",
+          "value": "GPS, Glonass, Beidou, Galileo, QZSS",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "N77(3700), N78(3500)",
+            "chunk_id": "chk_23d0112810fc"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Earjack",
+          "value": "USB Type-C",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "N77(3700), N78(3500)",
+            "chunk_id": "chk_23d0112810fc"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Nfc",
+      "specifications": [
+        {
+          "parameter": "Nfc",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 3,
+            "section": "Nfc",
+            "chunk_id": "chk_57cff56ad7e1"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "146.9 x 70.5 x 7.2",
+      "specifications": [
+        {
+          "parameter": "Weight",
+          "value": "162",
+          "unit": "g",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Capacity (mAh, Typical)",
+          "value": "4000",
+          "unit": "mAh",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery Removable",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Playback Time",
+          "value": "Up to 29",
+          "unit": "Hours",
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Stereo Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Reviews",
+            "chunk_id": "chk_291ec8344fd2"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Video Playing Resolution",
+          "value": "UHD 8K (7680 x 4320)@60fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Webm",
+            "chunk_id": "chk_efae5ecc052d"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Webm",
+      "specifications": [
+        {
+          "parameter": "Video Playing Resolution",
+          "value": "UHD 8K (7680 x 4320)@60fps",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Webm",
+            "chunk_id": "chk_efae5ecc052d"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+      "specifications": [
+        {
+          "parameter": "Gear Support",
+          "value": "Galaxy Ring, Galaxy Buds3 Pro, Galaxy Buds2 Pro, Galaxy Buds Pro, Galaxy Buds Live, Galaxy Buds+, Galaxy Buds3, Galaxy Buds2, Galaxy Buds, Galaxy Buds FE, Galaxy Fit3, Galaxy Fit2, Galaxy Fit e, Galaxy Fit, Galaxy Watch FE, Galaxy Watch Ultra, Galaxy Watch7, Galaxy Watch6, Galaxy Watch5, Galaxy Watch4, Galaxy Watch3, Galaxy Watch, Galaxy Watch Active2, Galaxy Watch Active",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Samsung DeX Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Bluetooth® Hearing Aid Support",
+          "value": "Android Audio Streaming for Hearing Aid(ASHA)",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "SmartThings Support",
+          "value": "Yes",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Mobile TV",
+          "value": "No",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 4,
+            "section": "Imy, Rtttl, Rtx, Ota, Dff, Dsf, Ape",
+            "chunk_id": "chk_cc6a91fe27a0"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "feature_name": "1800 40 7267864 (1800 40 Samsung)",
+      "specifications": [
+        {
+          "parameter": "Battery Capacity (Typical)",
+          "value": "3885, 4755, 4855",
+          "unit": "mAh",
+          "qualifiers": [
+            "Galaxy S25",
+            "Galaxy S25+",
+            "Galaxy S25 Ultra"
+          ],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "1800 40 7267864 (1800 40 Samsung)",
+            "chunk_id": "chk_f6660c4a8218"
+          },
+          "grounding_status": "PARTIALLY_SUPPORTED"
+        },
+        {
+          "parameter": "Network bandwidth support",
+          "value": "May vary depending on the region or service provider",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "1800 40 7267864 (1800 40 Samsung)",
+            "chunk_id": "chk_6d22798c3abd"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Battery life",
+          "value": "Varies by network environment, features and apps used, frequency of calls and messages, number of times charged, and other factors",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "1800 40 7267864 (1800 40 Samsung)",
+            "chunk_id": "chk_907fd371da0f"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Launch date",
+          "value": "January 22nd, 2025",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "1800 40 7267864 (1800 40 Samsung)",
+            "chunk_id": "chk_4fbeebf6b43d"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "User Available Memory",
+          "value": "Actual user memory will vary depending on the operator and may change after software upgrades",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "1800 40 7267864 (1800 40 Samsung)",
+            "chunk_id": "chk_4bce9a4435f3"
+          },
+          "grounding_status": "SUPPORTED"
+        },
+        {
+          "parameter": "Wi-Fi 7 network availability",
+          "value": "May vary by market, network provider and user environment. Requires a Wi-Fi 7 router",
+          "unit": null,
+          "qualifiers": [],
+          "source": {
+            "document_id": "doc_e4a95c08981d936d",
+            "page": 5,
+            "section": "1800 40 7267864 (1800 40 Samsung)",
+            "chunk_id": "chk_fd7dacca787e"
+          },
+          "grounding_status": "SUPPORTED"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+Build this UI to visually match the existing Unified Platform (Electron) design system exactly. Do not invent a new visual language. Use the same colors, typography, spacing, radii, shadows, borders, and component patterns described below. Light mode only. No dark theme. No purple-to-indigo marketing gradients. No Tailwind purple defaults. Prefer vanilla CSS or CSS variables that mirror these tokens.
+
+═══════════════════════════════════════
+1) DESIGN TOKENS (CSS VARIABLES)
+═══════════════════════════════════════
+
+:root {
+  /* Neutrals (Slate scale) */
+  --base-0: #f8fafc;   /* page background */
+  --base-1: #f1f5f9;   /* soft secondary surface */
+  --base-2: #e2e8f0;   /* default borders / dividers */
+  --base-3: #cbd5e1;   /* stronger borders, scrollbar */
+  --base-4: #94a3b8;   /* muted controls */
+  --base-5: #64748b;   /* muted icons / secondary text edge */
+
+  /* Text */
+  --text-strong: #0f172a;  /* primary text / body */
+  --text-main: #1e293b;    /* secondary strong text */
+  --text-muted: #475569;   /* hints, descriptions, idle labels */
+
+  /* Brand / chrome */
+  --primary-color: #1e104e; /* deep purple-navy brand */
+  --btn-bg: #1e104e;
+  --btn-bg-hover: #180d40;
+  --btn-bg-active: #140a36;
+  --brand-blue: #1764e8;   /* primary CTA blue */
+
+  /* Layout chrome heights */
+  --titlebar-height: 30px;
+  --subnav-height: 32px;
+}
+
+Hard-coded chrome colors (also required):
+- Title bar background: #0d2a63
+- Title bar bottom border: #0a1f52
+- Title bar title text: #ffffff, 12px, weight 600
+- Title bar context/subtitle: #d8e5ff, 11px
+- Title bar settings button: rgba(255,255,255,0.09) bg, rgba(255,255,255,0.22) border; hover 0.2 / 0.45
+- Soft blue surfaces: #f8fbff, #eef4ff, #e8f0ff, #eef5ff, #eaf2ff, #eef3fb
+- Soft blue borders/dividers: #d7dde8, #d6deea, #dbe4f0, #d8e0ef, #d9e2f1, #dbe2ec
+- Active navy text/links: #0f2f7a
+- White surfaces: #ffffff
+
+═══════════════════════════════════════
+2) TYPOGRAPHY
+═══════════════════════════════════════
+
+- UI font stack: "Inter", "Segoe UI", Arial, sans-serif
+- Code / logs mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace
+  (streams/diffs may use: Consolas, "Courier New", monospace)
+- Body text color: var(--text-strong)
+- Section labels (panel h3 style):
+  11px, weight 700, letter-spacing 0.08em, text-transform uppercase, color #334155
+- Settings page title: 20px / 700 / letter-spacing -0.02em
+- Settings panel title: 15px / 700
+- Body / hints: 12–13px, weights 400–600, muted color var(--text-muted)
+- Micro labels, pills, badges: 9–11px, weight 600–800, often uppercase with letter-spacing 0.04–0.08em
+- Log stream: 12px, line-height 1.4
+- Common line-heights: 1, 1.2, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55
+- Headings h2/h3 default weight 600; margin bottom ~10px
+
+═══════════════════════════════════════
+3) SPACING SCALE (use these px steps)
+═══════════════════════════════════════
+
+Tight: 4, 5, 6, 8, 10
+Medium: 12, 14, 16, 18
+Large: 24, 36
+
+Conventions:
+- Main layout padding: 8px 10px 10px
+- Default panel padding: 14px
+- Settings main pane padding: 16px 18px 20px
+- Settings field gap: 14px between fields; 6px label→control
+- Modal outer padding ~24px; header 12px 16px; body 14px 16px
+- Splash card: margin 16vh auto; padding 36px
+
+═══════════════════════════════════════
+4) RADIUS, BORDERS, SHADOWS
+═══════════════════════════════════════
+
+Radius scale:
+- 4px: tiny badges / titlebar chips
+- 6px: small success controls / tags
+- 7px: default buttons, header tabs, nav items
+- 8px: inputs, selects, pipeline items
+- 10px: panels, textareas, callouts, settings cards
+- 12px: modal panels
+- 16px: splash cards
+- 50%: status rings / knobs / spinners
+- 999px: pills, badges, scrollbar thumb, toggle tracks
+
+Borders:
+- Default: 1px solid var(--base-2) or var(--base-3)
+- Empty states: 1px dashed var(--base-3)
+- Emphasized cards sometimes 1.5px–2px
+
+Shadows:
+- Splash: 0 10px 30px rgba(15, 23, 42, 0.06)
+- Panel: 0 1px 6px rgba(15, 23, 42, 0.05)
+- Modal: 0 18px 48px rgba(15, 23, 42, 0.18)
+- Hairline: 0 1px 0 rgba(15, 23, 42, 0.04)
+- Toggle knob: 0 1px 2px rgba(15, 23, 42, 0.15)
+- Modal backdrop: rgba(15, 23, 42, 0.45)
+
+Focus rings:
+- Textarea: 0 0 0 3px rgba(148, 163, 184, 0.18)
+- Settings input: border #3b82f6 + 0 0 0 3px rgba(59, 130, 246, 0.2)
+- Toggle: 0 0 0 3px rgba(59, 130, 246, 0.35)
+
+═══════════════════════════════════════
+5) BACKGROUNDS & SURFACES
+═══════════════════════════════════════
+
+- Page background: var(--base-0) (#f8fafc)
+- Main content / cards: #ffffff
+- Secondary panes / streams: #f8fafc
+- Soft info surface: #f8fbff
+- Terminal/log dark body ONLY when needed: bg #0f172a, text #e2e8f0
+- No background images/patterns as primary atmosphere
+- Scrollbar: thin 6px; thumb gradient linear-gradient(180deg, --base-3, --base-4); radius 999px; no arrow buttons
+
+═══════════════════════════════════════
+6) LAYOUT PATTERNS
+═══════════════════════════════════════
+
+- App shell: fixed title bar (30px, navy) + content height calc(100vh - 30px)
+- Optional subnav: 32px white bar with bottom border --base-2
+- Prefer CSS Grid + Flexbox
+- Typical 3-column workspace feel (if applicable):
+  minmax(290px, 23%) | minmax(540px, 59%) | minmax(220px, 18%); gap 10px
+- Settings layout: sidebar minmax(260px, 300px) + 1fr
+- Splash max-width: 560px, centered
+- Modals: min(920px, 96vw) / min(560px, 96vw); max-height ~70–82vh; radius 12px
+- Settings inputs max-width: 520px
+- Panels overflow hidden; streams overflow-y auto
+- Alignment: headers use flex space-between; labels left-aligned; forms stacked vertically with consistent gaps
+
+═══════════════════════════════════════
+7) COMPONENTS
+═══════════════════════════════════════
+
+PANELS / CARDS
+- .panel: white bg, 1px solid --base-2, radius 10px, padding 14px, shadow 0 1px 6px rgba(15,23,42,0.05)
+- Settings panels: similar; sometimes padding 14px 16px 16px
+- Pipeline / info items: bg #f8fbff, radius 8px
+- Callouts: soft tinted bg + matching border (see semantic colors)
+
+BUTTONS (base)
+- border 1px solid transparent; radius 7px; padding 9px 12px; font-weight 600
+- transition: all 0.15s ease
+- hover: filter brightness(0.97)
+- disabled: opacity 0.55; cursor not-allowed
+
+Button variants:
+- Primary: bg/border --brand-blue (#1764e8), text #fff
+- Secondary: bg #fff, border #cbd5e1, text #1e293b; hover bg #f8fafc
+- Success: bg/border #0f766e, text #fff (often radius 6px, pad 8px)
+- Danger: bg/border #b91c1c, text #fff
+- Warning/amber CTA: bg #d97706, border #b45309, text #fff; hover #b45309
+- Soft success (review): bg rgba(24,204,90,0.34), border rgba(2,36,15,0.53), text #166534
+- Soft danger (review): bg rgba(220,38,38,0.12), border rgba(220,38,38,0.56), text #b91c1c
+- Settings primary: #2563eb / hover #1d4ed8, radius 8px, pad 8px 16px
+- Settings secondary: white, border #93c5fd, text #1e40af; hover #eff6ff
+- Settings danger outline: white, border #fca5a5, text #b91c1c; hover #fef2f2
+- Report/download chip: bg #eff6ff, border #bfdbfe, text #1d4ed8, ~11px
+
+TABS / NAV
+- Header tabs: idle bg #f8fafc text #475569; active bg #e8f0ff border #bdd0f6 text #0f2f7a; radius 7px
+- Settings nav item: radius 7px, pad 7px 8px; hover #eef5ff/#d4e3ff; active #dbeafe/#93c5fd text #0f2f7a
+- Settings group title: 11px / 800 / uppercase / #0f2f7a
+
+INPUTS
+- Textarea: full width, radius 10px, border 1px solid --base-2, padding 12px, bg #fff
+- Select/input: radius 8px, padding ~7–10px, border #dbe2ec or #cbd5e1, 13px font
+- Suggested/info select state: border #93c5fd, bg #f8fbff
+- Disabled: opacity ~0.6
+- Toggle: track 42×24 (compact 36×20); off #cbd5e1; on #3b82f6; white knob
+- Radio/option cards checked: bg #eaf2ff, border #0f2f7a
+
+PILLS / STATUS BADGES
+- Idle: text #475569, border #dbe2ec, bg #f8fafc
+- Ready/info: text #1e40af, border #bfdbfe, bg #eff6ff
+- Running/warn: text #92400e, border #fcd34d, bg #fef3c7
+- Success pipeline: text #166534, border #86efac, bg #f0fdf4 / #dcfce7
+- Failed pipeline: text #991b1b, border #fca5a5, bg #fef2f2 / #fee2e2
+- Milestone dots: in-progress #facc15, completed #22c55e, failed #ef4444
+- Radius 999px for pills
+
+LOG LEVEL COLORS
+- Info: left #0ea5e9; badge #0369a1 / #e0f2fe / #7dd3fc
+- Warning: left #d97706; badge #9a3412 / #ffedd5 / #fdba74
+- Error: left #dc2626; badge #991b1b / #fee2e2 / #fca5a5
+- Success: left #16a34a; badge #14532d / #dcfce7 / #86efac
+
+DIFF COLORS
+- Addition: text #166534, bg #dcfce7
+- Deletion: text #991b1b, bg #fee2e2
+
+═══════════════════════════════════════
+8) VISUAL CHARACTER (MUST MATCH)
+═══════════════════════════════════════
+
+- Clean enterprise SaaS / engineering-tool look
+- Cool slate neutrals + navy chrome + bright brand blue CTAs
+- Dense but readable; lots of 11–13px UI text
+- Uppercase micro-labels with wide letter-spacing for section headers
+- Soft blue-tinted panels (#f8fbff) for “active workspace” areas
+- Subtle shadows only (almost flat cards)
+- Consistent 7–10px corner radii (not overly rounded)
+- Prefer left-aligned content, tight vertical rhythm, flex headers with actions on the right
+- Transitions short (~0.15s ease), no flashy motion
+- Do not use Inter as a Google Font CDN requirement if local stack fallback is fine; keep the same font-family string
+
+═══════════════════════════════════════
+9) IMPLEMENTATION RULES
+═══════════════════════════════════════
+
+1. Recreate the look using the tokens and component specs above before inventing new colors.
+2. If a new component is needed, derive it from existing panel/button/input/pill patterns.
+3. Keep light-only UI.
+4. Primary actions = #1764e8; destructive = #b91c1c; success = #0f766e / green soft tints; warning = amber #d97706.
+5. Page bg must be #f8fafc; cards/panels white with #e2e8f0 borders.
+6. Title/chrome bars (if present) must use #0d2a63 navy, not generic gray headers.
+7. Match spacing density of an Electron desktop tool, not 

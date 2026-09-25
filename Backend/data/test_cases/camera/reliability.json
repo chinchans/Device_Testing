@@ -1,0 +1,3770 @@
+{
+  "feature": "camera",
+  "category": "reliability",
+  "suite_metadata": {
+    "suite_id": "CAMERA_RELIABILITY_CODEGEN_V1",
+    "suite_name": "Camera Reliability / Endurance Codegen-Ready Suite",
+    "schema_version": "1.0",
+    "test_case_count": 20,
+    "execution_engine": "Python + ADB + Instrumentation Harness",
+    "harness_package": "com.example.cameratest",
+    "suite_constants": {
+      "ENDURANCE_CYCLES": 1000,
+      "LENS_SWITCH_CYCLES": 1000,
+      "ZOOM_CYCLES": 1000,
+      "AF_CYCLES": 1000,
+      "FLASH_CYCLES": 500,
+      "LONG_PREVIEW_DURATION_SEC": 3600,
+      "LONG_VIDEO_DURATION_SEC": 3600,
+      "MEMORY_LEAK_CYCLES": 500,
+      "RESOURCE_RELEASE_CYCLES": 1000,
+      "CAMERASERVICE_SESSION_CYCLES": 1000,
+      "BACKGROUND_FOREGROUND_CYCLES": 500,
+      "LOCK_UNLOCK_CYCLES": 500,
+      "ORIENTATION_CYCLES": 1000,
+      "MEDIA_INTEGRITY_CAPTURE_COUNT": 500,
+      "ENDURANCE_MONITOR_DURATION_SEC": 3600
+    },
+    "reliability_rules": [
+      "Every endurance workload is bounded by explicit cycles or duration.",
+      "Unsupported capabilities are NOT_APPLICABLE and are never invented.",
+      "Critical thermal state causes safe abort.",
+      "CameraService errors, crashes and ANRs are independently recorded.",
+      "Memory-leak validation compares baseline, peak and recovered memory without drop_caches.",
+      "Teardown always executes."
+    ]
+  },
+  "test_case_count": 20,
+  "test_cases": [
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_001",
+        "test_name": "Camera Open/Close 1000 Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Open/Close 1000 Cycles",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Open/Close 1000 Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.CameraOpenCloseEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Open/Close 1000 Cycles",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_001_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_001_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_001_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_001_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_001",
+      "source_id": "TC_CAM_REL_001"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_002",
+        "test_name": "Rear Camera Capture 1000 Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Rear Camera Capture 1000 Cycles",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Rear Camera Capture 1000 Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.RepeatedRearCaptureEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Rear Camera Capture 1000 Cycles",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_002_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_002_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_002_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_002_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_002",
+      "source_id": "TC_CAM_REL_002"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_003",
+        "test_name": "Front Camera Capture 1000 Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Front Camera Capture 1000 Cycles",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${FRONT_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: FRONT",
+          "code_gen_hint": "Resolve front camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Front Camera Capture 1000 Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e camera_id ${FRONT_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.RepeatedFrontCaptureEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Front Camera Capture 1000 Cycles",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_003_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_003_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_003_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_003_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_003",
+      "source_id": "TC_CAM_REL_003"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_004",
+        "test_name": "Front/Rear Switching 1000 Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Front/Rear Switching 1000 Cycles",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${FRONT_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: FRONT",
+          "code_gen_hint": "Resolve front camera. If absent, NOT_APPLICABLE."
+        },
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Front/Rear Switching 1000 Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e source_camera ${FRONT_PRIMARY_CAMERA_ID} -e target_camera ${REAR_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.CameraSwitchEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Front/Rear Switching 1000 Cycles",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_004_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_004_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_004_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_004_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_004",
+      "source_id": "TC_CAM_REL_004"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_005",
+        "test_name": "Video Recording Start/Stop 1000 Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Video Recording Start/Stop 1000 Cycles",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Video Recording Start/Stop 1000 Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${ENDURANCE_CYCLES} -e clip_duration_sec 2 com.example.cameratest/.VideoStartStopEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Video Recording Start/Stop 1000 Cycles",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_005_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_005_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_005_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_005_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_005",
+      "source_id": "TC_CAM_REL_005"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_006",
+        "test_name": "Repeated Primary/Ultrawide Switching",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Repeated Primary/Ultrawide Switching",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        },
+        {
+          "variable": "${ULTRAWIDE_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK.*?focalLength[s]?:\\s*([0-9.]+)",
+          "code_gen_hint": "Select rear camera with focal length below primary; otherwise NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Repeated Primary/Ultrawide Switching",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${ULTRAWIDE_CAMERA_ID} -e cycles ${LENS_SWITCH_CYCLES} com.example.cameratest/.UltrawideSwitchEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Repeated Primary/Ultrawide Switching",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_006_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_006_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_006_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_006_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_006",
+      "source_id": "TC_CAM_REL_006"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_007",
+        "test_name": "Repeated Primary/Telephoto Switching",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Repeated Primary/Telephoto Switching",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        },
+        {
+          "variable": "${TELEPHOTO_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK.*?focalLength[s]?:\\s*([0-9.]+)",
+          "code_gen_hint": "Select rear camera with focal length above primary; otherwise NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Repeated Primary/Telephoto Switching",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${TELEPHOTO_CAMERA_ID} -e cycles ${LENS_SWITCH_CYCLES} com.example.cameratest/.TelephotoSwitchEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Repeated Primary/Telephoto Switching",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_007_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_007_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_007_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_007_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_007",
+      "source_id": "TC_CAM_REL_007"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_008",
+        "test_name": "Repeated Digital Zoom Cycling",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Repeated Digital Zoom Cycling",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        },
+        {
+          "variable": "${MAX_ZOOM_RATIO}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?i)(?:maxDigitalZoom|CONTROL_ZOOM_RATIO_RANGE).*?([0-9.]+)",
+          "code_gen_hint": "Resolve maximum zoom; if unavailable or <=1, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Repeated Digital Zoom Cycling",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e min_zoom 1.0 -e max_zoom ${MAX_ZOOM_RATIO} -e cycles ${ZOOM_CYCLES} com.example.cameratest/.ZoomEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Repeated Digital Zoom Cycling",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_008_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_008_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_008_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_008_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_008",
+      "source_id": "TC_CAM_REL_008"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_009",
+        "test_name": "Repeated Autofocus Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Repeated Autofocus Cycles",
+        "feasibility": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        },
+        {
+          "variable": "${AUTOFOCUS_SUPPORTED}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?i)(AUTO|CONTINUOUS_PICTURE|focus modes)",
+          "code_gen_hint": "Require AF support; otherwise NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Repeated Autofocus Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${AF_CYCLES} com.example.cameratest/.AutofocusEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Repeated Autofocus Cycles",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 950,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_009_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_009_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_009_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_009_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_009",
+      "source_id": "TC_CAM_REL_009"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_010",
+        "test_name": "Repeated Flash Capture Cycles",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Repeated Flash Capture Cycles",
+        "feasibility": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        },
+        {
+          "variable": "${FLASH_SUPPORTED_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?flash.*?(?:available|flashAvailable)[:= ]+true",
+          "code_gen_hint": "Resolve flash camera; otherwise NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Repeated Flash Capture Cycles",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e camera_id ${FLASH_SUPPORTED_CAMERA_ID} -e cycles ${FLASH_CYCLES} com.example.cameratest/.FlashEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Repeated Flash Capture Cycles",
+          "operator": "==",
+          "target_value": 500,
+          "critical_threshold": 475,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_010_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_010_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_010_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_010_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_010",
+      "source_id": "TC_CAM_REL_010"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_011",
+        "test_name": "Long-Duration Preview Stability",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Long-Duration Preview Stability",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Long-Duration Preview Stability",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e duration_sec ${LONG_PREVIEW_DURATION_SEC} com.example.cameratest/.PreviewEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Long-Duration Preview Stability",
+          "operator": ">=",
+          "target_value": 3600,
+          "critical_threshold": 3540,
+          "unit": "sec",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_011_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_011_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_011_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_011_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_011",
+      "source_id": "TC_CAM_REL_011"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_012",
+        "test_name": "Long-Duration Video Recording Stability",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Long-Duration Video Recording Stability",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Long-Duration Video Recording Stability",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e duration_sec ${LONG_VIDEO_DURATION_SEC} com.example.cameratest/.VideoEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Long-Duration Video Recording Stability",
+          "operator": ">=",
+          "target_value": 3600,
+          "critical_threshold": 3480,
+          "unit": "sec",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_012_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_012_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_012_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_012_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_012",
+      "source_id": "TC_CAM_REL_012"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_013",
+        "test_name": "Camera Memory-Leak Detection Over Repeated Use",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Memory-Leak Detection Over Repeated Use",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Memory-Leak Detection Over Repeated Use",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${MEMORY_LEAK_CYCLES} com.example.cameratest/.MemoryLeakEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Memory-Leak Detection Over Repeated Use",
+          "operator": "<=",
+          "target_value": 50,
+          "critical_threshold": 100,
+          "unit": "MB",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_013_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_013_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_013_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_013_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_013",
+      "source_id": "TC_CAM_REL_013"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_014",
+        "test_name": "Camera Resource-Release Validation",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Resource-Release Validation",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Resource-Release Validation",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${RESOURCE_RELEASE_CYCLES} com.example.cameratest/.ResourceReleaseEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Resource-Release Validation",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_014_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_014_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_014_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_014_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_014",
+      "source_id": "TC_CAM_REL_014"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_015",
+        "test_name": "CameraService Stability Over Repeated Sessions",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "CameraService Stability Over Repeated Sessions",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "CameraService Stability Over Repeated Sessions",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${CAMERASERVICE_SESSION_CYCLES} com.example.cameratest/.CameraServiceEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "CameraService Stability Over Repeated Sessions",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_015_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_015_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_015_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_015_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_015",
+      "source_id": "TC_CAM_REL_015"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_016",
+        "test_name": "Camera Recovery After Repeated Background/Foreground Transitions",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Recovery After Repeated Background/Foreground Transitions",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Recovery After Repeated Background/Foreground Transitions",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${BACKGROUND_FOREGROUND_CYCLES} com.example.cameratest/.BackgroundForegroundRecoveryTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Recovery After Repeated Background/Foreground Transitions",
+          "operator": "==",
+          "target_value": 500,
+          "critical_threshold": 490,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_016_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_016_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_016_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_016_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_016",
+      "source_id": "TC_CAM_REL_016"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_017",
+        "test_name": "Camera Recovery After Screen Lock/Unlock",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Recovery After Screen Lock/Unlock",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Recovery After Screen Lock/Unlock",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${LOCK_UNLOCK_CYCLES} com.example.cameratest/.LockUnlockRecoveryTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Recovery After Screen Lock/Unlock",
+          "operator": "==",
+          "target_value": 500,
+          "critical_threshold": 490,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_017_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_017_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_017_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_017_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_017",
+      "source_id": "TC_CAM_REL_017"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_018",
+        "test_name": "Camera Stability After Repeated Orientation Changes",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Stability After Repeated Orientation Changes",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Stability After Repeated Orientation Changes",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e cycles ${ORIENTATION_CYCLES} com.example.cameratest/.OrientationEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Stability After Repeated Orientation Changes",
+          "operator": "==",
+          "target_value": 1000,
+          "critical_threshold": 990,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_018_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_018_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_018_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_018_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_018",
+      "source_id": "TC_CAM_REL_018"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_019",
+        "test_name": "Media-File Integrity After Repeated Captures",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Media-File Integrity After Repeated Captures",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Media-File Integrity After Repeated Captures",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e capture_count ${MEDIA_INTEGRITY_CAPTURE_COUNT} com.example.cameratest/.MediaIntegrityEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Media-File Integrity After Repeated Captures",
+          "operator": "==",
+          "target_value": 500,
+          "critical_threshold": 490,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_019_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_019_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_019_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_019_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_019",
+      "source_id": "TC_CAM_REL_019"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_CAM_REL_020",
+        "test_name": "Camera Crash/ANR Monitoring During Endurance Run",
+        "feature": "Camera",
+        "test_type": "Reliability",
+        "target_scenario": "Camera Crash/ANR Monitoring During Endurance Run",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Instrumentation Harness",
+        "codegen_eligible": true
+      },
+      "capability_discovery": [
+        {
+          "variable": "${REAR_PRIMARY_CAMERA_ID}",
+          "command": "adb shell dumpsys media.camera",
+          "extraction_regex": "(?s)Camera (\\d+) information.*?facing: BACK",
+          "code_gen_hint": "Resolve primary rear camera. If absent, NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "thermal_limits": {
+          "battery_temp_max_c": 42,
+          "soc_temp_max_c": 60,
+          "abort_on_critical_thermal_status": true
+        },
+        "battery_state": {
+          "min_charge_pct": 50,
+          "mock_unplug_required": false
+        },
+        "display_state": {
+          "screen_on": true,
+          "initial_orientation": "portrait"
+        },
+        "environment_hygiene": {
+          "min_free_storage_gb": 5,
+          "background_workload_policy": "minimize_non_test_workloads"
+        }
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+          "description": "Grant camera permission.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Verify Instrumentation Harness",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell pm list instrumentation | grep com.example.cameratest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "harness_available",
+            "log_source": "stdout",
+            "extraction_regex": "instrumentation:com\\.example\\.cameratest/(\\S+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "If harness is absent classify TEST_ARTIFACT and stop."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Camera Crash/ANR Monitoring During Endurance Run",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -e duration_sec ${ENDURANCE_MONITOR_DURATION_SEC} com.example.cameratest/.CrashAnrEnduranceTest",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "endurance_result",
+            "log_source": "stdout",
+            "extraction_regex": "\\{\"result\"\\s*:\\s*\"(PASS|FAIL)\"[^}]*\"metric_value\"\\s*:\\s*([0-9.]+)[^}]*\"failures\"\\s*:\\s*(\\d+)[^}]*\"thermal_abort\"\\s*:\\s*(true|false)",
+            "timeout_sec": 6000
+          },
+          "code_gen_hint": "Run only the explicit bounded cycles/duration. Use monotonic timing. Track CameraService errors, crashes, ANRs, memory/resource state and thermal state. Abort safely on critical thermal status and emit one single-line JSON result."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "primary_reliability_metric",
+          "metric_name": "Camera Crash/ANR Monitoring During Endurance Run",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "fatal_camera_errors",
+          "metric_name": "Fatal Camera Errors",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "app_crash_count",
+          "metric_name": "Application Crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        },
+        {
+          "metric_key": "anr_count",
+          "metric_name": "ANR Events",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_CAM_REL_020_logcat.txt",
+          "filter_tags": [
+            "CameraService",
+            "Camera3Device",
+            "CameraHal",
+            "ImageReader",
+            "MediaRecorder",
+            "ActivityManager",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "media_camera",
+            "command": "adb shell dumpsys media.camera > TC_CAM_REL_020_media_camera.txt"
+          },
+          {
+            "name": "meminfo",
+            "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_020_meminfo.txt"
+          },
+          {
+            "name": "thermal",
+            "command": "adb shell dumpsys thermalservice > TC_CAM_REL_020_thermal.txt"
+          }
+        ],
+        "telemetry_nodes": [],
+        "bugreport_condition": "Collect bugreport on FAIL, timeout, CameraService fatal error, crash/ANR, leak, corruption, or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "description": "Stop harness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "cam_rel_020",
+      "source_id": "TC_CAM_REL_020"
+    }
+  ],
+  "transformation_summary": {
+    "generated_test_count": 20,
+    "test_ids": [
+      "TC_CAM_REL_001",
+      "TC_CAM_REL_002",
+      "TC_CAM_REL_003",
+      "TC_CAM_REL_004",
+      "TC_CAM_REL_005",
+      "TC_CAM_REL_006",
+      "TC_CAM_REL_007",
+      "TC_CAM_REL_008",
+      "TC_CAM_REL_009",
+      "TC_CAM_REL_010",
+      "TC_CAM_REL_011",
+      "TC_CAM_REL_012",
+      "TC_CAM_REL_013",
+      "TC_CAM_REL_014",
+      "TC_CAM_REL_015",
+      "TC_CAM_REL_016",
+      "TC_CAM_REL_017",
+      "TC_CAM_REL_018",
+      "TC_CAM_REL_019",
+      "TC_CAM_REL_020"
+    ],
+    "semi_automated_tests": [
+      "TC_CAM_REL_009",
+      "TC_CAM_REL_010"
+    ],
+    "assumptions": [
+      "Referenced instrumentation harness classes are implemented in com.example.cameratest.",
+      "CameraCharacteristics should be preferred over OEM-dependent dumpsys parsing when available.",
+      "Numeric thresholds are framework defaults and can be replaced by product/golden-build acceptance criteria."
+    ]
+  }
+}

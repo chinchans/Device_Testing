@@ -1,0 +1,13 @@
+{
+  "name": "device-testing-ui",
+  "version": "1.0.0",
+  "description": "Electron UI for Device Testing POC",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron ."
+  },
+  "dependencies": {
+    "electron": "^41.2.1"
+  }
+}

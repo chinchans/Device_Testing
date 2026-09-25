@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device Testing Platform</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Splash -->
+      <section id="splash-screen" class="screen active">
+        <div class="splash-card">
+          <h1>Device Testing Platform</h1>
+          <p>Extract features from specifications, generate test scripts, and execute validation workflows.</p>
+          <div class="splash-meta">
+            <span class="status-pill is-ready">Specification</span>
+            <span class="status-pill is-ready">Test Suite</span>
+            <span class="status-pill is-auto">Auto / Semi / Manual</span>
+          </div>
+          <button id="enter-platform-btn" class="primary" type="button">Start</button>
+        </div>
+      </section>
+
+      <!-- Main workbench -->
+      <section id="main-screen" class="screen">
+        <div class="wb-status-sr" aria-hidden="true">
+          <span id="shell-context"></span>
+          <span id="project-score-chip"></span>
+          <span id="workspace-status-pill" class="status-pill">Idle</span>
+        </div>
+
+        <div class="wb-layout">
+          <aside class="wb-sidebar" id="wb-sidebar" aria-label="Primary">
+            <nav class="wb-nav">
+              <div class="wb-nav-section" id="overview-nav-section">
+                <div class="wb-nav-label-row">
+                  <button
+                    type="button"
+                    class="wb-sidebar-collapse-btn"
+                    id="sidebar-collapse-btn"
+                    title="Hide sidebar"
+                    aria-label="Hide sidebar"
+                    aria-expanded="true"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                  </button>
+                  <div class="wb-nav-label">Overview</div>
+                </div>
+                <div class="wb-nav-section-body" id="overview-nav-body">
+                  <button type="button" class="nav-item active" data-view="home">
+                    <span class="nav-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z"/></svg>
+                    </span>
+                    <span>Home</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="wb-nav-section">
+                <div class="wb-nav-label">Pipeline</div>
+                <button type="button" class="nav-item" data-view="device-selection">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+                  </span>
+                  <span>Device Selection</span>
+                </button>
+                <button type="button" class="nav-item" data-view="feature-extraction" id="nav-feature-extraction">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                  </span>
+                  <span>Feature Extraction</span>
+                </button>
+                <button type="button" class="nav-item" data-view="device-classification">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.6 13.4 12.9 21a2 2 0 0 1-2.8 0L3 13.9a2 2 0 0 1 0-2.8l7.7-7.7a2 2 0 0 1 2.8 0l7.1 7.1a2 2 0 0 1 0 2.9z"/><circle cx="8.5" cy="8.5" r="1.2"/></svg>
+                  </span>
+                  <span>Device Classification</span>
+                </button>
+                <button type="button" class="nav-item" data-view="test-case-generation">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 3 3 5-6"/></svg>
+                  </span>
+                  <span>Test Case Generation</span>
+                </button>
+                <button type="button" class="nav-item" data-view="framework-selection">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+                  </span>
+                  <span>Framework Selection</span>
+                </button>
+                <button type="button" class="nav-item" data-view="test-script-generation">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m8 8-4 4 4 4M16 8l4 4-4 4"/></svg>
+                  </span>
+                  <span>Test Script Generation</span>
+                </button>
+                <button type="button" class="nav-item" data-view="test-execution">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 2 4 14h7l-1 8 10-14h-7l1-6z"/></svg>
+                  </span>
+                  <span>Test Execution</span>
+                </button>
+                <button type="button" class="nav-item" data-view="rca">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 11h6M9.5 8.5 11 11l1.5 2.5"/></svg>
+                  </span>
+                  <span>RCA</span>
+                </button>
+              </div>
+
+              <div class="wb-nav-section">
+                <div class="wb-nav-label">Intelligence</div>
+                <button type="button" class="nav-item" data-view="reports">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 15v-2M12 15V9M17 15v-5"/></svg>
+                  </span>
+                  <span>REPORTS</span>
+                </button>
+              </div>
+            </nav>
+          </aside>
+
+          <div class="wb-main app-body">
+            <div class="wb-main-toolbar" id="wb-main-toolbar">
+              <button
+                type="button"
+                class="wb-sidebar-expand-btn hidden"
+                id="sidebar-expand-btn"
+                title="Show sidebar"
+                aria-label="Show sidebar"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+            <!-- HOME -->
+            <div id="view-home" class="view active">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Home</div>
+              <div class="home-hero">
+                <h2>Welcome to Device Testing Platform</h2>
+                <p>AI-powered test automation for device bring-up to release validation.</p>
+              </div>
+              <div class="home-metrics" aria-label="Session summary metrics">
+                <article class="metric-card">
+                  <div class="metric-card-label">Features extracted</div>
+                  <div class="metric-card-value" id="home-stat-features">0</div>
+                  <div class="metric-card-hint">From product specifications</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Test cases</div>
+                  <div class="metric-card-value" id="home-stat-cases">0</div>
+                  <div class="metric-card-hint">Generated validation cases</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Test scripts</div>
+                  <div class="metric-card-value" id="home-stat-scripts">0</div>
+                  <div class="metric-card-hint">Automation scripts ready</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Coverage</div>
+                  <div class="metric-card-value" id="home-stat-coverage">0%</div>
+                  <div class="metric-card-hint">Spec / feature coverage</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Executions</div>
+                  <div class="metric-card-value" id="home-stat-executions">0</div>
+                  <div class="metric-card-hint">Features scored this session</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Avg. score</div>
+                  <div class="metric-card-value" id="home-stat-score">—</div>
+                  <div class="metric-card-hint">Pass rate across runs</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Documents</div>
+                  <div class="metric-card-value" id="home-stat-docs">0</div>
+                  <div class="metric-card-hint">Spec &amp; suite uploads</div>
+                </article>
+                <article class="metric-card">
+                  <div class="metric-card-label">Device</div>
+                  <div class="metric-card-value metric-card-value-sm" id="home-stat-device">—</div>
+                  <div class="metric-card-hint">Selected device type</div>
+                </article>
+              </div>
+            </div>
+
+            <!-- DEVICE SELECTION -->
+            <div id="view-device-selection" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Device Selection</div>
+              <div class="ds-solo panel" aria-label="Device selection">
+                <div class="panel-head-row">
+                  <h3 class="ds-panel-title">Device Selection</h3>
+                  <span class="status-pill" id="device-status-pill">Required</span>
+                </div>
+
+                <div class="field ds-device-field">
+                  <label for="device-type-select">Device type</label>
+                  <select id="device-type-select" class="select" aria-label="Device type">
+                    <option value="">Select device type…</option>
+                    <option value="mobile">Mobile (Android / Smartphone)</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="wearable">Wearable</option>
+                  </select>
+                </div>
+
+                <div id="test-area-block" class="test-area-block hidden">
+                  <div class="panel-head-row">
+                    <h3 class="ds-panel-title">Test Focus</h3>
+                  </div>
+                  <div class="test-area-list test-area-cards" role="listbox" aria-label="Test focus areas" id="test-area-list">
+                    <button type="button" class="test-area-option" data-area="feature_testing" role="option">
+                      <span class="test-area-index">01</span>
+                      <span class="test-area-body">
+                        <span class="test-area-title">Feature Testing</span>
+                        <span class="test-area-desc">Capability and parameter validation</span>
+                      </span>
+                    </button>
+                    <button type="button" class="test-area-option" data-area="hardware_bringup" role="option">
+                      <span class="test-area-index">02</span>
+                      <span class="test-area-body">
+                        <span class="test-area-title">Hardware Bring-up Testing</span>
+                        <span class="test-area-desc">Boot, power, display, and components</span>
+                      </span>
+                    </button>
+                    <button type="button" class="test-area-option" data-area="android_os_kernel" role="option">
+                      <span class="test-area-index">03</span>
+                      <span class="test-area-body">
+                        <span class="test-area-title">Android OS &amp; Kernel Testing</span>
+                        <span class="test-area-desc">OS, kernel, and driver stability</span>
+                      </span>
+                    </button>
+                    <button type="button" class="test-area-option" data-area="app_compatibility" role="option">
+                      <span class="test-area-index">04</span>
+                      <span class="test-area-body">
+                        <span class="test-area-title">Application &amp; Compatibility Testing</span>
+                        <span class="test-area-desc">Apps and ecosystem compatibility</span>
+                      </span>
+                    </button>
+                    <button type="button" class="test-area-option" data-area="ota_upgrade" role="option">
+                      <span class="test-area-index">05</span>
+                      <span class="test-area-body">
+                        <span class="test-area-title">OTA / Upgrade Testing</span>
+                        <span class="test-area-desc">Updates, rollback, and data retention</span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="ds-reset-row hidden" id="ds-actions-row">
+                  <button class="secondary" type="button" id="reset-setup-btn">Reset</button>
+                </div>
+
+                <div class="page-next-nav hidden" id="ds-next-nav" aria-label="Continue to next step">
+                  <button
+                    type="button"
+                    class="page-next-arrow"
+                    id="goto-feature-extraction-btn"
+                    title="Go to Feature Extraction"
+                    aria-label="Go to Feature Extraction"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- FEATURE EXTRACTION -->
+            <div id="view-feature-extraction" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Feature Extraction</div>
+
+              <div id="fe-intake-section" class="fe-intake-section">
+                <div class="intake-hero panel">
+                  <div class="intake-hero-top">
+                    <div>
+                      <div class="section-label" style="margin-bottom: 6px;">Document Intake</div>
+                      <h3 class="intake-hero-title">Reference documents</h3>
+                      <p class="intake-hero-copy">
+                        Upload the product specification (required). Test suite is optional.
+                      </p>
+                    </div>
+                    <div class="intake-source-stack" id="intake-source-stack">
+                      <span class="source-chip is-off" id="source-chip-spec">Specification</span>
+                      <span class="source-chip is-off" id="source-chip-suite">Test Suite</span>
+                    </div>
+                  </div>
+
+                  <div class="doc-lanes">
+                    <article class="doc-lane doc-lane-spec" id="doc-lane-spec">
+                      <div class="doc-lane-rail" aria-hidden="true"></div>
+                      <div class="doc-lane-content">
+                        <div class="doc-lane-head">
+                          <div>
+                            <span class="doc-lane-kicker">Required</span>
+                            <h4>Product Specification</h4>
+                          </div>
+                          <span class="status-pill" id="spec-pill">Not uploaded</span>
+                        </div>
+                        <p class="doc-lane-blurb">Source for capability and parameter extraction.</p>
+                        <div
+                          class="upload-zone compact"
+                          id="spec-upload-zone"
+                          role="button"
+                          tabindex="0"
+                          aria-label="Upload product specification"
+                        >
+                          <div class="upload-icon">SPEC</div>
+                          <h4>Select product specification</h4>
+                          <p>PDF, DOCX</p>
+                          <span class="upload-file-name hidden" id="spec-file-name"></span>
+                          <button class="secondary" type="button" id="spec-browse-btn">Browse</button>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="doc-lane doc-lane-suite" id="doc-lane-suite">
+                      <div class="doc-lane-rail" aria-hidden="true"></div>
+                      <div class="doc-lane-content">
+                        <div class="doc-lane-head">
+                          <div>
+                            <span class="doc-lane-kicker">Optional</span>
+                            <h4>Test Suite Document</h4>
+                          </div>
+                          <span class="status-pill" id="suite-pill">Optional</span>
+                        </div>
+                        <p class="doc-lane-blurb">Scenarios and acceptance criteria, when available.</p>
+                        <div
+                          class="upload-zone compact"
+                          id="suite-upload-zone"
+                          role="button"
+                          tabindex="0"
+                          aria-label="Upload test suite document"
+                        >
+                          <div class="upload-icon">SUITE</div>
+                          <h4>Select test suite document</h4>
+                          <p>PDF, DOCX, XLSX</p>
+                          <span class="upload-file-name hidden" id="suite-file-name"></span>
+                          <button class="secondary" type="button" id="suite-browse-btn">Browse</button>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
+                <div class="panel fe-extract-bar">
+                  <p class="extract-hint-text" id="extract-hint">Select a device type and test focus to continue.</p>
+                  <span class="running-indicator hidden" id="extract-running">
+                    <span class="running-spinner" aria-hidden="true"></span>
+                    <span>Preparing extraction…</span>
+                  </span>
+                  <div class="btn-row ds-extract-btns">
+                    <button class="primary" type="button" id="extract-features-btn" disabled>Extract Features</button>
+                  </div>
+                </div>
+
+                <div class="callout info hidden" id="extract-pending-callout" role="status">
+                  Documents registered. Feature cards will populate after Agentic RAG extraction is connected.
+                </div>
+              </div>
+
+              <div id="extracted-features-section" class="extracted-features-section hidden">
+                <div class="features-toolbar">
+                  <div>
+                    <h2 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700;">Feature Checklist</h2>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);" id="features-summary">
+                      Specs identified from the product specification
+                    </p>
+                  </div>
+                </div>
+
+                <div class="features-layout">
+                  <aside class="panel" style="padding: 10px;">
+                    <div class="panel-head-row">
+                      <h3>Features</h3>
+                      <span class="status-pill is-ready" id="feature-count-pill">0 specs</span>
+                    </div>
+                    <div class="feature-list" id="feature-list"></div>
+                  </aside>
+
+                  <main class="feature-detail" id="feature-detail">
+                    <div class="feature-detail-empty" id="feature-detail-empty">
+                      <div class="empty-stage" style="padding: 24px;">
+                        <div class="empty-stage-badge">WAITING ON RAG</div>
+                        <h3 style="margin: 0 0 6px 0; font-size: 14px;">No features extracted yet</h3>
+                        <p style="margin: 0; max-width: 360px;" id="features-empty-copy">
+                          Complete Device Selection, upload a Product Specification, and run Extract Features.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div id="feature-detail-content" class="hidden">
+                      <div class="panel">
+                        <div class="detail-header">
+                          <div>
+                            <h3 id="detail-title">Feature</h3>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="panel">
+                        <div class="panel-head-row">
+                          <h3>Specification / Parameters</h3>
+                        </div>
+                        <table class="spec-table">
+                          <thead>
+                            <tr>
+                              <th>Parameter</th>
+                              <th>Value</th>
+                            </tr>
+                          </thead>
+                          <tbody id="detail-spec-body"></tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </main>
+                </div>
+              </div>
+
+              <div class="page-next-nav" aria-label="Continue to next step">
+                <button
+                  type="button"
+                  class="page-next-arrow"
+                  id="goto-device-classification-btn"
+                  title="Go to Device Classification"
+                  aria-label="Go to Device Classification"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- DEVICE CLASSIFICATION -->
+            <div id="view-device-classification" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Device Classification</div>
+              <div class="panel dc-panel">
+                <div class="panel-head-row">
+                  <h3 class="ds-panel-title">Device Classification</h3>
+                  <span class="status-pill" id="dc-status-pill">Awaiting extract</span>
+                </div>
+                <p class="dc-intro muted" id="dc-intro">
+                  Values are filled from the extracted product specification after Feature Extraction.
+                </p>
+                <div class="panel-head-row">
+                  <h3>Specification / Parameters</h3>
+                </div>
+                <table class="spec-table" id="dc-spec-table">
+                  <thead>
+                    <tr>
+                      <th>Parameter</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dc-spec-body">
+                    <tr><td>Device category</td><td>Not identified</td></tr>
+                    <tr><td>OS</td><td>Not identified</td></tr>
+                    <tr><td>Manufacturer</td><td>Not identified</td></tr>
+                    <tr><td>Model</td><td>Not identified</td></tr>
+                    <tr><td>Storage</td><td>Not identified</td></tr>
+                    <tr><td>CPU</td><td>Not identified</td></tr>
+                    <tr><td>RAM</td><td>Not identified</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TEST CASE GENERATION -->
+            <div id="view-test-case-generation" class="view view-tcg">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Test Case Generation</div>
+
+              <div class="panel tcg-page">
+                <div class="panel-head-row tcg-page-head">
+                  <div>
+                    <h3 class="ds-panel-title">Test Case Generation</h3>
+                    <p class="muted" id="tcg-rail-hint" style="margin: 4px 0 0; font-size: 12px;">
+                      Click a feature → category to view the full test case JSON.
+                    </p>
+                  </div>
+                  <span class="status-pill" id="tcg-feature-count">0</span>
+                </div>
+
+                <div id="tcg-tree" class="tcg-tree" aria-label="Features and test cases">
+                  <!-- filled by app.js -->
+                </div>
+
+                <div class="tcg-empty muted" id="tcg-empty">
+                  No extracted features yet. Run Feature Extraction first.
+                </div>
+
+                <div class="tcg-page-footer" aria-label="Continue to framework selection">
+                  <button
+                    type="button"
+                    class="primary"
+                    id="goto-framework-selection-btn"
+                  >
+                    Framework Selection
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- FRAMEWORK SELECTION -->
+            <div id="view-framework-selection" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Framework Selection</div>
+
+              <div class="fw-page">
+                <div class="panel fw-device-banner" id="fw-device-banner" aria-label="Selected device">
+                  <div class="fw-device-banner-top">
+                    <div>
+                      <div class="section-label" style="margin-bottom: 4px;">Selected device</div>
+                      <h3 class="fw-device-title" id="fw-device-title">No device selected</h3>
+                      <p class="muted fw-device-meta" id="fw-device-meta">
+                        Complete Device Selection to continue.
+                      </p>
+                    </div>
+                    <span class="status-pill" id="fw-device-pill">Pending</span>
+                  </div>
+                </div>
+
+                <div class="panel">
+                  <div class="panel-head-row">
+                    <div>
+                      <h3 class="ds-panel-title">Automation frameworks</h3>
+                      <p class="muted" style="margin: 4px 0 0 0; font-size: 12px;">
+                        ADB, Appium, and UiAutomator2 are recommended for script generation.
+                      </p>
+                    </div>
+                    <span class="status-pill" id="fw-selected-count">0 selected</span>
+                  </div>
+
+                  <div class="fw-card-grid" id="fw-card-grid" role="listbox" aria-label="Framework options" aria-multiselectable="true">
+                    <!-- filled by app.js -->
+                  </div>
+                </div>
+
+                <div class="fw-footer">
+                  <button type="button" class="primary fw-generate-btn" id="generate-test-scripts-btn" disabled>
+                    Generate Test Scripts
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="view-test-script-generation" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Test Script Generation</div>
+              <div class="panel placeholder-panel">
+                <h2>Test Script Generation</h2>
+                <p class="muted" id="tsg-placeholder-copy">
+                  Scripts will be generated here by sending test cases to the LLM with the selected frameworks.
+                </p>
+              </div>
+            </div>
+            <div id="view-test-execution" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Test Execution</div>
+              <div class="panel placeholder-panel"><h2>Test Execution</h2><p class="muted">Available in a later release.</p></div>
+            </div>
+            <div id="view-rca" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> RCA</div>
+              <div class="panel placeholder-panel"><h2>RCA</h2><p class="muted">Available in a later release.</p></div>
+            </div>
+            <div id="view-reports" class="view">
+              <div class="wb-breadcrumb">Workbench <span>/</span> REPORTS</div>
+              <div class="panel placeholder-panel"><h2>Reports</h2><p class="muted">Available in a later release.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="manual-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="manual-modal-title">
+      <div class="modal-backdrop" data-close-modal="manual-modal"></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <h4 id="manual-modal-title">Manual Test Steps</h4>
+          <button class="modal-close" type="button" data-close-modal="manual-modal">Close</button>
+        </div>
+        <div class="modal-body">
+          <p id="manual-modal-desc">Follow these steps on the device, then record the result.</p>
+          <ol class="manual-steps" id="manual-steps-list"></ol>
+          <div class="callout warn" style="margin-top: 12px;">
+            Manual execution requires operator confirmation. Mark Pass or Fail after completing all steps.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="soft-danger" type="button" id="manual-fail-btn">Fail</button>
+          <button class="soft-success" type="button" id="manual-pass-btn">Pass</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="semi-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="semi-modal-title">
+      <div class="modal-backdrop" data-close-modal="semi-modal"></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <h4 id="semi-modal-title">Semi-Automated Checkpoint</h4>
+          <button class="modal-close" type="button" data-close-modal="semi-modal">Close</button>
+        </div>
+        <div class="modal-body">
+          <p id="semi-modal-desc">Automated portion completed. Confirm the manual checkpoint below.</p>
+          <div class="info-surface" id="semi-checkpoint-box"></div>
+          <div class="callout info" style="margin-top: 12px;">
+            Continue only after verifying the on-device condition described above.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="secondary" type="button" data-close-modal="semi-modal">Cancel</button>
+          <button class="primary" type="button" id="semi-confirm-btn">Confirm &amp; Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+      <div class="modal-backdrop" data-close-modal="settings-modal"></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <h4 id="settings-modal-title">Settings</h4>
+          <button class="modal-close" type="button" data-close-modal="settings-modal">Close</button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label for="api-base-display">API base URL</label>
+            <input class="input" id="api-base-display" type="text" readonly />
+            <div class="hint">Feature extraction uses the Agentic RAG backend at this URL.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="settings-btn settings-btn-primary" type="button" data-close-modal="settings-modal">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

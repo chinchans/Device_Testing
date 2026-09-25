@@ -1,0 +1,43 @@
+# Gradle
+.gradle/
+build/
+**/build/
+local.properties
+
+# Kotlin
+.kotlin/
+
+# Native / CMake
+.cxx/
+externalNativeBuild/
+captures/
+
+# Built packages
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Emulator / AVD artifacts (if landed under this project)
+.android/
+*.avd/
+avd/
+emulator/
+emulator-user.ini
+hardware-qemu.ini
+modem-nv-ram-*
+*.img
+*.qcow2
+snapshots/
+system-images/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db

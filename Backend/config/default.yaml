@@ -1,0 +1,50 @@
+# Agentic RAG — default configuration (device-agnostic)
+
+indexing:
+  chunk_max_tokens: 512
+  chunk_overlap_tokens: 64
+  child_chunk_max_tokens: 256
+  embedding_batch_size: 32
+  ocr_enabled: true
+  ocr_min_chars_per_page: 40
+  ocr_retry_missing_standards: 3
+  llm_rag_normalize: true
+  llm_normalize_max_chars_per_call: 10000
+  index_pipeline_version: 4
+
+retrieval:
+  vector_top_n: 20
+  bm25_top_n: 20
+  rrf_k: 60
+  rerank_input_n: 30
+  rerank_top_k: 8
+  neighbor_window: 1
+  expand_parent: true
+
+agents:
+  max_retries: 2
+  section_concurrency: 4
+  cheap_model_temperature: 0.0
+  extraction_temperature: 0.0
+  max_evidence_chars: 12000
+
+observability:
+  debug_mode: true
+  log_dir: data/logs
+  trace_dir: data/traces
+
+paths:
+  uploads_dir: data/uploads
+  documents_dir: data/documents
+  cache_dir: data/cache
+  indexes_dir: data/indexes
+
+models:
+  # Chat deployments (Azure OpenAI)
+  extraction_deployment: null   # falls back to AZURE_OPENAI_DEPLOYMENT
+  cheap_deployment: null        # falls back to AZURE_OPENAI_DEPLOYMENT
+  # Embeddings — set AZURE_OPENAI_EMBEDDING_DEPLOYMENT in .env
+  embedding_provider: azure     # azure | hashing
+  embedding_dimensions: 1536
+  # Reranker: llm (no extra deps) | cross_encoder
+  reranker_provider: llm

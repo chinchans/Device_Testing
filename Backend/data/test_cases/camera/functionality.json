@@ -1,0 +1,1248 @@
+{
+  "feature": "camera",
+  "category": "functionality",
+  "suite_id": "CAMERA_FUNCTIONAL_CODEGEN_V1",
+  "test_case_count": 20,
+  "test_cases": [
+    {
+      "test_case_id": "TC_CAM_FUNC_001",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Rear Primary Camera Photo Capture",
+      "execution": "AUTO",
+      "objective": "Validate that the rear primary camera can successfully capture and save a photo using the device-supported configuration.",
+      "applicability": {
+        "required_capabilities": [
+          "${REAR_PRIMARY_CAMERA}",
+          "${REAR_PRIMARY_PHOTO_RESOLUTION}"
+        ],
+        "condition": "${REAR_PRIMARY_CAMERA_SUPPORTED} == true",
+        "not_applicable_if": "${REAR_PRIMARY_CAMERA_SUPPORTED} == false"
+      },
+      "parameters": {
+        "camera": "${REAR_PRIMARY_CAMERA}",
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "photo_resolution": "${REAR_PRIMARY_PHOTO_RESOLUTION}",
+        "image_format": "${DEFAULT_IMAGE_FORMAT}"
+      },
+      "prerequisites": [
+        "ADB connection is available",
+        "Camera permission is granted",
+        "${REAR_PRIMARY_CAMERA} is available",
+        "Available storage is greater than ${MIN_FREE_STORAGE_MB} MB",
+        "Battery level is greater than ${MIN_BATTERY_PERCENT}%"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${CAMERA_TEST_APP}"
+        },
+        {
+          "step": 2,
+          "action": "Select camera ${REAR_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 3,
+          "action": "Configure photo resolution ${REAR_PRIMARY_PHOTO_RESOLUTION}"
+        },
+        {
+          "step": 4,
+          "action": "Configure image format ${DEFAULT_IMAGE_FORMAT}"
+        },
+        {
+          "step": 5,
+          "action": "Start camera preview"
+        },
+        {
+          "step": 6,
+          "action": "Capture one photo"
+        },
+        {
+          "step": 7,
+          "action": "Wait for image callback and save completion"
+        },
+        {
+          "step": 8,
+          "action": "Validate generated image file"
+        }
+      ],
+      "expected_results": [
+        "Camera opens successfully",
+        "Preview starts successfully",
+        "Capture request completes without camera error",
+        "Image callback is received",
+        "Image file is created",
+        "Saved image resolution matches ${REAR_PRIMARY_PHOTO_RESOLUTION}",
+        "Saved image format matches ${DEFAULT_IMAGE_FORMAT}"
+      ],
+      "evidence": [
+        "camera_event_log",
+        "captured_image",
+        "camera_metadata",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_001",
+      "source_id": "TC_CAM_FUNC_001"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_002",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Front Camera Photo Capture",
+      "execution": "AUTO",
+      "objective": "Validate successful photo capture using the front primary camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${FRONT_PRIMARY_CAMERA}",
+          "${FRONT_PRIMARY_PHOTO_RESOLUTION}"
+        ],
+        "condition": "${FRONT_PRIMARY_CAMERA_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${FRONT_PRIMARY_CAMERA}",
+        "camera_id": "${FRONT_PRIMARY_CAMERA_ID}",
+        "photo_resolution": "${FRONT_PRIMARY_PHOTO_RESOLUTION}",
+        "image_format": "${DEFAULT_IMAGE_FORMAT}"
+      },
+      "prerequisites": [
+        "Camera permission is granted",
+        "${FRONT_PRIMARY_CAMERA} is available",
+        "Available storage is greater than ${MIN_FREE_STORAGE_MB} MB"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${CAMERA_TEST_APP}"
+        },
+        {
+          "step": 2,
+          "action": "Select ${FRONT_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 3,
+          "action": "Configure ${FRONT_PRIMARY_PHOTO_RESOLUTION}"
+        },
+        {
+          "step": 4,
+          "action": "Start preview"
+        },
+        {
+          "step": 5,
+          "action": "Capture photo"
+        },
+        {
+          "step": 6,
+          "action": "Save and validate captured image"
+        }
+      ],
+      "expected_results": [
+        "Front camera opens successfully",
+        "Preview is available",
+        "Capture completes successfully",
+        "Image file is generated",
+        "Image resolution matches ${FRONT_PRIMARY_PHOTO_RESOLUTION}"
+      ],
+      "evidence": [
+        "captured_image",
+        "camera_metadata",
+        "camera_event_log",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_002",
+      "source_id": "TC_CAM_FUNC_002"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_003",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Front-to-Rear Camera Switching",
+      "execution": "AUTO",
+      "objective": "Validate switching from the front camera to the rear primary camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${FRONT_PRIMARY_CAMERA}",
+          "${REAR_PRIMARY_CAMERA}"
+        ],
+        "condition": "${FRONT_PRIMARY_CAMERA_SUPPORTED} == true AND ${REAR_PRIMARY_CAMERA_SUPPORTED} == true"
+      },
+      "parameters": {
+        "source_camera": "${FRONT_PRIMARY_CAMERA_ID}",
+        "destination_camera": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "prerequisites": [
+        "Both front and rear cameras are available",
+        "Camera permission is granted"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${FRONT_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 2,
+          "action": "Start front-camera preview"
+        },
+        {
+          "step": 3,
+          "action": "Close ${FRONT_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 4,
+          "action": "Open ${REAR_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 5,
+          "action": "Start rear-camera preview"
+        },
+        {
+          "step": 6,
+          "action": "Validate active camera"
+        }
+      ],
+      "expected_results": [
+        "Front camera closes cleanly",
+        "Rear camera opens successfully",
+        "Rear camera preview starts",
+        "No CameraService error occurs",
+        "Active camera ID equals ${REAR_PRIMARY_CAMERA_ID}"
+      ],
+      "evidence": [
+        "camera_switch_log",
+        "camera_service_dump",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_003",
+      "source_id": "TC_CAM_FUNC_003"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_004",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Rear-to-Front Camera Switching",
+      "execution": "AUTO",
+      "objective": "Validate switching from the rear primary camera to the front camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${REAR_PRIMARY_CAMERA}",
+          "${FRONT_PRIMARY_CAMERA}"
+        ],
+        "condition": "${REAR_PRIMARY_CAMERA_SUPPORTED} == true AND ${FRONT_PRIMARY_CAMERA_SUPPORTED} == true"
+      },
+      "parameters": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "destination_camera": "${FRONT_PRIMARY_CAMERA_ID}"
+      },
+      "prerequisites": [
+        "Rear and front cameras are available",
+        "Camera permission is granted"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${REAR_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 2,
+          "action": "Start rear-camera preview"
+        },
+        {
+          "step": 3,
+          "action": "Close rear camera"
+        },
+        {
+          "step": 4,
+          "action": "Open ${FRONT_PRIMARY_CAMERA_ID}"
+        },
+        {
+          "step": 5,
+          "action": "Start front-camera preview"
+        }
+      ],
+      "expected_results": [
+        "Rear camera releases successfully",
+        "Front camera opens successfully",
+        "Front-camera preview starts",
+        "No camera resource conflict occurs"
+      ],
+      "evidence": [
+        "camera_switch_log",
+        "camera_service_dump",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_004",
+      "source_id": "TC_CAM_FUNC_004"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_005",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Supported Photo Resolution Validation",
+      "execution": "AUTO",
+      "objective": "Validate photo capture at every supported resolution reported for the target camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${SUPPORTED_PHOTO_RESOLUTIONS}"
+        ],
+        "condition": "COUNT(${SUPPORTED_PHOTO_RESOLUTIONS}) > 0"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "resolutions": "${SUPPORTED_PHOTO_RESOLUTIONS}",
+        "image_format": "${DEFAULT_IMAGE_FORMAT}"
+      },
+      "prerequisites": [
+        "Supported photo resolutions have been discovered",
+        "Sufficient storage is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA_ID}"
+        },
+        {
+          "step": 2,
+          "action": "Iterate through ${SUPPORTED_PHOTO_RESOLUTIONS}"
+        },
+        {
+          "step": 3,
+          "action": "Configure each resolution"
+        },
+        {
+          "step": 4,
+          "action": "Capture one image at each resolution"
+        },
+        {
+          "step": 5,
+          "action": "Read saved image dimensions"
+        },
+        {
+          "step": 6,
+          "action": "Compare actual dimensions with requested dimensions"
+        }
+      ],
+      "expected_results": [
+        "Every advertised supported resolution can be configured",
+        "Capture succeeds at every supported resolution",
+        "Saved image dimensions match the requested resolution",
+        "No camera error occurs"
+      ],
+      "evidence": [
+        "resolution_matrix",
+        "captured_images",
+        "image_metadata",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_005",
+      "source_id": "TC_CAM_FUNC_005"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_006",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Supported Aspect Ratio Validation",
+      "execution": "AUTO",
+      "objective": "Validate supported camera photo aspect ratios.",
+      "applicability": {
+        "required_capabilities": [
+          "${SUPPORTED_PHOTO_ASPECT_RATIOS}"
+        ],
+        "condition": "COUNT(${SUPPORTED_PHOTO_ASPECT_RATIOS}) > 0"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "aspect_ratios": "${SUPPORTED_PHOTO_ASPECT_RATIOS}"
+      },
+      "prerequisites": [
+        "Supported aspect ratios are available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Iterate through ${SUPPORTED_PHOTO_ASPECT_RATIOS}"
+        },
+        {
+          "step": 3,
+          "action": "Configure a supported resolution corresponding to each aspect ratio"
+        },
+        {
+          "step": 4,
+          "action": "Capture image"
+        },
+        {
+          "step": 5,
+          "action": "Calculate actual image aspect ratio"
+        }
+      ],
+      "expected_results": [
+        "Each supported aspect ratio can be exercised",
+        "Captured image dimensions correspond to the selected aspect ratio",
+        "No unexpected crop or capture failure is reported by the test interface"
+      ],
+      "evidence": [
+        "captured_images",
+        "image_metadata",
+        "aspect_ratio_results"
+      ],
+      "ui_id": "cam_fun_006",
+      "source_id": "TC_CAM_FUNC_006"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_007",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Autofocus Operation",
+      "execution": "AUTO_SEMI",
+      "objective": "Validate supported autofocus operation on the target camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${AUTOFOCUS_SUPPORTED}",
+          "${SUPPORTED_AF_MODES}"
+        ],
+        "condition": "${AUTOFOCUS_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "af_modes": "${SUPPORTED_AF_MODES}",
+        "test_af_mode": "${AUTOFOCUS_MODE}",
+        "focus_target": "${FOCUS_TEST_TARGET}"
+      },
+      "prerequisites": [
+        "Autofocus is supported",
+        "A suitable ${FOCUS_TEST_TARGET} is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Configure ${AUTOFOCUS_MODE}"
+        },
+        {
+          "step": 3,
+          "action": "Start preview"
+        },
+        {
+          "step": 4,
+          "action": "Trigger autofocus"
+        },
+        {
+          "step": 5,
+          "action": "Monitor AF state transitions"
+        },
+        {
+          "step": 6,
+          "action": "Capture image after focus completion"
+        }
+      ],
+      "expected_results": [
+        "Requested autofocus mode is supported",
+        "AF state reaches a terminal focus state",
+        "Camera remains operational",
+        "Capture completes without AF-related camera error"
+      ],
+      "evidence": [
+        "capture_result_metadata",
+        "af_state_log",
+        "captured_image"
+      ],
+      "ui_id": "cam_fun_007",
+      "source_id": "TC_CAM_FUNC_007"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_008",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Tap-to-Focus Operation",
+      "execution": "SEMI",
+      "objective": "Validate tap-to-focus functionality at a selected preview location.",
+      "applicability": {
+        "required_capabilities": [
+          "${TAP_TO_FOCUS_SUPPORTED}"
+        ],
+        "condition": "${TAP_TO_FOCUS_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "focus_point_x": "${FOCUS_POINT_X}",
+        "focus_point_y": "${FOCUS_POINT_Y}",
+        "focus_target": "${FOCUS_TEST_TARGET}"
+      },
+      "prerequisites": [
+        "Tap-to-focus is supported",
+        "Preview is active"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Start preview"
+        },
+        {
+          "step": 3,
+          "action": "Select focus point ${FOCUS_POINT_X},${FOCUS_POINT_Y}"
+        },
+        {
+          "step": 4,
+          "action": "Trigger focus at selected metering region"
+        },
+        {
+          "step": 5,
+          "action": "Observe AF state"
+        }
+      ],
+      "expected_results": [
+        "Focus region is accepted",
+        "Autofocus operation is triggered",
+        "AF reaches a valid terminal state",
+        "Camera remains responsive"
+      ],
+      "evidence": [
+        "af_region",
+        "af_state_log",
+        "capture_metadata"
+      ],
+      "ui_id": "cam_fun_008",
+      "source_id": "TC_CAM_FUNC_008"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_009",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Flash ON Operation",
+      "execution": "SEMI",
+      "objective": "Validate flash operation when flash is explicitly enabled.",
+      "applicability": {
+        "required_capabilities": [
+          "${FLASH_SUPPORTED}",
+          "${FLASH_MODE_ON}"
+        ],
+        "condition": "${FLASH_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${FLASH_SUPPORTED_CAMERA}",
+        "flash_mode": "${FLASH_MODE_ON}"
+      },
+      "prerequisites": [
+        "Flash is supported on ${FLASH_SUPPORTED_CAMERA}"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${FLASH_SUPPORTED_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Set flash mode to ${FLASH_MODE_ON}"
+        },
+        {
+          "step": 3,
+          "action": "Capture image"
+        },
+        {
+          "step": 4,
+          "action": "Collect flash/capture metadata"
+        }
+      ],
+      "expected_results": [
+        "Flash mode is accepted",
+        "Flash is fired during capture",
+        "Capture succeeds",
+        "No flash or camera error occurs"
+      ],
+      "evidence": [
+        "capture_metadata",
+        "captured_image",
+        "flash_observation"
+      ],
+      "ui_id": "cam_fun_009",
+      "source_id": "TC_CAM_FUNC_009"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_010",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Flash OFF Operation",
+      "execution": "SEMI",
+      "objective": "Validate capture with flash explicitly disabled.",
+      "applicability": {
+        "required_capabilities": [
+          "${FLASH_SUPPORTED}"
+        ],
+        "condition": "${FLASH_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${FLASH_SUPPORTED_CAMERA}",
+        "flash_mode": "${FLASH_MODE_OFF}"
+      },
+      "prerequisites": [
+        "Flash-capable camera is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${FLASH_SUPPORTED_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Set flash to ${FLASH_MODE_OFF}"
+        },
+        {
+          "step": 3,
+          "action": "Capture image"
+        }
+      ],
+      "expected_results": [
+        "Capture succeeds",
+        "Flash is not fired",
+        "Camera remains operational"
+      ],
+      "evidence": [
+        "capture_metadata",
+        "captured_image",
+        "flash_observation"
+      ],
+      "ui_id": "cam_fun_010",
+      "source_id": "TC_CAM_FUNC_010"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_011",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Flash Auto Operation",
+      "execution": "SEMI",
+      "objective": "Validate automatic flash behavior under controlled lighting conditions.",
+      "applicability": {
+        "required_capabilities": [
+          "${FLASH_SUPPORTED}",
+          "${FLASH_AUTO_SUPPORTED}"
+        ],
+        "condition": "${FLASH_SUPPORTED} == true AND ${FLASH_AUTO_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${FLASH_SUPPORTED_CAMERA}",
+        "flash_mode": "${FLASH_MODE_AUTO}",
+        "light_condition": "${LIGHT_CONDITION}",
+        "ambient_light_lux": "${AMBIENT_LIGHT_LUX}"
+      },
+      "prerequisites": [
+        "Auto flash mode is supported",
+        "Controlled ${LIGHT_CONDITION} can be provided"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Prepare ${LIGHT_CONDITION} at approximately ${AMBIENT_LIGHT_LUX} lux"
+        },
+        {
+          "step": 2,
+          "action": "Open ${FLASH_SUPPORTED_CAMERA}"
+        },
+        {
+          "step": 3,
+          "action": "Set flash mode to ${FLASH_MODE_AUTO}"
+        },
+        {
+          "step": 4,
+          "action": "Capture image"
+        },
+        {
+          "step": 5,
+          "action": "Record AE and flash metadata"
+        }
+      ],
+      "expected_results": [
+        "Auto flash mode is accepted",
+        "Flash behavior follows camera AE/flash decision under ${LIGHT_CONDITION}",
+        "Capture succeeds without camera error"
+      ],
+      "evidence": [
+        "capture_metadata",
+        "ae_state_log",
+        "flash_state_log",
+        "captured_image"
+      ],
+      "ui_id": "cam_fun_011",
+      "source_id": "TC_CAM_FUNC_011"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_012",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Digital Zoom Operation",
+      "execution": "AUTO",
+      "objective": "Validate digital zoom operation across the supported zoom range.",
+      "applicability": {
+        "required_capabilities": [
+          "${DIGITAL_ZOOM_SUPPORTED}",
+          "${MIN_ZOOM_RATIO}",
+          "${MAX_DIGITAL_ZOOM_RATIO}"
+        ],
+        "condition": "${DIGITAL_ZOOM_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "min_zoom_ratio": "${MIN_ZOOM_RATIO}",
+        "max_zoom_ratio": "${MAX_DIGITAL_ZOOM_RATIO}",
+        "zoom_step": "${ZOOM_STEP}"
+      },
+      "prerequisites": [
+        "Digital zoom is supported"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Start preview"
+        },
+        {
+          "step": 3,
+          "action": "Iterate zoom from ${MIN_ZOOM_RATIO} to ${MAX_DIGITAL_ZOOM_RATIO} using ${ZOOM_STEP}"
+        },
+        {
+          "step": 4,
+          "action": "Read applied zoom/crop metadata after each change"
+        },
+        {
+          "step": 5,
+          "action": "Capture at selected zoom levels"
+        }
+      ],
+      "expected_results": [
+        "All requested supported zoom values are accepted",
+        "Applied zoom metadata corresponds to requested values within device-supported behavior",
+        "Preview remains active",
+        "Capture succeeds"
+      ],
+      "evidence": [
+        "zoom_metadata",
+        "captured_images",
+        "camera_event_log"
+      ],
+      "ui_id": "cam_fun_012",
+      "source_id": "TC_CAM_FUNC_012"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_013",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Optical Zoom and Telephoto Lens Switching",
+      "execution": "AUTO_SEMI",
+      "objective": "Validate telephoto availability and supported optical/lens switching behavior.",
+      "applicability": {
+        "required_capabilities": [
+          "${TELEPHOTO_CAMERA_SUPPORTED}",
+          "${TELEPHOTO_CAMERA}",
+          "${SUPPORTED_OPTICAL_ZOOM_RATIOS}"
+        ],
+        "condition": "${TELEPHOTO_CAMERA_SUPPORTED} == true"
+      },
+      "parameters": {
+        "primary_camera": "${REAR_PRIMARY_CAMERA}",
+        "telephoto_camera": "${TELEPHOTO_CAMERA}",
+        "optical_zoom_ratios": "${SUPPORTED_OPTICAL_ZOOM_RATIOS}"
+      },
+      "prerequisites": [
+        "Telephoto camera is present",
+        "Optical zoom or multi-camera switching is supported"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${REAR_PRIMARY_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Start preview"
+        },
+        {
+          "step": 3,
+          "action": "Iterate through ${SUPPORTED_OPTICAL_ZOOM_RATIOS}"
+        },
+        {
+          "step": 4,
+          "action": "Monitor logical/physical camera metadata where exposed"
+        },
+        {
+          "step": 5,
+          "action": "Capture at configured optical zoom points"
+        }
+      ],
+      "expected_results": [
+        "Supported optical zoom ratios are usable",
+        "Telephoto path is available where exposed by the camera API",
+        "Camera transition does not produce fatal camera errors",
+        "Capture succeeds at supported optical zoom points"
+      ],
+      "evidence": [
+        "physical_camera_metadata",
+        "zoom_metadata",
+        "captured_images",
+        "camera_event_log"
+      ],
+      "ui_id": "cam_fun_013",
+      "source_id": "TC_CAM_FUNC_013"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_014",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Ultrawide Camera Switching",
+      "execution": "AUTO",
+      "objective": "Validate switching from the rear primary camera to the ultrawide camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${ULTRAWIDE_CAMERA_SUPPORTED}",
+          "${ULTRAWIDE_CAMERA}"
+        ],
+        "condition": "${ULTRAWIDE_CAMERA_SUPPORTED} == true"
+      },
+      "parameters": {
+        "source_camera": "${REAR_PRIMARY_CAMERA}",
+        "destination_camera": "${ULTRAWIDE_CAMERA}",
+        "ultrawide_camera_id": "${ULTRAWIDE_CAMERA_ID}"
+      },
+      "prerequisites": [
+        "Ultrawide camera is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${REAR_PRIMARY_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Start preview"
+        },
+        {
+          "step": 3,
+          "action": "Switch to ${ULTRAWIDE_CAMERA}"
+        },
+        {
+          "step": 4,
+          "action": "Validate ultrawide camera activation"
+        },
+        {
+          "step": 5,
+          "action": "Capture image"
+        }
+      ],
+      "expected_results": [
+        "Ultrawide camera activates successfully",
+        "Preview continues without fatal error",
+        "Capture using ${ULTRAWIDE_CAMERA} succeeds"
+      ],
+      "evidence": [
+        "camera_switch_log",
+        "camera_metadata",
+        "captured_image"
+      ],
+      "ui_id": "cam_fun_014",
+      "source_id": "TC_CAM_FUNC_014"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_015",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Video Recording Start and Stop",
+      "execution": "AUTO",
+      "objective": "Validate basic video recording start, sustained recording, stop, finalization, and playback-readiness.",
+      "applicability": {
+        "required_capabilities": [
+          "${VIDEO_RECORDING_SUPPORTED}",
+          "${VIDEO_RESOLUTION}",
+          "${VIDEO_FPS}"
+        ],
+        "condition": "${VIDEO_RECORDING_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "resolution": "${VIDEO_RESOLUTION}",
+        "fps": "${VIDEO_FPS}",
+        "codec": "${VIDEO_CODEC}",
+        "duration_sec": "${RECORDING_DURATION_SEC}"
+      },
+      "prerequisites": [
+        "Video recording is supported",
+        "Microphone permission is granted if audio is enabled",
+        "Sufficient storage is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Configure ${VIDEO_RESOLUTION}, ${VIDEO_FPS} FPS and ${VIDEO_CODEC}"
+        },
+        {
+          "step": 3,
+          "action": "Start video recording"
+        },
+        {
+          "step": 4,
+          "action": "Record for ${RECORDING_DURATION_SEC} seconds"
+        },
+        {
+          "step": 5,
+          "action": "Stop recording"
+        },
+        {
+          "step": 6,
+          "action": "Wait for media finalization"
+        },
+        {
+          "step": 7,
+          "action": "Validate recorded media metadata and readability"
+        }
+      ],
+      "expected_results": [
+        "Recording starts successfully",
+        "Recording remains active for ${RECORDING_DURATION_SEC} seconds",
+        "Recording stops cleanly",
+        "Output video is created",
+        "Recorded resolution matches ${VIDEO_RESOLUTION}",
+        "Recorded FPS is consistent with ${VIDEO_FPS} within ${FPS_TOLERANCE}",
+        "Output media is readable"
+      ],
+      "evidence": [
+        "recorded_video",
+        "video_metadata",
+        "camera_event_log",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_015",
+      "source_id": "TC_CAM_FUNC_015"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_016",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Supported Video Resolution Validation",
+      "execution": "AUTO",
+      "objective": "Validate video recording at each supported video resolution for the target camera.",
+      "applicability": {
+        "required_capabilities": [
+          "${SUPPORTED_VIDEO_RESOLUTIONS}"
+        ],
+        "condition": "COUNT(${SUPPORTED_VIDEO_RESOLUTIONS}) > 0"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "resolutions": "${SUPPORTED_VIDEO_RESOLUTIONS}",
+        "test_duration_sec": "${VIDEO_RESOLUTION_TEST_DURATION_SEC}"
+      },
+      "prerequisites": [
+        "Supported video resolutions are known",
+        "Sufficient storage is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Iterate through ${SUPPORTED_VIDEO_RESOLUTIONS}"
+        },
+        {
+          "step": 3,
+          "action": "Select a supported FPS for each resolution"
+        },
+        {
+          "step": 4,
+          "action": "Record for ${VIDEO_RESOLUTION_TEST_DURATION_SEC} seconds"
+        },
+        {
+          "step": 5,
+          "action": "Stop recording and read media metadata"
+        }
+      ],
+      "expected_results": [
+        "Every advertised supported video resolution can be configured",
+        "Recording succeeds at each supported resolution",
+        "Recorded media dimensions match the selected resolution",
+        "Output file is valid"
+      ],
+      "evidence": [
+        "video_resolution_matrix",
+        "recorded_videos",
+        "video_metadata",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_016",
+      "source_id": "TC_CAM_FUNC_016"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_017",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Supported Video FPS Validation",
+      "execution": "AUTO",
+      "objective": "Validate supported frame-rate configurations for supported camera video profiles.",
+      "applicability": {
+        "required_capabilities": [
+          "${SUPPORTED_VIDEO_PROFILES}"
+        ],
+        "condition": "COUNT(${SUPPORTED_VIDEO_PROFILES}) > 0"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "video_profiles": "${SUPPORTED_VIDEO_PROFILES}",
+        "test_duration_sec": "${FPS_TEST_DURATION_SEC}",
+        "fps_tolerance": "${FPS_TOLERANCE}"
+      },
+      "prerequisites": [
+        "Supported resolution/FPS combinations are known"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Iterate through ${SUPPORTED_VIDEO_PROFILES}"
+        },
+        {
+          "step": 3,
+          "action": "Configure resolution and FPS for each profile"
+        },
+        {
+          "step": 4,
+          "action": "Record for ${FPS_TEST_DURATION_SEC} seconds"
+        },
+        {
+          "step": 5,
+          "action": "Calculate actual recorded FPS"
+        }
+      ],
+      "expected_results": [
+        "Every supported resolution/FPS profile can be configured",
+        "Recording succeeds",
+        "Measured FPS is within ${FPS_TOLERANCE} of the expected profile rate",
+        "No camera or encoder failure occurs"
+      ],
+      "evidence": [
+        "fps_validation_matrix",
+        "video_metadata",
+        "recorded_videos",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_017",
+      "source_id": "TC_CAM_FUNC_017"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_018",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "HDR Photo and Video Operation",
+      "execution": "AUTO_SEMI",
+      "objective": "Validate supported HDR camera capture modes.",
+      "applicability": {
+        "required_capabilities": [
+          "${HDR_SUPPORTED}",
+          "${SUPPORTED_HDR_MODES}"
+        ],
+        "condition": "${HDR_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${TARGET_CAMERA}",
+        "hdr_modes": "${SUPPORTED_HDR_MODES}",
+        "hdr_mode": "${SUPPORTED_HDR_MODE}",
+        "capture_type": "${HDR_CAPTURE_TYPE}",
+        "hdr_test_scene": "${HDR_TEST_SCENE}"
+      },
+      "prerequisites": [
+        "HDR is supported",
+        "${HDR_TEST_SCENE} is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Prepare ${HDR_TEST_SCENE}"
+        },
+        {
+          "step": 2,
+          "action": "Open ${TARGET_CAMERA}"
+        },
+        {
+          "step": 3,
+          "action": "Enable ${SUPPORTED_HDR_MODE}"
+        },
+        {
+          "step": 4,
+          "action": "Perform ${HDR_CAPTURE_TYPE}"
+        },
+        {
+          "step": 5,
+          "action": "Collect output media and HDR metadata"
+        }
+      ],
+      "expected_results": [
+        "${SUPPORTED_HDR_MODE} can be enabled",
+        "${HDR_CAPTURE_TYPE} completes successfully",
+        "Output media is generated",
+        "HDR metadata or device-supported HDR indication is present when exposed"
+      ],
+      "evidence": [
+        "hdr_media",
+        "hdr_metadata",
+        "capture_result_metadata",
+        "logcat"
+      ],
+      "ui_id": "cam_fun_018",
+      "source_id": "TC_CAM_FUNC_018"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_019",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Portrait Mode Operation",
+      "execution": "SEMI",
+      "objective": "Validate portrait-mode capture on a device that advertises portrait capability.",
+      "applicability": {
+        "required_capabilities": [
+          "${PORTRAIT_MODE_SUPPORTED}"
+        ],
+        "condition": "${PORTRAIT_MODE_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${PORTRAIT_SUPPORTED_CAMERA}",
+        "mode": "${PORTRAIT_MODE}",
+        "scene": "${PORTRAIT_TEST_SCENE}",
+        "subject_distance": "${PORTRAIT_SUBJECT_DISTANCE}"
+      },
+      "prerequisites": [
+        "Portrait mode is supported",
+        "${PORTRAIT_TEST_SCENE} is available",
+        "Subject is positioned at ${PORTRAIT_SUBJECT_DISTANCE}"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Open ${PORTRAIT_SUPPORTED_CAMERA}"
+        },
+        {
+          "step": 2,
+          "action": "Select ${PORTRAIT_MODE}"
+        },
+        {
+          "step": 3,
+          "action": "Position ${PORTRAIT_TEST_SCENE} at ${PORTRAIT_SUBJECT_DISTANCE}"
+        },
+        {
+          "step": 4,
+          "action": "Wait for portrait-mode readiness indication if available"
+        },
+        {
+          "step": 5,
+          "action": "Capture portrait image"
+        },
+        {
+          "step": 6,
+          "action": "Validate successful portrait-mode processing/output"
+        }
+      ],
+      "expected_results": [
+        "Portrait mode can be selected",
+        "Portrait capture succeeds",
+        "Processed output image is generated",
+        "No camera processing failure occurs"
+      ],
+      "evidence": [
+        "portrait_image",
+        "capture_metadata",
+        "camera_event_log",
+        "operator_observation"
+      ],
+      "ui_id": "cam_fun_019",
+      "source_id": "TC_CAM_FUNC_019"
+    },
+    {
+      "test_case_id": "TC_CAM_FUNC_020",
+      "feature": "Camera",
+      "test_type": "Functional",
+      "test_name": "Night and Low-Light Mode Operation",
+      "execution": "SEMI_LAB",
+      "objective": "Validate supported night or low-light camera mode under a controlled low-light environment.",
+      "applicability": {
+        "required_capabilities": [
+          "${NIGHT_MODE_SUPPORTED}"
+        ],
+        "condition": "${NIGHT_MODE_SUPPORTED} == true"
+      },
+      "parameters": {
+        "camera": "${NIGHT_MODE_SUPPORTED_CAMERA}",
+        "mode": "${NIGHT_MODE}",
+        "light_condition": "${LOW_LIGHT_CONDITION}",
+        "ambient_light_lux": "${LOW_LIGHT_LUX}",
+        "test_scene": "${LOW_LIGHT_TEST_SCENE}"
+      },
+      "prerequisites": [
+        "Night mode is supported",
+        "Controlled low-light environment is available",
+        "${LOW_LIGHT_TEST_SCENE} is available"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Prepare ${LOW_LIGHT_TEST_SCENE}"
+        },
+        {
+          "step": 2,
+          "action": "Set ambient illumination to ${LOW_LIGHT_LUX} lux or configured ${LOW_LIGHT_CONDITION}"
+        },
+        {
+          "step": 3,
+          "action": "Open ${NIGHT_MODE_SUPPORTED_CAMERA}"
+        },
+        {
+          "step": 4,
+          "action": "Enable ${NIGHT_MODE}"
+        },
+        {
+          "step": 5,
+          "action": "Capture low-light image"
+        },
+        {
+          "step": 6,
+          "action": "Wait for image processing completion"
+        },
+        {
+          "step": 7,
+          "action": "Validate output creation and camera stability"
+        }
+      ],
+      "expected_results": [
+        "${NIGHT_MODE} can be enabled",
+        "Low-light capture completes successfully",
+        "Processed image is generated",
+        "Camera remains responsive throughout capture and processing",
+        "No fatal CameraService or processing error occurs"
+      ],
+      "evidence": [
+        "night_mode_image",
+        "capture_metadata",
+        "camera_event_log",
+        "thermal_snapshot",
+        "operator_observation"
+      ],
+      "ui_id": "cam_fun_020",
+      "source_id": "TC_CAM_FUNC_020"
+    }
+  ]
+}
