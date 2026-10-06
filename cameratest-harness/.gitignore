@@ -19,6 +19,11 @@ captures/
 *.dex
 *.class
 
+# Prebuilt harness APKs needed by the backend runtime
+!/cameratest.apk
+!/cameratest-secondary.apk
+!/cameratest-unauthorized.apk
+
 # Emulator / AVD artifacts (if landed under this project)
 .android/
 *.avd/
