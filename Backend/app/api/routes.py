@@ -17,11 +17,15 @@ from indexing.pipeline import IndexingPipeline
 from llm.azure_client import is_azure_configured
 from observability.logging import TraceRecorder, logger
 from services.test_cases import (
+    derive_spec_values,
+    fill_placeholders,
     get_feature_catalog,
     get_full_suite,
     get_test_case,
     list_features as list_test_case_features,
+    placeholders_in,
 )
+from services.test_scripts import FeatureDisabledError, generate_scripts
 from storage.document_store import DocumentStore
 
 router = APIRouter()
@@ -150,6 +154,21 @@ class ExtractFromPathRequest(BaseModel):
     query: str = "Extract all features and specifications"
     device_type: Optional[str] = None
     force_reindex: bool = False
+
+
+class GenerateScriptsRequest(BaseModel):
+    feature: str = "camera"
+    case_ids: list[str] = Field(min_length=1)
+    frameworks: list[str] = Field(default_factory=list)
+    use_llm: bool = True
+    # UI feature cards ({name, parameters:[{name, value}]}) of the current extraction;
+    # empty keeps the ${VAR} placeholders for runtime discovery.
+    spec_features: list[dict[str, Any]] = Field(default_factory=list)
+    product_name: Optional[str] = None
+
+
+class FillTestCaseRequest(BaseModel):
+    spec_features: list[dict[str, Any]] = Field(default_factory=list)
 
 
 @router.get("/health")
@@ -373,3 +392,48 @@ def get_default_test_case(
             f"Test case '{case_id}' not found for {feature}/{category}",
         )
     return case
+
+
+@router.post("/api/test-cases/{feature}/{category}/{case_id}/fill")
+def fill_test_case(
+    feature: str, category: str, case_id: str, req: FillTestCaseRequest
+) -> dict[str, Any]:
+    """Preview one test case with ${VAR} placeholders filled from extracted spec values."""
+    case = get_test_case(feature, category, case_id)
+    if case is None:
+        raise HTTPException(
+            404,
+            f"Test case '{case_id}' not found for {feature}/{category}",
+        )
+    derived = derive_spec_values(req.spec_features)
+    used = placeholders_in(case)
+    values = {k: v["value"] for k, v in derived.items() if k in used}
+    return {
+        "test_case": fill_placeholders(case, values),
+        "spec_values": {k: derived[k] for k in values},
+        "unfilled_placeholders": sorted(used - values.keys()),
+    }
+
+
+# ── Test script generation (test case + harness operation → Python script) ──
+
+
+@router.post("/api/test-scripts/generate")
+def generate_test_scripts(req: GenerateScriptsRequest) -> dict[str, Any]:
+    """One script per selected case; the LLM writes run(h), the runtime does the rest."""
+    try:
+        return generate_scripts(
+            req.feature,
+            req.case_ids,
+            use_llm=req.use_llm,
+            frameworks=req.frameworks,
+            spec_features=req.spec_features,
+            product_name=req.product_name,
+        )
+    except FeatureDisabledError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(500, f"Missing generation input: {exc}") from exc
+    except Exception as exc:
+        logger.exception("Test script generation failed")
+        raise HTTPException(500, f"Test script generation failed: {exc}") from exc

@@ -1,0 +1,1551 @@
+{
+  "harness_version": "2.0.1",
+  "package": "com.example.cameratest",
+  "apks": {
+    "harness": "cameratest.apk (com.example.cameratest)",
+    "unauthorized": "cameratest-unauthorized.apk (com.example.cameraunauthorized, no CAMERA permission)",
+    "secondary": "cameratest-secondary.apk (com.example.camerasecondary, CAMERA but no media permissions)"
+  },
+  "command_template": "adb shell am instrument -w -r {-e key value ...} -e class {class} com.example.cameratest/androidx.test.runner.AndroidJUnitRunner",
+  "case_command_translation": "Case files write 'com.example.cameratest/.X'; run it as '-e class com.example.cameratest.X com.example.cameratest/androidx.test.runner.AndroidJUnitRunner'. Every X exists in the APK.",
+  "result_parsing": "With -r, take the line 'INSTRUMENTATION_STATUS: harness_json=<json>'. Without -r, the same JSON is printed as its own line (status 'stream'). Exactly one JSON per operation.",
+  "result_values": [
+    "PASS",
+    "FAIL",
+    "NOT_APPLICABLE",
+    "SKIPPED",
+    "BLOCKED_PRECONDITION"
+  ],
+  "contracts": {
+    "functional": [
+      "result",
+      "error?",
+      "...facts"
+    ],
+    "performance": [
+      "result",
+      "metric_value",
+      "samples",
+      "latency_ms",
+      "p95_latency_ms",
+      "...facts"
+    ],
+    "reliability": [
+      "result",
+      "metric_value",
+      "failures",
+      "thermal_abort",
+      "completed_cycles",
+      "fatal_camera_errors",
+      "app_crash_count",
+      "anr_count",
+      "cameraserver_restarted",
+      "...facts"
+    ],
+    "security": [
+      "result",
+      "metric_value",
+      "unauthorized_access_count",
+      "crash_count",
+      "...evidence"
+    ]
+  },
+  "variables_from_CapabilityTest": {
+    "REAR_PRIMARY_CAMERA_ID": "first cameras[] with facing BACK",
+    "FRONT_PRIMARY_CAMERA_ID": "first cameras[] with facing FRONT",
+    "TELEPHOTO_CAMERA_ID": "physicalCameras[] (or BACK camera) with equivalentFocalMm >= 1.8 x primary",
+    "ULTRAWIDE_CAMERA_ID": "physicalCameras[] (or BACK camera) with equivalentFocalMm <= 0.8 x primary",
+    "FLASH_SUPPORTED_CAMERA_ID": "camera with hasFlash = true",
+    "SUPPORTED_PHOTO_RESOLUTIONS": "cameras[].resolutions",
+    "SUPPORTED_PHOTO_ASPECT_RATIOS": "cameras[].aspectRatios",
+    "SUPPORTED_VIDEO_RESOLUTIONS": "cameras[].encoderVideoSizes",
+    "MAX_SUPPORTED_PHOTO_RESOLUTION": "'max' (or largest of cameras[].resolutions)",
+    "MAX_ZOOM_RATIO / MAX_DIGITAL_ZOOM_RATIO": "upper bound of cameras[].zoomRatioRange",
+    "SUPPORTED_HDR_MODE / PORTRAIT / NIGHT support": "cameras[].extensions or cameras[].sceneModes; hlg10 for HDR video"
+  },
+  "cases": {
+    "cam_fun_001": {
+      "source_id": "TC_CAM_FUNC_001",
+      "name": "Rear Primary Camera Photo Capture",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.PhotoCaptureTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "resolution": "${REAR_PRIMARY_PHOTO_RESOLUTION}",
+        "format": "${DEFAULT_IMAGE_FORMAT}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "verify": [
+        {
+          "class": "com.example.cameratest.ImageInspectTest",
+          "args": {
+            "image_path": "<result.image_path>"
+          }
+        }
+      ]
+    },
+    "cam_fun_002": {
+      "source_id": "TC_CAM_FUNC_002",
+      "name": "Front Camera Photo Capture",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.PhotoCaptureTest",
+      "args": {
+        "camera_id": "${FRONT_PRIMARY_CAMERA_ID}",
+        "resolution": "${FRONT_PRIMARY_PHOTO_RESOLUTION}",
+        "format": "${DEFAULT_IMAGE_FORMAT}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "verify": [
+        {
+          "class": "com.example.cameratest.ImageInspectTest",
+          "args": {
+            "image_path": "<result.image_path>"
+          }
+        }
+      ]
+    },
+    "cam_fun_003": {
+      "source_id": "TC_CAM_FUNC_003",
+      "name": "Front-to-Rear Camera Switching",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.CameraSwitchTest",
+      "args": {
+        "source_camera": "${FRONT_PRIMARY_CAMERA_ID}",
+        "target_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "iterations": "1"
+      }
+    },
+    "cam_fun_004": {
+      "source_id": "TC_CAM_FUNC_004",
+      "name": "Rear-to-Front Camera Switching",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.CameraSwitchTest",
+      "args": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${FRONT_PRIMARY_CAMERA_ID}",
+        "iterations": "1"
+      }
+    },
+    "cam_fun_005": {
+      "source_id": "TC_CAM_FUNC_005",
+      "name": "Supported Photo Resolution Validation",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.ResolutionMatrixTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "resolutions": "${SUPPORTED_PHOTO_RESOLUTIONS}",
+        "format": "${DEFAULT_IMAGE_FORMAT}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "notes": "resolutions is a JSON array string, e.g. [\"4000x3000\",\"1920x1080\"]"
+    },
+    "cam_fun_006": {
+      "source_id": "TC_CAM_FUNC_006",
+      "name": "Supported Aspect Ratio Validation",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.AspectRatioCaptureTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "aspect_ratios": "${SUPPORTED_PHOTO_ASPECT_RATIOS}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      }
+    },
+    "cam_fun_007": {
+      "source_id": "TC_CAM_FUNC_007",
+      "name": "Autofocus Operation",
+      "execution": "AUTO_SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.FocusTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "mode": "auto",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Place ${FOCUS_TEST_TARGET} in front of the camera; judge sharpness from the saved image if required."
+    },
+    "cam_fun_008": {
+      "source_id": "TC_CAM_FUNC_008",
+      "name": "Tap-to-Focus Operation",
+      "execution": "SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.FocusTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "mode": "tap",
+        "x": "${FOCUS_POINT_X}",
+        "y": "${FOCUS_POINT_Y}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Place ${FOCUS_TEST_TARGET} at the focus point. x / y are 0..1 in sensor orientation."
+    },
+    "cam_fun_009": {
+      "source_id": "TC_CAM_FUNC_009",
+      "name": "Flash ON Operation",
+      "execution": "SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.FlashTest",
+      "args": {
+        "camera_id": "${FLASH_SUPPORTED_CAMERA_ID}",
+        "mode": "on",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Tester may visually confirm the flash fired; harness reports FLASH_STATE."
+    },
+    "cam_fun_010": {
+      "source_id": "TC_CAM_FUNC_010",
+      "name": "Flash OFF Operation",
+      "execution": "SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.FlashTest",
+      "args": {
+        "camera_id": "${FLASH_SUPPORTED_CAMERA_ID}",
+        "mode": "off",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      }
+    },
+    "cam_fun_011": {
+      "source_id": "TC_CAM_FUNC_011",
+      "name": "Flash Auto Operation",
+      "execution": "SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.FlashTest",
+      "args": {
+        "camera_id": "${FLASH_SUPPORTED_CAMERA_ID}",
+        "mode": "auto",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Set ambient light to ${AMBIENT_LIGHT_LUX} lux; flash_fired should equal flash_required."
+    },
+    "cam_fun_012": {
+      "source_id": "TC_CAM_FUNC_012",
+      "name": "Digital Zoom Operation",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.DigitalZoomTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "min_zoom": "${MIN_ZOOM_RATIO}",
+        "max_zoom": "${MAX_DIGITAL_ZOOM_RATIO}",
+        "steps": "<(max-min)/ZOOM_STEP + 1>"
+      }
+    },
+    "cam_fun_013": {
+      "source_id": "TC_CAM_FUNC_013",
+      "name": "Optical Zoom and Telephoto Lens Switching",
+      "execution": "AUTO_SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.OpticalZoomTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "zoom_ratios": "${SUPPORTED_OPTICAL_ZOOM_RATIOS}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "notes": "Alternatively pass target_camera=${TELEPHOTO_CAMERA_ID}. Telephoto switching may need adequate light and subject distance."
+    },
+    "cam_fun_014": {
+      "source_id": "TC_CAM_FUNC_014",
+      "name": "Ultrawide Camera Switching",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.OpticalZoomTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${ULTRAWIDE_CAMERA_ID}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      }
+    },
+    "cam_fun_015": {
+      "source_id": "TC_CAM_FUNC_015",
+      "name": "Video Recording Start and Stop",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.VideoRecordTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "resolution": "${VIDEO_RESOLUTION}",
+        "fps": "${VIDEO_FPS}",
+        "duration_sec": "${RECORDING_DURATION_SEC}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "verify": [
+        {
+          "class": "com.example.cameratest.VideoInspectTest",
+          "args": {
+            "video_path": "<result.video_path>"
+          }
+        }
+      ]
+    },
+    "cam_fun_016": {
+      "source_id": "TC_CAM_FUNC_016",
+      "name": "Supported Video Resolution Validation",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.VideoProfileTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "resolutions": "${SUPPORTED_VIDEO_RESOLUTIONS}",
+        "duration_sec": "${VIDEO_RESOLUTION_TEST_DURATION_SEC}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      }
+    },
+    "cam_fun_017": {
+      "source_id": "TC_CAM_FUNC_017",
+      "name": "Supported Video FPS Validation",
+      "execution": "AUTO",
+      "contract": "functional",
+      "class": "com.example.cameratest.VideoProfileTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "profiles": "${SUPPORTED_VIDEO_PROFILES}",
+        "duration_sec": "${FPS_TEST_DURATION_SEC}",
+        "fps_tolerance": "${FPS_TOLERANCE}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "notes": "profiles format: 1920x1080@30,3840x2160@60"
+    },
+    "cam_fun_018": {
+      "source_id": "TC_CAM_FUNC_018",
+      "name": "HDR Photo and Video Operation",
+      "execution": "AUTO_SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.CaptureModeTest",
+      "args": {
+        "camera_id": "${TARGET_CAMERA_ID}",
+        "mode": "hdr",
+        "capture_type": "${HDR_CAPTURE_TYPE}",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Use a high-contrast ${HDR_TEST_SCENE}. capture_type=video records HLG10 HEVC."
+    },
+    "cam_fun_019": {
+      "source_id": "TC_CAM_FUNC_019",
+      "name": "Portrait Mode Operation",
+      "execution": "SEMI",
+      "contract": "functional",
+      "class": "com.example.cameratest.CaptureModeTest",
+      "args": {
+        "camera_id": "${PORTRAIT_SUPPORTED_CAMERA_ID}",
+        "mode": "portrait",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Subject at ${PORTRAIT_SUBJECT_DISTANCE}; background blur is judged from the saved image."
+    },
+    "cam_fun_020": {
+      "source_id": "TC_CAM_FUNC_020",
+      "name": "Night and Low-Light Mode Operation",
+      "execution": "SEMI_LAB",
+      "contract": "functional",
+      "class": "com.example.cameratest.CaptureModeTest",
+      "args": {
+        "camera_id": "${NIGHT_MODE_SUPPORTED_CAMERA_ID}",
+        "mode": "night",
+        "output_dir": "/sdcard/DCIM/CameraTest"
+      },
+      "manual": "Lab scene at ${LOW_LIGHT_LUX} lux (${LOW_LIGHT_TEST_SCENE})."
+    },
+    "cam_per_001": {
+      "source_id": "TC_CAM_PERF_001",
+      "name": "Cold Camera Launch Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.ColdLaunchPerfTest",
+      "args": {
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e iterations ${PERF_ITERATIONS} com.example.cameratest/.ColdLaunchPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ],
+      "notes": "The harness kills its :launchprobe process before every iteration (true cold start); no host loop needed."
+    },
+    "cam_per_002": {
+      "source_id": "TC_CAM_PERF_002",
+      "name": "Warm Camera Launch Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.WarmLaunchPerfTest",
+      "args": {
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e iterations ${PERF_ITERATIONS} com.example.cameratest/.WarmLaunchPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ],
+      "notes": "First iteration is a discarded warm-up."
+    },
+    "cam_per_003": {
+      "source_id": "TC_CAM_PERF_003",
+      "name": "Time-to-First-Preview-Frame",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.PreviewTtffPerfTest",
+      "args": {
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e iterations ${PERF_ITERATIONS} com.example.cameratest/.PreviewTtffPerfTest",
+      "sla_keys": [
+        "p95_ttff_ms"
+      ]
+    },
+    "cam_per_004": {
+      "source_id": "TC_CAM_PERF_004",
+      "name": "Shutter-to-Capture Latency with ZSL Enabled",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.ShutterLatencyPerfTest",
+      "args": {
+        "zsl": "true",
+        "resolution": "${PHOTO_RESOLUTION}",
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e zsl true -e resolution ${PHOTO_RESOLUTION} -e iterations ${PERF_ITERATIONS} com.example.cameratest/.ShutterLatencyPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_005": {
+      "source_id": "TC_CAM_PERF_005",
+      "name": "Shutter-to-Capture Latency with ZSL Disabled",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.ShutterLatencyPerfTest",
+      "args": {
+        "zsl": "false",
+        "resolution": "${PHOTO_RESOLUTION}",
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e zsl false -e resolution ${PHOTO_RESOLUTION} -e iterations ${PERF_ITERATIONS} com.example.cameratest/.ShutterLatencyPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_006": {
+      "source_id": "TC_CAM_PERF_006",
+      "name": "Autofocus Acquisition Latency",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.AutofocusPerfTest",
+      "args": {
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e iterations ${PERF_ITERATIONS} com.example.cameratest/.AutofocusPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ],
+      "notes": "SEMI: keep a textured target at a fixed distance."
+    },
+    "cam_per_007": {
+      "source_id": "TC_CAM_PERF_007",
+      "name": "Front-to-Rear Camera Switching Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.CameraSwitchPerfTest",
+      "args": {
+        "source_camera": "${FRONT_PRIMARY_CAMERA_ID}",
+        "target_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "iterations": "${SWITCH_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${FRONT_PRIMARY_CAMERA_ID} -e target_camera ${REAR_PRIMARY_CAMERA_ID} -e iterations ${SWITCH_ITERATIONS} com.example.cameratest/.CameraSwitchPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_008": {
+      "source_id": "TC_CAM_PERF_008",
+      "name": "Rear-to-Front Camera Switching Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.CameraSwitchPerfTest",
+      "args": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${FRONT_PRIMARY_CAMERA_ID}",
+        "iterations": "${SWITCH_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${FRONT_PRIMARY_CAMERA_ID} -e iterations ${SWITCH_ITERATIONS} com.example.cameratest/.CameraSwitchPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_009": {
+      "source_id": "TC_CAM_PERF_009",
+      "name": "Primary-to-Ultrawide Switching Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.LensSwitchPerfTest",
+      "args": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${ULTRAWIDE_CAMERA_ID}",
+        "iterations": "${SWITCH_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${ULTRAWIDE_CAMERA_ID} -e iterations ${SWITCH_ITERATIONS} com.example.cameratest/.LensSwitchPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_010": {
+      "source_id": "TC_CAM_PERF_010",
+      "name": "Primary-to-Telephoto Switching Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.LensSwitchPerfTest",
+      "args": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${TELEPHOTO_CAMERA_ID}",
+        "iterations": "${SWITCH_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${TELEPHOTO_CAMERA_ID} -e iterations ${SWITCH_ITERATIONS} com.example.cameratest/.LensSwitchPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_011": {
+      "source_id": "TC_CAM_PERF_011",
+      "name": "Photo Processing Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.PhotoProcessingPerfTest",
+      "args": {
+        "resolution": "${PHOTO_RESOLUTION}",
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${PHOTO_RESOLUTION} -e iterations ${PERF_ITERATIONS} com.example.cameratest/.PhotoProcessingPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_012": {
+      "source_id": "TC_CAM_PERF_012",
+      "name": "Photo Save-to-Storage Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.PhotoSavePerfTest",
+      "args": {
+        "resolution": "${PHOTO_RESOLUTION}",
+        "iterations": "${PERF_ITERATIONS}",
+        "output_dir": "/sdcard/DCIM/CameraPerf"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${PHOTO_RESOLUTION} -e iterations ${PERF_ITERATIONS} -e output_dir /sdcard/DCIM/CameraPerf com.example.cameratest/.PhotoSavePerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_013": {
+      "source_id": "TC_CAM_PERF_013",
+      "name": "Burst Capture Throughput",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.BurstPerfTest",
+      "args": {
+        "resolution": "${PHOTO_RESOLUTION}",
+        "count": "${BURST_CAPTURE_COUNT}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${PHOTO_RESOLUTION} -e count ${BURST_CAPTURE_COUNT} com.example.cameratest/.BurstPerfTest",
+      "sla_keys": [
+        "throughput_fps"
+      ]
+    },
+    "cam_per_014": {
+      "source_id": "TC_CAM_PERF_014",
+      "name": "Burst Capture Inter-Frame Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.BurstPerfTest",
+      "args": {
+        "resolution": "${PHOTO_RESOLUTION}",
+        "count": "${BURST_CAPTURE_COUNT}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${PHOTO_RESOLUTION} -e count ${BURST_CAPTURE_COUNT} com.example.cameratest/.BurstPerfTest",
+      "sla_keys": [
+        "p95_inter_frame_ms"
+      ]
+    },
+    "cam_per_015": {
+      "source_id": "TC_CAM_PERF_015",
+      "name": "Video Start Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.VideoStartPerfTest",
+      "args": {
+        "resolution": "${VIDEO_RESOLUTION}",
+        "fps": "${VIDEO_FPS}",
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${VIDEO_RESOLUTION} -e fps ${VIDEO_FPS} -e iterations ${PERF_ITERATIONS} com.example.cameratest/.VideoStartPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_016": {
+      "source_id": "TC_CAM_PERF_016",
+      "name": "Video Stop/Finalization Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.VideoFinalizePerfTest",
+      "args": {
+        "resolution": "${VIDEO_RESOLUTION}",
+        "fps": "${VIDEO_FPS}",
+        "duration_sec": "${VIDEO_SHORT_DURATION_SEC}",
+        "iterations": "${PERF_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${VIDEO_RESOLUTION} -e fps ${VIDEO_FPS} -e duration_sec ${VIDEO_SHORT_DURATION_SEC} -e iterations ${PERF_ITERATIONS} com.example.cameratest/.VideoFinalizePerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_per_017": {
+      "source_id": "TC_CAM_PERF_017",
+      "name": "Video Frame-Rate Stability",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.VideoFpsStabilityTest",
+      "args": {
+        "resolution": "${VIDEO_RESOLUTION}",
+        "fps": "${VIDEO_FPS}",
+        "duration_sec": "${FPS_STABILITY_DURATION_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${VIDEO_RESOLUTION} -e fps ${VIDEO_FPS} -e duration_sec ${FPS_STABILITY_DURATION_SEC} com.example.cameratest/.VideoFpsStabilityTest",
+      "sla_keys": [
+        "fps_within_tolerance_percent"
+      ]
+    },
+    "cam_per_018": {
+      "source_id": "TC_CAM_PERF_018",
+      "name": "Camera Memory Usage During Capture",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.CameraMemoryPerfTest",
+      "args": {
+        "resolution": "${PHOTO_RESOLUTION}",
+        "count": "${MEMORY_CAPTURE_COUNT}",
+        "sample_interval_sec": "${RESOURCE_SAMPLE_INTERVAL_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${PHOTO_RESOLUTION} -e count ${MEMORY_CAPTURE_COUNT} -e sample_interval_sec ${RESOURCE_SAMPLE_INTERVAL_SEC} com.example.cameratest/.CameraMemoryPerfTest",
+      "sla_keys": [
+        "memory_growth_mb"
+      ]
+    },
+    "cam_per_019": {
+      "source_id": "TC_CAM_PERF_019",
+      "name": "Camera CPU Utilization During Recording",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.CameraCpuPerfTest",
+      "args": {
+        "resolution": "${VIDEO_RESOLUTION}",
+        "fps": "${VIDEO_FPS}",
+        "duration_sec": "${CPU_TEST_DURATION_SEC}",
+        "sample_interval_sec": "${RESOURCE_SAMPLE_INTERVAL_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${VIDEO_RESOLUTION} -e fps ${VIDEO_FPS} -e duration_sec ${CPU_TEST_DURATION_SEC} -e sample_interval_sec ${RESOURCE_SAMPLE_INTERVAL_SEC} com.example.cameratest/.CameraCpuPerfTest",
+      "sla_keys": [
+        "average_cpu_percent"
+      ]
+    },
+    "cam_per_020": {
+      "source_id": "TC_CAM_PERF_020",
+      "name": "High-Resolution Capture Processing Latency",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "performance",
+      "class": "com.example.cameratest.HighResProcessingPerfTest",
+      "args": {
+        "resolution": "${MAX_SUPPORTED_PHOTO_RESOLUTION}",
+        "iterations": "${HIGH_RES_ITERATIONS}"
+      },
+      "case_command": "adb shell am instrument -w -e resolution ${MAX_SUPPORTED_PHOTO_RESOLUTION} -e iterations ${HIGH_RES_ITERATIONS} com.example.cameratest/.HighResProcessingPerfTest",
+      "sla_keys": [
+        "p95_latency_ms"
+      ]
+    },
+    "cam_rel_001": {
+      "source_id": "TC_CAM_REL_001",
+      "name": "Camera Open/Close 1000 Cycles",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.CameraOpenCloseEnduranceTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "cycles": "${ENDURANCE_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.CameraOpenCloseEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_002": {
+      "source_id": "TC_CAM_REL_002",
+      "name": "Rear Camera Capture 1000 Cycles",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.RepeatedRearCaptureEnduranceTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "cycles": "${ENDURANCE_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.RepeatedRearCaptureEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_003": {
+      "source_id": "TC_CAM_REL_003",
+      "name": "Front Camera Capture 1000 Cycles",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.RepeatedFrontCaptureEnduranceTest",
+      "args": {
+        "camera_id": "${FRONT_PRIMARY_CAMERA_ID}",
+        "cycles": "${ENDURANCE_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${FRONT_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.RepeatedFrontCaptureEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_004": {
+      "source_id": "TC_CAM_REL_004",
+      "name": "Front/Rear Switching 1000 Cycles",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.CameraSwitchEnduranceTest",
+      "args": {
+        "source_camera": "${FRONT_PRIMARY_CAMERA_ID}",
+        "target_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "cycles": "${ENDURANCE_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${FRONT_PRIMARY_CAMERA_ID} -e target_camera ${REAR_PRIMARY_CAMERA_ID} -e cycles ${ENDURANCE_CYCLES} com.example.cameratest/.CameraSwitchEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_005": {
+      "source_id": "TC_CAM_REL_005",
+      "name": "Video Recording Start/Stop 1000 Cycles",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.VideoStartStopEnduranceTest",
+      "args": {
+        "cycles": "${ENDURANCE_CYCLES}",
+        "clip_duration_sec": "2"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${ENDURANCE_CYCLES} -e clip_duration_sec 2 com.example.cameratest/.VideoStartStopEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_006": {
+      "source_id": "TC_CAM_REL_006",
+      "name": "Repeated Primary/Ultrawide Switching",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.UltrawideSwitchEnduranceTest",
+      "args": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${ULTRAWIDE_CAMERA_ID}",
+        "cycles": "${LENS_SWITCH_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${ULTRAWIDE_CAMERA_ID} -e cycles ${LENS_SWITCH_CYCLES} com.example.cameratest/.UltrawideSwitchEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_007": {
+      "source_id": "TC_CAM_REL_007",
+      "name": "Repeated Primary/Telephoto Switching",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.TelephotoSwitchEnduranceTest",
+      "args": {
+        "source_camera": "${REAR_PRIMARY_CAMERA_ID}",
+        "target_camera": "${TELEPHOTO_CAMERA_ID}",
+        "cycles": "${LENS_SWITCH_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e source_camera ${REAR_PRIMARY_CAMERA_ID} -e target_camera ${TELEPHOTO_CAMERA_ID} -e cycles ${LENS_SWITCH_CYCLES} com.example.cameratest/.TelephotoSwitchEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_008": {
+      "source_id": "TC_CAM_REL_008",
+      "name": "Repeated Digital Zoom Cycling",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.ZoomEnduranceTest",
+      "args": {
+        "min_zoom": "1.0",
+        "max_zoom": "${MAX_ZOOM_RATIO}",
+        "cycles": "${ZOOM_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e min_zoom 1.0 -e max_zoom ${MAX_ZOOM_RATIO} -e cycles ${ZOOM_CYCLES} com.example.cameratest/.ZoomEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_009": {
+      "source_id": "TC_CAM_REL_009",
+      "name": "Repeated Autofocus Cycles",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.AutofocusEnduranceTest",
+      "args": {
+        "cycles": "${AF_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${AF_CYCLES} com.example.cameratest/.AutofocusEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ],
+      "notes": "SEMI: keep a textured target in view."
+    },
+    "cam_rel_010": {
+      "source_id": "TC_CAM_REL_010",
+      "name": "Repeated Flash Capture Cycles",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.FlashEnduranceTest",
+      "args": {
+        "camera_id": "${FLASH_SUPPORTED_CAMERA_ID}",
+        "cycles": "${FLASH_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${FLASH_SUPPORTED_CAMERA_ID} -e cycles ${FLASH_CYCLES} com.example.cameratest/.FlashEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ],
+      "notes": "SEMI: flash_interval_ms (default 1000) lets the flash recharge; watch thermals."
+    },
+    "cam_rel_011": {
+      "source_id": "TC_CAM_REL_011",
+      "name": "Long-Duration Preview Stability",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.PreviewEnduranceTest",
+      "args": {
+        "duration_sec": "${LONG_PREVIEW_DURATION_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e duration_sec ${LONG_PREVIEW_DURATION_SEC} com.example.cameratest/.PreviewEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_012": {
+      "source_id": "TC_CAM_REL_012",
+      "name": "Long-Duration Video Recording Stability",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.VideoEnduranceTest",
+      "args": {
+        "duration_sec": "${LONG_VIDEO_DURATION_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e duration_sec ${LONG_VIDEO_DURATION_SEC} com.example.cameratest/.VideoEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_013": {
+      "source_id": "TC_CAM_REL_013",
+      "name": "Camera Memory-Leak Detection Over Repeated Use",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.MemoryLeakEnduranceTest",
+      "args": {
+        "cycles": "${MEMORY_LEAK_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${MEMORY_LEAK_CYCLES} com.example.cameratest/.MemoryLeakEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_014": {
+      "source_id": "TC_CAM_REL_014",
+      "name": "Camera Resource-Release Validation",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.ResourceReleaseEnduranceTest",
+      "args": {
+        "cycles": "${RESOURCE_RELEASE_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${RESOURCE_RELEASE_CYCLES} com.example.cameratest/.ResourceReleaseEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_015": {
+      "source_id": "TC_CAM_REL_015",
+      "name": "CameraService Stability Over Repeated Sessions",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.CameraServiceEnduranceTest",
+      "args": {
+        "cycles": "${CAMERASERVICE_SESSION_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${CAMERASERVICE_SESSION_CYCLES} com.example.cameratest/.CameraServiceEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_016": {
+      "source_id": "TC_CAM_REL_016",
+      "name": "Camera Recovery After Repeated Background/Foreground Transitions",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.BackgroundForegroundRecoveryTest",
+      "args": {
+        "cycles": "${BACKGROUND_FOREGROUND_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${BACKGROUND_FOREGROUND_CYCLES} com.example.cameratest/.BackgroundForegroundRecoveryTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ],
+      "notes": "Uses UiAutomation (shell); do not run concurrently with Appium UiAutomator2."
+    },
+    "cam_rel_017": {
+      "source_id": "TC_CAM_REL_017",
+      "name": "Camera Recovery After Screen Lock/Unlock",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.LockUnlockRecoveryTest",
+      "args": {
+        "cycles": "${LOCK_UNLOCK_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${LOCK_UNLOCK_CYCLES} com.example.cameratest/.LockUnlockRecoveryTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ],
+      "notes": "NOT_APPLICABLE on a secure lock (harness cannot unlock). Uses UiAutomation."
+    },
+    "cam_rel_018": {
+      "source_id": "TC_CAM_REL_018",
+      "name": "Camera Stability After Repeated Orientation Changes",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.OrientationEnduranceTest",
+      "args": {
+        "cycles": "${ORIENTATION_CYCLES}"
+      },
+      "case_command": "adb shell am instrument -w -e cycles ${ORIENTATION_CYCLES} com.example.cameratest/.OrientationEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ],
+      "notes": "Uses UiAutomation rotation freeze; restored at the end."
+    },
+    "cam_rel_019": {
+      "source_id": "TC_CAM_REL_019",
+      "name": "Media-File Integrity After Repeated Captures",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.MediaIntegrityEnduranceTest",
+      "args": {
+        "capture_count": "${MEDIA_INTEGRITY_CAPTURE_COUNT}"
+      },
+      "case_command": "adb shell am instrument -w -e capture_count ${MEDIA_INTEGRITY_CAPTURE_COUNT} com.example.cameratest/.MediaIntegrityEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_rel_020": {
+      "source_id": "TC_CAM_REL_020",
+      "name": "Camera Crash/ANR Monitoring During Endurance Run",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "reliability",
+      "class": "com.example.cameratest.CrashAnrEnduranceTest",
+      "args": {
+        "duration_sec": "${ENDURANCE_MONITOR_DURATION_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e duration_sec ${ENDURANCE_MONITOR_DURATION_SEC} com.example.cameratest/.CrashAnrEnduranceTest",
+      "sla_keys": [
+        "primary_reliability_metric",
+        "fatal_camera_errors",
+        "app_crash_count",
+        "anr_count"
+      ]
+    },
+    "cam_sec_001": {
+      "source_id": "TC_CAM_SEC_001",
+      "name": "Camera Permission Grant Validation",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PermissionGrantSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.PermissionGrantSecurityTest",
+      "sla_keys": [
+        "permission_grant_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm revoke com.example.cameratest android.permission.CAMERA"
+      ],
+      "notes": "Harness verifies denial, grants CAMERA itself via UiAutomation, then verifies access."
+    },
+    "cam_sec_002": {
+      "source_id": "TC_CAM_SEC_002",
+      "name": "Camera Permission Denial Enforcement",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PermissionDenialSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.PermissionDenialSecurityTest",
+      "sla_keys": [
+        "denial_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm revoke com.example.cameratest android.permission.CAMERA"
+      ],
+      "host_post": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ]
+    },
+    "cam_sec_003": {
+      "source_id": "TC_CAM_SEC_003",
+      "name": "Camera Permission Revocation Enforcement",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PermissionRevocationSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.PermissionRevocationSecurityTest",
+      "sla_keys": [
+        "revocation_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "phases": [
+        {
+          "args": {
+            "phase": "before"
+          }
+        },
+        {
+          "host": [
+            "adb shell pm revoke com.example.cameratest android.permission.CAMERA"
+          ]
+        },
+        {
+          "args": {
+            "phase": "after"
+          }
+        }
+      ],
+      "host_post": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "combine": "revocation_enforced = before.metric_value == 1 and after.metric_value == 1"
+    },
+    "cam_sec_004": {
+      "source_id": "TC_CAM_SEC_004",
+      "name": "One-Time Camera Permission Behavior",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.OneTimePermissionSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.OneTimePermissionSecurityTest",
+      "sla_keys": [
+        "one_time_permission_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm revoke com.example.cameratest android.permission.CAMERA",
+        "adb shell pm clear-permission-flags com.example.cameratest android.permission.CAMERA user-set user-fixed"
+      ],
+      "phases": [
+        {
+          "args": {
+            "phase": "before",
+            "grant_timeout_sec": "60"
+          },
+          "manual": "Tester taps 'Only this time' in the permission dialog."
+        },
+        {
+          "host": [
+            "adb shell am force-stop com.example.cameratest",
+            "adb shell input keyevent KEYCODE_HOME",
+            "sleep 90"
+          ]
+        },
+        {
+          "args": {
+            "phase": "after"
+          }
+        }
+      ],
+      "host_post": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "combine": "one_time_permission_enforced = before.metric_value == 1 and after.metric_value == 1"
+    },
+    "cam_sec_005": {
+      "source_id": "TC_CAM_SEC_005",
+      "name": "While-in-Use Camera Permission Enforcement",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.WhileInUsePermissionSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "background_observation_sec": "${BACKGROUND_OBSERVATION_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e background_observation_sec ${BACKGROUND_OBSERVATION_SEC} com.example.cameratest/.WhileInUsePermissionSecurityTest",
+      "sla_keys": [
+        "while_in_use_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "notes": "BLOCKED_PRECONDITION if instrumentation keeps the process foreground."
+    },
+    "cam_sec_006": {
+      "source_id": "TC_CAM_SEC_006",
+      "name": "Background Camera Access Restriction",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.BackgroundCameraRestrictionTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "observation_sec": "${BACKGROUND_OBSERVATION_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e observation_sec ${BACKGROUND_OBSERVATION_SEC} com.example.cameratest/.BackgroundCameraRestrictionTest",
+      "sla_keys": [
+        "background_restriction_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "notes": "BLOCKED_PRECONDITION if instrumentation keeps the process foreground."
+    },
+    "cam_sec_007": {
+      "source_id": "TC_CAM_SEC_007",
+      "name": "Camera Privacy Indicator Validation",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PrivacyIndicatorSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.PrivacyIndicatorSecurityTest",
+      "sla_keys": [
+        "privacy_indicator_observed",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "manual": "Tester confirms the privacy indicator; re-run with -e indicator_confirmed true if not auto-detected."
+    },
+    "cam_sec_008": {
+      "source_id": "TC_CAM_SEC_008",
+      "name": "Camera Privacy Toggle Blocking Validation",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PrivacyToggleBlockSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.PrivacyToggleBlockSecurityTest",
+      "sla_keys": [
+        "privacy_toggle_blocks_camera",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "manual": "Enable the camera privacy toggle (Quick Settings), or pass -e toggle_via_shell true where 'cmd sensor_privacy' is permitted."
+    },
+    "cam_sec_009": {
+      "source_id": "TC_CAM_SEC_009",
+      "name": "Camera Access After Privacy Toggle Restoration",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PrivacyToggleRestoreSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.PrivacyToggleRestoreSecurityTest",
+      "sla_keys": [
+        "access_restored",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "manual": "Disable the camera privacy toggle, or pass -e toggle_via_shell true."
+    },
+    "cam_sec_010": {
+      "source_id": "TC_CAM_SEC_010",
+      "name": "Unauthorized App Camera Access Attempt",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.UnauthorizedAppSecurityTest",
+      "args": {
+        "unauthorized_package": "${UNAUTHORIZED_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e unauthorized_package ${UNAUTHORIZED_TEST_PACKAGE} com.example.cameratest/.UnauthorizedAppSecurityTest",
+      "sla_keys": [
+        "unauthorized_access_blocked",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "requires_apk": "cameratest-unauthorized.apk"
+    },
+    "cam_sec_011": {
+      "source_id": "TC_CAM_SEC_011",
+      "name": "Camera Access After App Permission Reset",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PermissionResetSecurityTest",
+      "args": {
+        "package": "${CAMERA_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e package ${CAMERA_TEST_PACKAGE} com.example.cameratest/.PermissionResetSecurityTest",
+      "sla_keys": [
+        "reset_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "phases": [
+        {
+          "args": {
+            "phase": "before"
+          }
+        },
+        {
+          "host": [
+            "adb shell pm revoke com.example.cameratest android.permission.CAMERA"
+          ]
+        },
+        {
+          "args": {
+            "phase": "after"
+          }
+        },
+        {
+          "host": [
+            "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+          ]
+        },
+        {
+          "args": {
+            "phase": "regrant"
+          }
+        }
+      ],
+      "combine": "reset_enforced = all phases metric_value == 1"
+    },
+    "cam_sec_012": {
+      "source_id": "TC_CAM_SEC_012",
+      "name": "Camera Access After App Data Reset",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.AppDataResetSecurityTest",
+      "args": {
+        "package": "${CAMERA_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e package ${CAMERA_TEST_PACKAGE} com.example.cameratest/.AppDataResetSecurityTest",
+      "sla_keys": [
+        "data_reset_permission_state_valid",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "phases": [
+        {
+          "args": {
+            "phase": "before"
+          }
+        },
+        {
+          "host": [
+            "adb shell pm clear com.example.cameratest"
+          ]
+        },
+        {
+          "args": {
+            "phase": "after"
+          }
+        }
+      ],
+      "host_post": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "combine": "data_reset_permission_state_valid = after.metric_value == 1"
+    },
+    "cam_sec_013": {
+      "source_id": "TC_CAM_SEC_013",
+      "name": "Concurrent Camera Permission Isolation Between Apps",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PermissionIsolationSecurityTest",
+      "args": {
+        "authorized_package": "${CAMERA_TEST_PACKAGE}",
+        "unauthorized_package": "${UNAUTHORIZED_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e authorized_package ${CAMERA_TEST_PACKAGE} -e unauthorized_package ${UNAUTHORIZED_TEST_PACKAGE} com.example.cameratest/.PermissionIsolationSecurityTest",
+      "sla_keys": [
+        "permission_isolation_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "requires_apk": "cameratest-unauthorized.apk"
+    },
+    "cam_sec_014": {
+      "source_id": "TC_CAM_SEC_014",
+      "name": "Locked-Device Camera Access Behavior",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.LockedDeviceCameraSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.LockedDeviceCameraSecurityTest",
+      "sla_keys": [
+        "locked_device_policy_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "manual": "Enable 'Power button instantly locks'. Harness locks the screen itself."
+    },
+    "cam_sec_015": {
+      "source_id": "TC_CAM_SEC_015",
+      "name": "Secure Lock-Screen Camera Behavior",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.SecureLockscreenCameraSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} com.example.cameratest/.SecureLockscreenCameraSecurityTest",
+      "sla_keys": [
+        "secure_lockscreen_isolation",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "manual": "Requires a secure lock (PIN/pattern). Device is left locked; tester unlocks afterwards."
+    },
+    "cam_sec_016": {
+      "source_id": "TC_CAM_SEC_016",
+      "name": "Captured-Media Access Permission Validation",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.CapturedMediaPermissionSecurityTest",
+      "args": {
+        "file_count": "${MEDIA_TEST_FILE_COUNT}",
+        "secondary_package": "${SECONDARY_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e file_count ${MEDIA_TEST_FILE_COUNT} -e secondary_package ${SECONDARY_TEST_PACKAGE} com.example.cameratest/.CapturedMediaPermissionSecurityTest",
+      "sla_keys": [
+        "media_access_control_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "requires_apk": "cameratest-secondary.apk"
+    },
+    "cam_sec_017": {
+      "source_id": "TC_CAM_SEC_017",
+      "name": "Camera Access Audit/Log Verification",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.CameraAuditSecurityTest",
+      "args": {
+        "camera_id": "${REAR_PRIMARY_CAMERA_ID}",
+        "audit_window_sec": "${AUDIT_LOG_WINDOW_SEC}"
+      },
+      "case_command": "adb shell am instrument -w -e camera_id ${REAR_PRIMARY_CAMERA_ID} -e audit_window_sec ${AUDIT_LOG_WINDOW_SEC} com.example.cameratest/.CameraAuditSecurityTest",
+      "sla_keys": [
+        "audit_evidence_present",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ]
+    },
+    "cam_sec_018": {
+      "source_id": "TC_CAM_SEC_018",
+      "name": "Camera Resource Isolation Between Applications",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.CameraResourceIsolationSecurityTest",
+      "args": {
+        "primary_package": "${CAMERA_TEST_PACKAGE}",
+        "secondary_package": "${SECONDARY_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e primary_package ${CAMERA_TEST_PACKAGE} -e secondary_package ${SECONDARY_TEST_PACKAGE} com.example.cameratest/.CameraResourceIsolationSecurityTest",
+      "sla_keys": [
+        "resource_isolation_enforced",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "requires_apk": "cameratest-secondary.apk"
+    },
+    "cam_sec_019": {
+      "source_id": "TC_CAM_SEC_019",
+      "name": "Camera Permission Persistence After Reboot",
+      "execution": "FULLY_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PermissionPersistenceRebootSecurityTest",
+      "args": {
+        "package": "${CAMERA_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e package ${CAMERA_TEST_PACKAGE} com.example.cameratest/.PermissionPersistenceRebootSecurityTest",
+      "sla_keys": [
+        "permission_state_persisted",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "host_pre": [
+        "adb shell pm grant com.example.cameratest android.permission.CAMERA"
+      ],
+      "phases": [
+        {
+          "args": {
+            "phase": "before"
+          }
+        },
+        {
+          "host": [
+            "adb reboot",
+            "adb wait-for-device",
+            "adb shell 'while [ \"$(getprop sys.boot_completed)\" != \"1\" ]; do sleep 2; done'",
+            "adb shell input keyevent KEYCODE_WAKEUP",
+            "adb shell wm dismiss-keyguard"
+          ]
+        },
+        {
+          "args": {
+            "phase": "after"
+          }
+        }
+      ],
+      "combine": "permission_state_persisted = after.metric_value == 1"
+    },
+    "cam_sec_020": {
+      "source_id": "TC_CAM_SEC_020",
+      "name": "Camera Privacy Behavior After OTA Update",
+      "execution": "SEMI_AUTOMATED",
+      "contract": "security",
+      "class": "com.example.cameratest.PostOtaPrivacySecurityTest",
+      "args": {
+        "package": "${CAMERA_TEST_PACKAGE}"
+      },
+      "case_command": "adb shell am instrument -w -e package ${CAMERA_TEST_PACKAGE} com.example.cameratest/.PostOtaPrivacySecurityTest",
+      "sla_keys": [
+        "post_ota_privacy_regression_free",
+        "unauthorized_access_count",
+        "crash_count"
+      ],
+      "phases": [
+        {
+          "args": {
+            "phase": "before"
+          },
+          "manual": "Run on the pre-OTA build."
+        },
+        {
+          "host": [
+            "<apply OTA and wait for boot>"
+          ]
+        },
+        {
+          "args": {
+            "phase": "after"
+          }
+        }
+      ],
+      "combine": "post_ota_privacy_regression_free = after.metric_value == 1"
+    }
+  }
+}

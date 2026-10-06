@@ -81,12 +81,20 @@ class ResolutionMatrixTest : BaseCamera2Test() {
                 imageReader = null
             }
 
-            emitPass(
-                "tested" to tested,
-                "passed" to passed,
-                "failed" to failed,
-                "details" to details,
-            )
+            val items = (0 until details.length()).map { details.getJSONObject(it) }
+            val unsupported = items.filter { it.optString("result") == "SKIPPED" }.map { it.getString("resolution") }
+            val broken = items.filter { it.optString("result") == "FAIL" }
+                .map { "${it.getString("resolution")} (${it.optString("error", "capture failed")})" }
+            val summary = listOfNotNull(
+                unsupported.takeIf { it.isNotEmpty() }?.let { "unsupported: ${it.joinToString(", ")}" },
+                broken.takeIf { it.isNotEmpty() }?.let { "failed: ${it.joinToString(", ")}" },
+            ).joinToString("; ")
+            val fields = mapOf("tested" to tested, "passed" to passed, "failed" to failed, "details" to details)
+            when {
+                failed == 0 -> emitPass(*fields.toList().toTypedArray())
+                passed == 0 && broken.isEmpty() -> emit(mapOf("result" to "SKIPPED", "error" to summary) + fields)
+                else -> emit(mapOf("result" to "FAIL", "error" to summary) + fields)
+            }
         } catch (e: SecurityException) {
             emitFail("CAMERA permission not granted: ${e.message}")
         } catch (e: CameraAccessException) {

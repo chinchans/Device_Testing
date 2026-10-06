@@ -1,0 +1,176 @@
+{
+  "ui_id": "cam_rel_001",
+  "source_id": "TC_CAM_REL_001",
+  "name": "Camera Open/Close 1000 Cycles",
+  "category": "reliability",
+  "verdict": "PASS",
+  "reason": "",
+  "started_at": "2026-09-30T14:55:16",
+  "finished_at": "2026-09-30T14:55:19",
+  "serial": "emulator-5554",
+  "device": {
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "sdk_int": 34,
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+  },
+  "variables": {
+    "MEDIA_INTEGRITY_CAPTURE_COUNT": "3",
+    "ENDURANCE_CYCLES": "3",
+    "AF_CYCLES": "3",
+    "FLASH_CYCLES": "3",
+    "ZOOM_CYCLES": "3",
+    "LENS_SWITCH_CYCLES": "3",
+    "ORIENTATION_CYCLES": "3",
+    "LOCK_UNLOCK_CYCLES": "3",
+    "BACKGROUND_FOREGROUND_CYCLES": "3",
+    "CAMERASERVICE_SESSION_CYCLES": "3",
+    "MEMORY_LEAK_CYCLES": "3",
+    "RESOURCE_RELEASE_CYCLES": "3",
+    "LONG_PREVIEW_DURATION_SEC": "10",
+    "LONG_VIDEO_DURATION_SEC": "10",
+    "ENDURANCE_MONITOR_DURATION_SEC": "10",
+    "REAR_PRIMARY_CAMERA_ID": "10",
+    "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+    "FRONT_PRIMARY_CAMERA_ID": "1",
+    "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+    "TARGET_CAMERA_ID": "10",
+    "PHOTO_RESOLUTION": "640x480",
+    "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+    "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+    "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+    "VIDEO_RESOLUTION": "640x480",
+    "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+    "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+    "MIN_ZOOM_RATIO": "1.0",
+    "MAX_ZOOM_RATIO": "1.0",
+    "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+    "FLASH_SUPPORTED_CAMERA_ID": "1",
+    "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+    "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+  },
+  "spec_values": {},
+  "spec_source": null,
+  "operations": [
+    {
+      "label": "main",
+      "class": "com.example.cameratest.CameraOpenCloseEnduranceTest",
+      "args": {
+        "camera_id": "10",
+        "cycles": "3"
+      },
+      "duration_s": 1.74,
+      "result": {
+        "result": "PASS",
+        "metric_value": 3,
+        "failures": 0,
+        "thermal_abort": false,
+        "operation": "open_close",
+        "completed_cycles": 3,
+        "requested_cycles": 3,
+        "elapsed_sec": 1.38,
+        "thermal_status_end": 0,
+        "fatal_camera_errors": 0,
+        "camera_service_errors": 0,
+        "camera_device_errors": 0,
+        "camera_disconnects": 0,
+        "other_camera_errors": 0,
+        "app_crash_count": 0,
+        "anr_count": 0,
+        "crashed_packages": "",
+        "cameraserver_restarted": false,
+        "camera_id": "10"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "type": "sla",
+      "description": "primary_reliability_metric == 3 count",
+      "metric_key": "primary_reliability_metric",
+      "actual": 3,
+      "target": 3,
+      "operator": "==",
+      "passed": true
+    },
+    {
+      "type": "sla",
+      "description": "fatal_camera_errors == 0 count",
+      "metric_key": "fatal_camera_errors",
+      "actual": 0,
+      "target": 0,
+      "operator": "==",
+      "passed": true
+    },
+    {
+      "type": "sla",
+      "description": "app_crash_count == 0 count",
+      "metric_key": "app_crash_count",
+      "actual": 0,
+      "target": 0,
+      "operator": "==",
+      "passed": true
+    },
+    {
+      "type": "sla",
+      "description": "anr_count == 0 count",
+      "metric_key": "anr_count",
+      "actual": 0,
+      "target": 0,
+      "operator": "==",
+      "passed": true
+    }
+  ],
+  "derived": {},
+  "manual_steps": [],
+  "host_steps": [
+    {
+      "command": "adb wait-for-device",
+      "rc": 0
+    },
+    {
+      "command": "adb shell input keyevent KEYCODE_WAKEUP",
+      "rc": 0
+    },
+    {
+      "command": "adb shell pm grant com.example.cameratest android.permission.CAMERA",
+      "rc": 0
+    },
+    {
+      "command": "adb logcat -c",
+      "rc": 0
+    },
+    {
+      "command": "adb logcat -d -v threadtime > TC_CAM_REL_001_logcat.txt",
+      "rc": 0
+    },
+    {
+      "command": "adb shell dumpsys media.camera > TC_CAM_REL_001_media_camera.txt",
+      "rc": 0
+    },
+    {
+      "command": "adb shell dumpsys meminfo com.example.cameratest > TC_CAM_REL_001_meminfo.txt",
+      "rc": 0
+    },
+    {
+      "command": "adb shell dumpsys thermalservice > TC_CAM_REL_001_thermal.txt",
+      "rc": 0
+    },
+    {
+      "command": "adb shell am force-stop com.example.cameratest",
+      "rc": 0
+    },
+    {
+      "command": "adb shell input keyevent KEYCODE_HOME",
+      "rc": 0
+    }
+  ],
+  "evidence_files": [
+    "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20260930_145441_ec09f4/executions/20260930_145516_c337/cam_rel_001/TC_CAM_REL_001_logcat.txt",
+    "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20260930_145441_ec09f4/executions/20260930_145516_c337/cam_rel_001/TC_CAM_REL_001_media_camera.txt",
+    "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20260930_145441_ec09f4/executions/20260930_145516_c337/cam_rel_001/TC_CAM_REL_001_meminfo.txt",
+    "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20260930_145441_ec09f4/executions/20260930_145516_c337/cam_rel_001/TC_CAM_REL_001_thermal.txt"
+  ],
+  "notes": [],
+  "runtime_version": "1.2.0"
+}

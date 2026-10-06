@@ -1,0 +1,3395 @@
+{
+  "execution": {
+    "id": "20261001_102942_030e",
+    "run_id": "20261001_102855_400168",
+    "feature": "camera",
+    "product_name": "Samsung Samsung Galaxy S25",
+    "serial": "emulator-5554",
+    "device": {
+      "manufacturer": "Google",
+      "model": "sdk_gphone64_x86_64",
+      "android_version": "14",
+      "sdk_int": 34,
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys",
+      "is_emulator": true
+    },
+    "health": {
+      "battery_pct": 100,
+      "battery_temp_c": 25.0,
+      "charging": false,
+      "thermal_status": 0
+    },
+    "overrides": {},
+    "case_overrides": {},
+    "case_timeout_min": 60.0,
+    "state": "finished",
+    "created_at": "2026-10-01T10:29:42",
+    "started_at": "2026-10-01T10:29:42",
+    "finished_at": "2026-10-01T10:30:18",
+    "current_case": null,
+    "cases": [
+      {
+        "case_id": "cam_fun_001",
+        "name": "Rear Primary Camera Photo Capture",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_001.py",
+        "spec_values": {
+          "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+          "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+          "REAR_PRIMARY_PHOTO_RESOLUTION": "8160x6120"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "Spec mismatch: device does not support REAR_PRIMARY_PHOTO_RESOLUTION=8160x6120 from Samsung Samsung Galaxy S25 (harness: resolution 8160x6120 not supported for JPEG on camera 10)",
+        "started_at": "2026-10-01T10:29:42",
+        "cause": "spec_mismatch",
+        "finished_at": "2026-10-01T10:29:44",
+        "exit_code": 1,
+        "result_file": "cam_fun_001/cam_fun_001_result.json",
+        "log_file": "cam_fun_001.log",
+        "checks_total": 8,
+        "failed_checks": [
+          {
+            "description": "verify: previous result has no 'image_path'",
+            "actual": null,
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Camera opens successfully",
+            "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Preview starts successfully",
+            "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Capture request completes without camera error",
+            "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Image callback is received",
+            "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Image file is created",
+            "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Saved image resolution matches 8160x6120",
+            "actual": "SKIPPED: missing image_path",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Saved image format matches JPEG",
+            "actual": "SKIPPED: missing image_path",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_002",
+        "name": "Front Camera Photo Capture",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_002.py",
+        "spec_values": {
+          "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+          "FRONT_PRIMARY_CAMERA_SUPPORTED": "true",
+          "FRONT_PRIMARY_PHOTO_RESOLUTION": "4000x3000"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "ERROR",
+        "reason": "TypeError: Harness.expect() takes 3 positional arguments but 4 were given",
+        "cause": "script_error",
+        "started_at": "2026-10-01T10:29:44",
+        "finished_at": "2026-10-01T10:29:45",
+        "exit_code": 1,
+        "result_file": "cam_fun_002/cam_fun_002_result.json",
+        "log_file": "cam_fun_002.log",
+        "checks_total": 5,
+        "failed_checks": [
+          {
+            "description": "verify: previous result has no 'image_path'",
+            "actual": null,
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Front camera opens successfully",
+            "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Preview is available",
+            "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Capture completes successfully",
+            "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Image file is generated",
+            "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_003",
+        "name": "Front-to-Rear Camera Switching",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_003.py",
+        "spec_values": {
+          "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+          "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+          "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+          "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "PASS",
+        "reason": "",
+        "cause": "passed",
+        "started_at": "2026-10-01T10:29:45",
+        "finished_at": "2026-10-01T10:29:47",
+        "exit_code": 0,
+        "result_file": "cam_fun_003/cam_fun_003_result.json",
+        "log_file": "cam_fun_003.log",
+        "checks_total": 5,
+        "failed_checks": [],
+        "manual_steps": 0,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_004",
+        "name": "Rear-to-Front Camera Switching",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_004.py",
+        "spec_values": {
+          "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+          "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+          "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+          "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "PASS",
+        "reason": "",
+        "cause": "passed",
+        "started_at": "2026-10-01T10:29:47",
+        "finished_at": "2026-10-01T10:29:49",
+        "exit_code": 0,
+        "result_file": "cam_fun_004/cam_fun_004_result.json",
+        "log_file": "cam_fun_004.log",
+        "checks_total": 4,
+        "failed_checks": [],
+        "manual_steps": 0,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_005",
+        "name": "Supported Photo Resolution Validation",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_005.py",
+        "spec_values": {
+          "SUPPORTED_PHOTO_RESOLUTIONS": "8160x6120"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "Spec mismatch: device does not support SUPPORTED_PHOTO_RESOLUTIONS=8160x6120 from Samsung Samsung Galaxy S25 (harness: unsupported: 8160x6120)",
+        "cause": "spec_mismatch",
+        "started_at": "2026-10-01T10:29:49",
+        "finished_at": "2026-10-01T10:29:51",
+        "exit_code": 1,
+        "result_file": "cam_fun_005/cam_fun_005_result.json",
+        "log_file": "cam_fun_005.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "Every advertised supported resolution can be configured",
+            "actual": "SKIPPED: unsupported: 8160x6120",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Capture succeeds at every supported resolution",
+            "actual": "SKIPPED: unsupported: 8160x6120",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Saved image dimensions match the requested resolution",
+            "actual": "SKIPPED: unsupported: 8160x6120",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "No camera error occurs",
+            "actual": "SKIPPED: unsupported: 8160x6120",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_006",
+        "name": "Supported Aspect Ratio Validation",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_006.py",
+        "spec_values": {},
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "PASS",
+        "reason": "",
+        "cause": "passed",
+        "started_at": "2026-10-01T10:29:51",
+        "finished_at": "2026-10-01T10:29:54",
+        "exit_code": 0,
+        "result_file": "cam_fun_006/cam_fun_006_result.json",
+        "log_file": "cam_fun_006.log",
+        "checks_total": 3,
+        "failed_checks": [],
+        "manual_steps": 0,
+        "duration_s": 3.0
+      },
+      {
+        "case_id": "cam_fun_007",
+        "name": "Autofocus Operation",
+        "category": "functionality",
+        "execution": "Automated with manual checks",
+        "filename": "test_cam_fun_007.py",
+        "spec_values": {
+          "AUTOFOCUS_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "MANUAL_REVIEW",
+        "reason": "1 manual checkpoint(s)",
+        "cause": "needs_review",
+        "started_at": "2026-10-01T10:29:54",
+        "finished_at": "2026-10-01T10:29:56",
+        "exit_code": 0,
+        "result_file": "cam_fun_007/cam_fun_007_result.json",
+        "log_file": "cam_fun_007.log",
+        "checks_total": 4,
+        "failed_checks": [],
+        "manual_steps": 1,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_008",
+        "name": "Tap-to-Focus Operation",
+        "category": "functionality",
+        "execution": "Semi Automated",
+        "filename": "test_cam_fun_008.py",
+        "spec_values": {},
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "NOT_APPLICABLE",
+        "reason": "camera 10 does not support AF regions",
+        "cause": "capability_missing",
+        "started_at": "2026-10-01T10:29:56",
+        "finished_at": "2026-10-01T10:29:57",
+        "exit_code": 0,
+        "result_file": "cam_fun_008/cam_fun_008_result.json",
+        "log_file": "cam_fun_008.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "Focus region is accepted",
+            "actual": "NOT_APPLICABLE: camera 10 does not support AF regions",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Autofocus operation is triggered",
+            "actual": "NOT_APPLICABLE: camera 10 does not support AF regions",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "AF reaches a valid terminal state",
+            "actual": "NOT_APPLICABLE: camera 10 does not support AF regions",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Camera remains responsive",
+            "actual": "NOT_APPLICABLE: camera 10 does not support AF regions",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 1,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_009",
+        "name": "Flash ON Operation",
+        "category": "functionality",
+        "execution": "Semi Automated",
+        "filename": "test_cam_fun_009.py",
+        "spec_values": {
+          "FLASH_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "MANUAL_REVIEW",
+        "reason": "1 manual checkpoint(s)",
+        "cause": "needs_review",
+        "started_at": "2026-10-01T10:29:57",
+        "finished_at": "2026-10-01T10:30:00",
+        "exit_code": 0,
+        "result_file": "cam_fun_009/cam_fun_009_result.json",
+        "log_file": "cam_fun_009.log",
+        "checks_total": 4,
+        "failed_checks": [],
+        "manual_steps": 1,
+        "duration_s": 3.0
+      },
+      {
+        "case_id": "cam_fun_010",
+        "name": "Flash OFF Operation",
+        "category": "functionality",
+        "execution": "Semi Automated",
+        "filename": "test_cam_fun_010.py",
+        "spec_values": {
+          "FLASH_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "PASS",
+        "reason": "",
+        "cause": "passed",
+        "started_at": "2026-10-01T10:30:00",
+        "finished_at": "2026-10-01T10:30:02",
+        "exit_code": 0,
+        "result_file": "cam_fun_010/cam_fun_010_result.json",
+        "log_file": "cam_fun_010.log",
+        "checks_total": 3,
+        "failed_checks": [],
+        "manual_steps": 0,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_011",
+        "name": "Flash Auto Operation",
+        "category": "functionality",
+        "execution": "Semi Automated",
+        "filename": "test_cam_fun_011.py",
+        "spec_values": {
+          "FLASH_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "MANUAL_REVIEW",
+        "reason": "1 manual checkpoint(s)",
+        "cause": "needs_review",
+        "started_at": "2026-10-01T10:30:02",
+        "finished_at": "2026-10-01T10:30:05",
+        "exit_code": 0,
+        "result_file": "cam_fun_011/cam_fun_011_result.json",
+        "log_file": "cam_fun_011.log",
+        "checks_total": 3,
+        "failed_checks": [],
+        "manual_steps": 1,
+        "duration_s": 3.0
+      },
+      {
+        "case_id": "cam_fun_012",
+        "name": "Digital Zoom Operation",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_012.py",
+        "spec_values": {
+          "MAX_DIGITAL_ZOOM_RATIO": "30"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "main: steps required; All requested supported zoom values are accepted (actual FAIL: steps required); Applied zoom metadata corresponds to requested values within device-supported behavior (actual FAIL: steps required); Preview remains active (actual FAIL: steps required); Capture succeeds (actual FAIL: steps required)",
+        "cause": "failure",
+        "started_at": "2026-10-01T10:30:05",
+        "finished_at": "2026-10-01T10:30:06",
+        "exit_code": 1,
+        "result_file": "cam_fun_012/cam_fun_012_result.json",
+        "log_file": "cam_fun_012.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "All requested supported zoom values are accepted",
+            "actual": "FAIL: steps required",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Applied zoom metadata corresponds to requested values within device-supported behavior",
+            "actual": "FAIL: steps required",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Preview remains active",
+            "actual": "FAIL: steps required",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Capture succeeds",
+            "actual": "FAIL: steps required",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_013",
+        "name": "Optical Zoom and Telephoto Lens Switching",
+        "category": "functionality",
+        "execution": "Automated with manual checks",
+        "filename": "test_cam_fun_013.py",
+        "spec_values": {
+          "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+          "SUPPORTED_OPTICAL_ZOOM_RATIOS": "2,3",
+          "TELEPHOTO_CAMERA_SUPPORTED": "true"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "Spec mismatch: device does not support SUPPORTED_OPTICAL_ZOOM_RATIOS=2, 3 from Samsung Samsung Galaxy S25 (harness: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x)",
+        "cause": "spec_mismatch",
+        "started_at": "2026-10-01T10:30:06",
+        "finished_at": "2026-10-01T10:30:07",
+        "exit_code": 1,
+        "result_file": "cam_fun_013/cam_fun_013_result.json",
+        "log_file": "cam_fun_013.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "Supported optical zoom ratios are usable",
+            "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Telephoto path is available where exposed by the camera API",
+            "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Camera transition does not produce fatal camera errors",
+            "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Capture succeeds at supported optical zoom points",
+            "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_014",
+        "name": "Ultrawide Camera Switching",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_014.py",
+        "spec_values": {
+          "REAR_PRIMARY_CAMERA": "50 MP rear primary camera"
+        },
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "NOT_APPLICABLE",
+        "reason": "${ULTRAWIDE_CAMERA_ID} is not available on this device",
+        "cause": "capability_missing",
+        "started_at": "2026-10-01T10:30:07",
+        "finished_at": "2026-10-01T10:30:08",
+        "exit_code": 0,
+        "result_file": "cam_fun_014/cam_fun_014_result.json",
+        "log_file": "cam_fun_014.log",
+        "checks_total": 0,
+        "failed_checks": [],
+        "manual_steps": 0,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_015",
+        "name": "Video Recording Start and Stop",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_015.py",
+        "spec_values": {
+          "VIDEO_RECORDING_SUPPORTED": "true",
+          "VIDEO_RESOLUTION": "7680x4320",
+          "VIDEO_FPS": "30"
+        },
+        "estimate_s": 25,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "main: Unexpected: prepare failed.; verify: previous result has no 'video_path' (actual None); Recording starts successfully (actual FAIL: Unexpected: prepare failed.); Recording remains active for 10 seconds (actual FAIL: Unexpected: prepare failed.); Recording stops cleanly (actual FAIL: Unexpected: prepare failed.); Output video is created (actual FAIL: Unexpected: prepare failed.); Recorded resolution matches 7680x4320 (actual SKIPPED: missing video_path); Recorded FPS is consistent with 30 within 2 (actual SKIPPED: missing video_path); Output media is readable (actual SKIPPED: missing video_path)",
+        "cause": "failure",
+        "started_at": "2026-10-01T10:30:08",
+        "finished_at": "2026-10-01T10:30:10",
+        "exit_code": 1,
+        "result_file": "cam_fun_015/cam_fun_015_result.json",
+        "log_file": "cam_fun_015.log",
+        "checks_total": 8,
+        "failed_checks": [
+          {
+            "description": "verify: previous result has no 'video_path'",
+            "actual": null,
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recording starts successfully",
+            "actual": "FAIL: Unexpected: prepare failed.",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recording remains active for 10 seconds",
+            "actual": "FAIL: Unexpected: prepare failed.",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recording stops cleanly",
+            "actual": "FAIL: Unexpected: prepare failed.",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Output video is created",
+            "actual": "FAIL: Unexpected: prepare failed.",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recorded resolution matches 7680x4320",
+            "actual": "SKIPPED: missing video_path",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recorded FPS is consistent with 30 within 2",
+            "actual": "SKIPPED: missing video_path",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Output media is readable",
+            "actual": "SKIPPED: missing video_path",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 2.0
+      },
+      {
+        "case_id": "cam_fun_016",
+        "name": "Supported Video Resolution Validation",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_016.py",
+        "spec_values": {
+          "SUPPORTED_VIDEO_RESOLUTIONS": "7680x4320"
+        },
+        "estimate_s": 20,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "Spec mismatch: device does not support SUPPORTED_VIDEO_RESOLUTIONS=7680x4320 from Samsung Samsung Galaxy S25 (harness: none of the requested video profiles is supported; unsupported: 7680x4320)",
+        "cause": "spec_mismatch",
+        "started_at": "2026-10-01T10:30:10",
+        "finished_at": "2026-10-01T10:30:11",
+        "exit_code": 1,
+        "result_file": "cam_fun_016/cam_fun_016_result.json",
+        "log_file": "cam_fun_016.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "Every advertised supported video resolution can be configured",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recording succeeds at each supported resolution",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recorded media dimensions match the selected resolution",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Output file is valid",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_017",
+        "name": "Supported Video FPS Validation",
+        "category": "functionality",
+        "execution": "Automated",
+        "filename": "test_cam_fun_017.py",
+        "spec_values": {
+          "SUPPORTED_VIDEO_PROFILES": "7680x4320@30"
+        },
+        "estimate_s": 25,
+        "status": "done",
+        "verdict": "FAIL",
+        "reason": "Spec mismatch: device does not support SUPPORTED_VIDEO_PROFILES=7680x4320@30 from Samsung Samsung Galaxy S25 (harness: none of the requested video profiles is supported; unsupported: 7680x4320@30)",
+        "cause": "spec_mismatch",
+        "started_at": "2026-10-01T10:30:11",
+        "finished_at": "2026-10-01T10:30:12",
+        "exit_code": 1,
+        "result_file": "cam_fun_017/cam_fun_017_result.json",
+        "log_file": "cam_fun_017.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "Every supported resolution/FPS profile can be configured",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Recording succeeds",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Measured FPS is within 2 of the expected profile rate",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "No camera or encoder failure occurs",
+            "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 0,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_018",
+        "name": "HDR Photo and Video Operation",
+        "category": "functionality",
+        "execution": "Automated with manual checks",
+        "filename": "test_cam_fun_018.py",
+        "spec_values": {},
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "NOT_APPLICABLE",
+        "reason": "camera 10 exposes no hdr extension or scene mode to third-party apps",
+        "cause": "capability_missing",
+        "started_at": "2026-10-01T10:30:12",
+        "finished_at": "2026-10-01T10:30:13",
+        "exit_code": 0,
+        "result_file": "cam_fun_018/cam_fun_018_result.json",
+        "log_file": "cam_fun_018.log",
+        "checks_total": 4,
+        "failed_checks": [
+          {
+            "description": "${SUPPORTED_HDR_MODE} can be enabled",
+            "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "photo completes successfully",
+            "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "Output media is generated",
+            "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps",
+            "target": null,
+            "operator": null
+          },
+          {
+            "description": "HDR metadata or device-supported HDR indication is present when exposed",
+            "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps",
+            "target": null,
+            "operator": null
+          }
+        ],
+        "manual_steps": 1,
+        "duration_s": 1.0
+      },
+      {
+        "case_id": "cam_fun_019",
+        "name": "Portrait Mode Operation",
+        "category": "functionality",
+        "execution": "Semi Automated",
+        "filename": "test_cam_fun_019.py",
+        "spec_values": {},
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "MANUAL_REVIEW",
+        "reason": "1 manual checkpoint(s)",
+        "cause": "passed",
+        "started_at": "2026-10-01T10:30:13",
+        "finished_at": "2026-10-01T10:30:16",
+        "exit_code": 0,
+        "result_file": "cam_fun_019/cam_fun_019_result.json",
+        "log_file": "cam_fun_019.log",
+        "checks_total": 4,
+        "failed_checks": [],
+        "manual_steps": 1,
+        "duration_s": 3.0,
+        "review": {
+          "decision": "PASS",
+          "note": "",
+          "at": "2026-10-01T10:30:58"
+        }
+      },
+      {
+        "case_id": "cam_fun_020",
+        "name": "Night and Low-Light Mode Operation",
+        "category": "functionality",
+        "execution": "Semi Automated (Lab)",
+        "filename": "test_cam_fun_020.py",
+        "spec_values": {},
+        "estimate_s": 15,
+        "status": "done",
+        "verdict": "MANUAL_REVIEW",
+        "reason": "1 manual checkpoint(s)",
+        "cause": "needs_review",
+        "started_at": "2026-10-01T10:30:16",
+        "finished_at": "2026-10-01T10:30:18",
+        "exit_code": 0,
+        "result_file": "cam_fun_020/cam_fun_020_result.json",
+        "log_file": "cam_fun_020.log",
+        "checks_total": 5,
+        "failed_checks": [],
+        "manual_steps": 1,
+        "duration_s": 2.0
+      }
+    ],
+    "summary": {
+      "total": 20,
+      "finished": 20,
+      "by_verdict": {
+        "FAIL": 7,
+        "ERROR": 1,
+        "PASS": 5,
+        "MANUAL_REVIEW": 4,
+        "NOT_APPLICABLE": 3
+      },
+      "by_cause": {
+        "spec_mismatch": 5,
+        "script_error": 1,
+        "passed": 5,
+        "needs_review": 4,
+        "capability_missing": 3,
+        "failure": 2
+      },
+      "by_category": {
+        "functionality": {
+          "FAIL": 7,
+          "ERROR": 1,
+          "PASS": 5,
+          "MANUAL_REVIEW": 4,
+          "NOT_APPLICABLE": 3
+        }
+      },
+      "pass_rate": 38.5,
+      "duration_s": 36.0
+    }
+  },
+  "results": {
+    "cam_fun_001": {
+      "ui_id": "cam_fun_001",
+      "source_id": "TC_CAM_FUNC_001",
+      "name": "Rear Primary Camera Photo Capture",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "Spec mismatch: device does not support REAR_PRIMARY_PHOTO_RESOLUTION=8160x6120 from Samsung Samsung Galaxy S25 (harness: resolution 8160x6120 not supported for JPEG on camera 10)",
+      "started_at": "2026-10-01T10:29:42",
+      "finished_at": "2026-10-01T10:29:44",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "8160x6120",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "REAR_PRIMARY_CAMERA_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "8160x6120"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.PhotoCaptureTest",
+          "args": {
+            "camera_id": "10",
+            "resolution": "8160x6120",
+            "format": "JPEG",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.34,
+          "result": {
+            "result": "SKIPPED",
+            "error": "resolution 8160x6120 not supported for JPEG on camera 10"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "verify: previous result has no 'image_path'",
+          "passed": false,
+          "actual": null
+        },
+        {
+          "type": "expect",
+          "description": "Camera opens successfully",
+          "passed": false,
+          "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10"
+        },
+        {
+          "type": "expect",
+          "description": "Preview starts successfully",
+          "passed": false,
+          "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10"
+        },
+        {
+          "type": "expect",
+          "description": "Capture request completes without camera error",
+          "passed": false,
+          "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10"
+        },
+        {
+          "type": "expect",
+          "description": "Image callback is received",
+          "passed": false,
+          "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10"
+        },
+        {
+          "type": "expect",
+          "description": "Image file is created",
+          "passed": false,
+          "actual": "SKIPPED: resolution 8160x6120 not supported for JPEG on camera 10"
+        },
+        {
+          "type": "expect",
+          "description": "Saved image resolution matches 8160x6120",
+          "passed": false,
+          "actual": "SKIPPED: missing image_path"
+        },
+        {
+          "type": "expect",
+          "description": "Saved image format matches JPEG",
+          "passed": false,
+          "actual": "SKIPPED: missing image_path"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_001_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_001/cam_fun_001_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_002": {
+      "ui_id": "cam_fun_002",
+      "source_id": "TC_CAM_FUNC_002",
+      "name": "Front Camera Photo Capture",
+      "category": "functionality",
+      "verdict": "ERROR",
+      "reason": "TypeError: Harness.expect() takes 3 positional arguments but 4 were given",
+      "started_at": "2026-10-01T10:29:44",
+      "finished_at": "2026-10-01T10:29:45",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "4000x3000",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+        "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+        "FRONT_PRIMARY_CAMERA_SUPPORTED": "true",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "4000x3000"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.PhotoCaptureTest",
+          "args": {
+            "camera_id": "1",
+            "resolution": "4000x3000",
+            "format": "JPEG",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.36,
+          "result": {
+            "result": "SKIPPED",
+            "error": "resolution 4000x3000 not supported for JPEG on camera 1"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "verify: previous result has no 'image_path'",
+          "passed": false,
+          "actual": null
+        },
+        {
+          "type": "expect",
+          "description": "Front camera opens successfully",
+          "passed": false,
+          "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1"
+        },
+        {
+          "type": "expect",
+          "description": "Preview is available",
+          "passed": false,
+          "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1"
+        },
+        {
+          "type": "expect",
+          "description": "Capture completes successfully",
+          "passed": false,
+          "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1"
+        },
+        {
+          "type": "expect",
+          "description": "Image file is generated",
+          "passed": false,
+          "actual": "SKIPPED: resolution 4000x3000 not supported for JPEG on camera 1"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_002_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_002/cam_fun_002_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_003": {
+      "ui_id": "cam_fun_003",
+      "source_id": "TC_CAM_FUNC_003",
+      "name": "Front-to-Rear Camera Switching",
+      "category": "functionality",
+      "verdict": "PASS",
+      "reason": "",
+      "started_at": "2026-10-01T10:29:45",
+      "finished_at": "2026-10-01T10:29:47",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+        "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+        "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+        "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+        "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.CameraSwitchTest",
+          "args": {
+            "source_camera": "1",
+            "target_camera": "10",
+            "iterations": "1"
+          },
+          "duration_s": 1.38,
+          "result": {
+            "result": "PASS",
+            "completed_iterations": 1,
+            "failed_iterations": 0,
+            "latency_ms": 998
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Front camera closes cleanly",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Rear camera opens successfully",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Rear camera preview starts",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "No CameraService error occurs",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Active camera ID equals 10",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_003_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_003/cam_fun_003_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_004": {
+      "ui_id": "cam_fun_004",
+      "source_id": "TC_CAM_FUNC_004",
+      "name": "Rear-to-Front Camera Switching",
+      "category": "functionality",
+      "verdict": "PASS",
+      "reason": "",
+      "started_at": "2026-10-01T10:29:47",
+      "finished_at": "2026-10-01T10:29:49",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+        "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+        "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+        "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+        "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.CameraSwitchTest",
+          "args": {
+            "source_camera": "10",
+            "target_camera": "1",
+            "iterations": "1"
+          },
+          "duration_s": 1.31,
+          "result": {
+            "result": "PASS",
+            "completed_iterations": 1,
+            "failed_iterations": 0,
+            "latency_ms": 894
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Rear camera releases successfully",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Front camera opens successfully",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Front-camera preview starts",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "No camera resource conflict occurs",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_004_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_004/cam_fun_004_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_005": {
+      "ui_id": "cam_fun_005",
+      "source_id": "TC_CAM_FUNC_005",
+      "name": "Supported Photo Resolution Validation",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "Spec mismatch: device does not support SUPPORTED_PHOTO_RESOLUTIONS=8160x6120 from Samsung Samsung Galaxy S25 (harness: unsupported: 8160x6120)",
+      "started_at": "2026-10-01T10:29:49",
+      "finished_at": "2026-10-01T10:29:51",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "8160x6120",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {
+        "SUPPORTED_PHOTO_RESOLUTIONS": "8160x6120"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.ResolutionMatrixTest",
+          "args": {
+            "camera_id": "10",
+            "resolutions": "8160x6120",
+            "format": "JPEG",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.59,
+          "result": {
+            "result": "SKIPPED",
+            "error": "unsupported: 8160x6120",
+            "tested": 1,
+            "passed": 0,
+            "failed": 1,
+            "details": [
+              {
+                "resolution": "8160x6120",
+                "result": "SKIPPED",
+                "error": "unsupported"
+              }
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Every advertised supported resolution can be configured",
+          "passed": false,
+          "actual": "SKIPPED: unsupported: 8160x6120"
+        },
+        {
+          "type": "expect",
+          "description": "Capture succeeds at every supported resolution",
+          "passed": false,
+          "actual": "SKIPPED: unsupported: 8160x6120"
+        },
+        {
+          "type": "expect",
+          "description": "Saved image dimensions match the requested resolution",
+          "passed": false,
+          "actual": "SKIPPED: unsupported: 8160x6120"
+        },
+        {
+          "type": "expect",
+          "description": "No camera error occurs",
+          "passed": false,
+          "actual": "SKIPPED: unsupported: 8160x6120"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_005_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_005/cam_fun_005_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_006": {
+      "ui_id": "cam_fun_006",
+      "source_id": "TC_CAM_FUNC_006",
+      "name": "Supported Aspect Ratio Validation",
+      "category": "functionality",
+      "verdict": "PASS",
+      "reason": "",
+      "started_at": "2026-10-01T10:29:51",
+      "finished_at": "2026-10-01T10:29:54",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {},
+      "spec_source": null,
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.AspectRatioCaptureTest",
+          "args": {
+            "camera_id": "10",
+            "aspect_ratios": "16:9,4:3",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.69,
+          "result": {
+            "result": "PASS",
+            "camera_id": "10",
+            "ratios_tested": 2,
+            "ratios_passed": 2,
+            "points": [
+              {
+                "aspect_ratio": "16:9",
+                "supported": true,
+                "width": 640,
+                "height": 360,
+                "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/aspect_16x9_1790830794498.jpg",
+                "decoded_width": 640,
+                "decoded_height": 360,
+                "ratio_matches": true
+              },
+              {
+                "aspect_ratio": "4:3",
+                "supported": true,
+                "width": 640,
+                "height": 480,
+                "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/aspect_4x3_1790830795129.jpg",
+                "decoded_width": 640,
+                "decoded_height": 480,
+                "ratio_matches": true
+              }
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Each supported aspect ratio can be exercised",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Captured image dimensions correspond to the selected aspect ratio",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "No unexpected crop or capture failure is reported by the test interface",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_006_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/aspect_16x9_1790830794498.jpg aspect_16x9_1790830794498.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/aspect_4x3_1790830795129.jpg aspect_4x3_1790830795129.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_006/cam_fun_006_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_006/aspect_16x9_1790830794498.jpg",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_006/aspect_4x3_1790830795129.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_007": {
+      "ui_id": "cam_fun_007",
+      "source_id": "TC_CAM_FUNC_007",
+      "name": "Autofocus Operation",
+      "category": "functionality",
+      "verdict": "MANUAL_REVIEW",
+      "reason": "1 manual checkpoint(s)",
+      "started_at": "2026-10-01T10:29:54",
+      "finished_at": "2026-10-01T10:29:56",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "AUTOFOCUS_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "AUTOFOCUS_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.FocusTest",
+          "args": {
+            "camera_id": "10",
+            "mode": "auto",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.41,
+          "result": {
+            "result": "PASS",
+            "camera_id": "10",
+            "mode": "auto",
+            "af_state": "FOCUSED_LOCKED",
+            "focused": true,
+            "af_latency_ms": 311.9,
+            "lens_focus_distance": 1,
+            "capture_ok": true,
+            "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/focus_auto_1790830797578.jpg"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Requested autofocus mode is supported",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "AF state reaches a terminal focus state",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Camera remains operational",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Capture completes without AF-related camera error",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Place a high-contrast focus chart about 50 cm away in front of the camera; judge sharpness from the saved image if required."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_007_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/focus_auto_1790830797578.jpg focus_auto_1790830797578.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_007/cam_fun_007_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_007/focus_auto_1790830797578.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_008": {
+      "ui_id": "cam_fun_008",
+      "source_id": "TC_CAM_FUNC_008",
+      "name": "Tap-to-Focus Operation",
+      "category": "functionality",
+      "verdict": "NOT_APPLICABLE",
+      "reason": "camera 10 does not support AF regions",
+      "started_at": "2026-10-01T10:29:56",
+      "finished_at": "2026-10-01T10:29:57",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {},
+      "spec_source": null,
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.FocusTest",
+          "args": {
+            "camera_id": "10",
+            "mode": "tap",
+            "x": "0.5",
+            "y": "0.5",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.45,
+          "result": {
+            "result": "NOT_APPLICABLE",
+            "reason": "camera 10 does not support AF regions",
+            "camera_id": "10"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Focus region is accepted",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 does not support AF regions"
+        },
+        {
+          "type": "expect",
+          "description": "Autofocus operation is triggered",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 does not support AF regions"
+        },
+        {
+          "type": "expect",
+          "description": "AF reaches a valid terminal state",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 does not support AF regions"
+        },
+        {
+          "type": "expect",
+          "description": "Camera remains responsive",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 does not support AF regions"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Place a high-contrast focus chart about 50 cm away at the focus point. x / y are 0..1 in sensor orientation."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_008_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_008/cam_fun_008_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_009": {
+      "ui_id": "cam_fun_009",
+      "source_id": "TC_CAM_FUNC_009",
+      "name": "Flash ON Operation",
+      "category": "functionality",
+      "verdict": "MANUAL_REVIEW",
+      "reason": "1 manual checkpoint(s)",
+      "started_at": "2026-10-01T10:29:57",
+      "finished_at": "2026-10-01T10:30:00",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "FLASH_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "FLASH_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.FlashTest",
+          "args": {
+            "camera_id": "1",
+            "mode": "on",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.71,
+          "result": {
+            "result": "PASS",
+            "camera_id": "1",
+            "mode": "on",
+            "flash_state": "FIRED",
+            "flash_fired": true,
+            "ae_state_before_capture": "CONVERGED",
+            "flash_required": false,
+            "expected_fire": true,
+            "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/flash_on_1790830801530.jpg"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Flash mode is accepted",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Flash is fired during capture",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Capture succeeds",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "No flash or camera error occurs",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Tester may visually confirm the flash fired; harness reports FLASH_STATE."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_009_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/flash_on_1790830801530.jpg flash_on_1790830801530.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_009/cam_fun_009_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_009/flash_on_1790830801530.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_010": {
+      "ui_id": "cam_fun_010",
+      "source_id": "TC_CAM_FUNC_010",
+      "name": "Flash OFF Operation",
+      "category": "functionality",
+      "verdict": "PASS",
+      "reason": "",
+      "started_at": "2026-10-01T10:30:00",
+      "finished_at": "2026-10-01T10:30:02",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "FLASH_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "FLASH_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.FlashTest",
+          "args": {
+            "camera_id": "1",
+            "mode": "off",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.01,
+          "result": {
+            "result": "PASS",
+            "camera_id": "1",
+            "mode": "off",
+            "flash_state": "READY",
+            "flash_fired": false,
+            "ae_state_before_capture": "SEARCHING",
+            "flash_required": false,
+            "expected_fire": false,
+            "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/flash_off_1790830803596.jpg"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Capture succeeds",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Flash is not fired",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Camera remains operational",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_010_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/flash_off_1790830803596.jpg flash_off_1790830803596.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_010/cam_fun_010_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_010/flash_off_1790830803596.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_011": {
+      "ui_id": "cam_fun_011",
+      "source_id": "TC_CAM_FUNC_011",
+      "name": "Flash Auto Operation",
+      "category": "functionality",
+      "verdict": "MANUAL_REVIEW",
+      "reason": "1 manual checkpoint(s)",
+      "started_at": "2026-10-01T10:30:02",
+      "finished_at": "2026-10-01T10:30:05",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "FLASH_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "FLASH_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.FlashTest",
+          "args": {
+            "camera_id": "1",
+            "mode": "auto",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.74,
+          "result": {
+            "result": "PASS",
+            "camera_id": "1",
+            "mode": "auto",
+            "flash_state": "FIRED",
+            "flash_fired": true,
+            "ae_state_before_capture": "CONVERGED",
+            "flash_required": false,
+            "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/flash_auto_1790830806436.jpg"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Auto flash mode is accepted",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Flash behavior follows camera AE/flash decision under dim indoor light",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Capture succeeds without camera error",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Set ambient light to 20 lux; flash_fired should equal flash_required."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_011_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/flash_auto_1790830806436.jpg flash_auto_1790830806436.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_011/cam_fun_011_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_011/flash_auto_1790830806436.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_012": {
+      "ui_id": "cam_fun_012",
+      "source_id": "TC_CAM_FUNC_012",
+      "name": "Digital Zoom Operation",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "main: steps required; All requested supported zoom values are accepted (actual FAIL: steps required); Applied zoom metadata corresponds to requested values within device-supported behavior (actual FAIL: steps required); Preview remains active (actual FAIL: steps required); Capture succeeds (actual FAIL: steps required)",
+      "started_at": "2026-10-01T10:30:05",
+      "finished_at": "2026-10-01T10:30:06",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "30",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {
+        "MAX_DIGITAL_ZOOM_RATIO": "30"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.DigitalZoomTest",
+          "args": {
+            "camera_id": "10",
+            "min_zoom": "1.0",
+            "max_zoom": "30",
+            "steps": "<(max-min)/ZOOM_STEP + 1>"
+          },
+          "duration_s": 0.4,
+          "result": {
+            "result": "FAIL",
+            "error": "steps required"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "All requested supported zoom values are accepted",
+          "passed": false,
+          "actual": "FAIL: steps required"
+        },
+        {
+          "type": "expect",
+          "description": "Applied zoom metadata corresponds to requested values within device-supported behavior",
+          "passed": false,
+          "actual": "FAIL: steps required"
+        },
+        {
+          "type": "expect",
+          "description": "Preview remains active",
+          "passed": false,
+          "actual": "FAIL: steps required"
+        },
+        {
+          "type": "expect",
+          "description": "Capture succeeds",
+          "passed": false,
+          "actual": "FAIL: steps required"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_012_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_012/cam_fun_012_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_013": {
+      "ui_id": "cam_fun_013",
+      "source_id": "TC_CAM_FUNC_013",
+      "name": "Optical Zoom and Telephoto Lens Switching",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "Spec mismatch: device does not support SUPPORTED_OPTICAL_ZOOM_RATIOS=2, 3 from Samsung Samsung Galaxy S25 (harness: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x)",
+      "started_at": "2026-10-01T10:30:06",
+      "finished_at": "2026-10-01T10:30:07",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "SUPPORTED_OPTICAL_ZOOM_RATIOS": "2,3",
+        "TELEPHOTO_CAMERA_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+        "SUPPORTED_OPTICAL_ZOOM_RATIOS": "2,3",
+        "TELEPHOTO_CAMERA_SUPPORTED": "true"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.OpticalZoomTest",
+          "args": {
+            "camera_id": "10",
+            "zoom_ratios": "2,3",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.4,
+          "result": {
+            "result": "NOT_APPLICABLE",
+            "reason": "requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x",
+            "camera_id": "10",
+            "zoom_range": "1.0-1.0",
+            "points": [
+              {
+                "requested_ratio": "2x",
+                "supported": false,
+                "reason": "outside zoom range 1.0-1.0"
+              },
+              {
+                "requested_ratio": "3x",
+                "supported": false,
+                "reason": "outside zoom range 1.0-1.0"
+              }
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Supported optical zoom ratios are usable",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x"
+        },
+        {
+          "type": "expect",
+          "description": "Telephoto path is available where exposed by the camera API",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x"
+        },
+        {
+          "type": "expect",
+          "description": "Camera transition does not produce fatal camera errors",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x"
+        },
+        {
+          "type": "expect",
+          "description": "Capture succeeds at supported optical zoom points",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: requested zoom ratios are outside 1.0-1.0; unsupported: 2x, 3x"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_013_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_013/cam_fun_013_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_014": {
+      "ui_id": "cam_fun_014",
+      "source_id": "TC_CAM_FUNC_014",
+      "name": "Ultrawide Camera Switching",
+      "category": "functionality",
+      "verdict": "NOT_APPLICABLE",
+      "reason": "${ULTRAWIDE_CAMERA_ID} is not available on this device",
+      "started_at": "2026-10-01T10:30:07",
+      "finished_at": "2026-10-01T10:30:08",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera"
+      },
+      "spec_values": {
+        "REAR_PRIMARY_CAMERA": "50 MP rear primary camera"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [],
+      "checks": [],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_014_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_014/cam_fun_014_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_015": {
+      "ui_id": "cam_fun_015",
+      "source_id": "TC_CAM_FUNC_015",
+      "name": "Video Recording Start and Stop",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "main: Unexpected: prepare failed.; verify: previous result has no 'video_path' (actual None); Recording starts successfully (actual FAIL: Unexpected: prepare failed.); Recording remains active for 10 seconds (actual FAIL: Unexpected: prepare failed.); Recording stops cleanly (actual FAIL: Unexpected: prepare failed.); Output video is created (actual FAIL: Unexpected: prepare failed.); Recorded resolution matches 7680x4320 (actual SKIPPED: missing video_path); Recorded FPS is consistent with 30 within 2 (actual SKIPPED: missing video_path); Output media is readable (actual SKIPPED: missing video_path)",
+      "started_at": "2026-10-01T10:30:08",
+      "finished_at": "2026-10-01T10:30:10",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "7680x4320",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+        "VIDEO_RECORDING_SUPPORTED": "true"
+      },
+      "spec_values": {
+        "VIDEO_RECORDING_SUPPORTED": "true",
+        "VIDEO_RESOLUTION": "7680x4320",
+        "VIDEO_FPS": "30"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.VideoRecordTest",
+          "args": {
+            "camera_id": "10",
+            "resolution": "7680x4320",
+            "fps": "30",
+            "duration_sec": "10",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.53,
+          "result": {
+            "result": "FAIL",
+            "error": "Unexpected: prepare failed."
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "verify: previous result has no 'video_path'",
+          "passed": false,
+          "actual": null
+        },
+        {
+          "type": "expect",
+          "description": "Recording starts successfully",
+          "passed": false,
+          "actual": "FAIL: Unexpected: prepare failed."
+        },
+        {
+          "type": "expect",
+          "description": "Recording remains active for 10 seconds",
+          "passed": false,
+          "actual": "FAIL: Unexpected: prepare failed."
+        },
+        {
+          "type": "expect",
+          "description": "Recording stops cleanly",
+          "passed": false,
+          "actual": "FAIL: Unexpected: prepare failed."
+        },
+        {
+          "type": "expect",
+          "description": "Output video is created",
+          "passed": false,
+          "actual": "FAIL: Unexpected: prepare failed."
+        },
+        {
+          "type": "expect",
+          "description": "Recorded resolution matches 7680x4320",
+          "passed": false,
+          "actual": "SKIPPED: missing video_path"
+        },
+        {
+          "type": "expect",
+          "description": "Recorded FPS is consistent with 30 within 2",
+          "passed": false,
+          "actual": "SKIPPED: missing video_path"
+        },
+        {
+          "type": "expect",
+          "description": "Output media is readable",
+          "passed": false,
+          "actual": "SKIPPED: missing video_path"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_015_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_015/cam_fun_015_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_016": {
+      "ui_id": "cam_fun_016",
+      "source_id": "TC_CAM_FUNC_016",
+      "name": "Supported Video Resolution Validation",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "Spec mismatch: device does not support SUPPORTED_VIDEO_RESOLUTIONS=7680x4320 from Samsung Samsung Galaxy S25 (harness: none of the requested video profiles is supported; unsupported: 7680x4320)",
+      "started_at": "2026-10-01T10:30:10",
+      "finished_at": "2026-10-01T10:30:11",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "7680x4320",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {
+        "SUPPORTED_VIDEO_RESOLUTIONS": "7680x4320"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.VideoProfileTest",
+          "args": {
+            "camera_id": "10",
+            "resolutions": "7680x4320",
+            "duration_sec": "5",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.4,
+          "result": {
+            "result": "NOT_APPLICABLE",
+            "reason": "none of the requested video profiles is supported; unsupported: 7680x4320",
+            "camera_id": "10",
+            "points": [
+              {
+                "profile": "7680x4320",
+                "fps": 30,
+                "supported": false,
+                "reason": "resolution not offered for encoder"
+              }
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Every advertised supported video resolution can be configured",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320"
+        },
+        {
+          "type": "expect",
+          "description": "Recording succeeds at each supported resolution",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320"
+        },
+        {
+          "type": "expect",
+          "description": "Recorded media dimensions match the selected resolution",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320"
+        },
+        {
+          "type": "expect",
+          "description": "Output file is valid",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_016_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_016/cam_fun_016_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_017": {
+      "ui_id": "cam_fun_017",
+      "source_id": "TC_CAM_FUNC_017",
+      "name": "Supported Video FPS Validation",
+      "category": "functionality",
+      "verdict": "FAIL",
+      "reason": "Spec mismatch: device does not support SUPPORTED_VIDEO_PROFILES=7680x4320@30 from Samsung Samsung Galaxy S25 (harness: none of the requested video profiles is supported; unsupported: 7680x4320@30)",
+      "started_at": "2026-10-01T10:30:11",
+      "finished_at": "2026-10-01T10:30:12",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "7680x4320@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {
+        "SUPPORTED_VIDEO_PROFILES": "7680x4320@30"
+      },
+      "spec_source": "Samsung Samsung Galaxy S25",
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.VideoProfileTest",
+          "args": {
+            "camera_id": "10",
+            "profiles": "7680x4320@30",
+            "duration_sec": "10",
+            "fps_tolerance": "2",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.48,
+          "result": {
+            "result": "NOT_APPLICABLE",
+            "reason": "none of the requested video profiles is supported; unsupported: 7680x4320@30",
+            "camera_id": "10",
+            "points": [
+              {
+                "profile": "7680x4320@30",
+                "fps": 30,
+                "supported": false,
+                "reason": "resolution not offered for encoder"
+              }
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Every supported resolution/FPS profile can be configured",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30"
+        },
+        {
+          "type": "expect",
+          "description": "Recording succeeds",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30"
+        },
+        {
+          "type": "expect",
+          "description": "Measured FPS is within 2 of the expected profile rate",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30"
+        },
+        {
+          "type": "expect",
+          "description": "No camera or encoder failure occurs",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: none of the requested video profiles is supported; unsupported: 7680x4320@30"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_017_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_017/cam_fun_017_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_018": {
+      "ui_id": "cam_fun_018",
+      "source_id": "TC_CAM_FUNC_018",
+      "name": "HDR Photo and Video Operation",
+      "category": "functionality",
+      "verdict": "NOT_APPLICABLE",
+      "reason": "camera 10 exposes no hdr extension or scene mode to third-party apps",
+      "started_at": "2026-10-01T10:30:12",
+      "finished_at": "2026-10-01T10:30:13",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {},
+      "spec_source": null,
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.CaptureModeTest",
+          "args": {
+            "camera_id": "10",
+            "mode": "hdr",
+            "capture_type": "photo",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 0.38,
+          "result": {
+            "result": "NOT_APPLICABLE",
+            "reason": "camera 10 exposes no hdr extension or scene mode to third-party apps",
+            "camera_id": "10",
+            "mode": "hdr"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "${SUPPORTED_HDR_MODE} can be enabled",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps"
+        },
+        {
+          "type": "expect",
+          "description": "photo completes successfully",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps"
+        },
+        {
+          "type": "expect",
+          "description": "Output media is generated",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps"
+        },
+        {
+          "type": "expect",
+          "description": "HDR metadata or device-supported HDR indication is present when exposed",
+          "passed": false,
+          "actual": "NOT_APPLICABLE: camera 10 exposes no hdr extension or scene mode to third-party apps"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Use a high-contrast backlit scene (subject in front of a bright window). capture_type=video records HLG10 HEVC."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_018_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_018/cam_fun_018_logcat.txt"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_019": {
+      "ui_id": "cam_fun_019",
+      "source_id": "TC_CAM_FUNC_019",
+      "name": "Portrait Mode Operation",
+      "category": "functionality",
+      "verdict": "MANUAL_REVIEW",
+      "reason": "1 manual checkpoint(s)",
+      "started_at": "2026-10-01T10:30:13",
+      "finished_at": "2026-10-01T10:30:16",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {},
+      "spec_source": null,
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.CaptureModeTest",
+          "args": {
+            "camera_id": "1",
+            "mode": "portrait",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.6,
+          "result": {
+            "result": "PASS",
+            "camera_id": "1",
+            "mode": "portrait",
+            "implementation": "scene_mode",
+            "processing_ms": 234.9,
+            "bytes": 56386,
+            "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/portrait_1790830817511.jpg",
+            "scene_mode": 3,
+            "scene_mode_in_result": 3,
+            "width": 1920,
+            "height": 1440
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "Portrait mode can be selected",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Portrait capture succeeds",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Processed output image is generated",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "No camera processing failure occurs",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Subject at 1.5 m; background blur is judged from the saved image."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_019_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/portrait_1790830817511.jpg portrait_1790830817511.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_019/cam_fun_019_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_019/portrait_1790830817511.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    },
+    "cam_fun_020": {
+      "ui_id": "cam_fun_020",
+      "source_id": "TC_CAM_FUNC_020",
+      "name": "Night and Low-Light Mode Operation",
+      "category": "functionality",
+      "verdict": "MANUAL_REVIEW",
+      "reason": "1 manual checkpoint(s)",
+      "started_at": "2026-10-01T10:30:16",
+      "finished_at": "2026-10-01T10:30:18",
+      "serial": "emulator-5554",
+      "device": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "sdk_int": 34,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+      },
+      "variables": {
+        "REAR_PRIMARY_CAMERA_ID": "10",
+        "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+        "FRONT_PRIMARY_CAMERA_ID": "1",
+        "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+        "TARGET_CAMERA_ID": "10",
+        "PHOTO_RESOLUTION": "640x480",
+        "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+        "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+        "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+        "VIDEO_RESOLUTION": "640x480",
+        "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+        "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+        "MIN_ZOOM_RATIO": "1.0",
+        "MAX_ZOOM_RATIO": "1.0",
+        "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+        "FLASH_SUPPORTED_CAMERA_ID": "1",
+        "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+        "PORTRAIT_SUPPORTED_CAMERA_ID": "1"
+      },
+      "spec_values": {},
+      "spec_source": null,
+      "operations": [
+        {
+          "label": "main",
+          "class": "com.example.cameratest.CaptureModeTest",
+          "args": {
+            "camera_id": "1",
+            "mode": "night",
+            "output_dir": "/sdcard/DCIM/CameraTest"
+          },
+          "duration_s": 1.41,
+          "result": {
+            "result": "PASS",
+            "camera_id": "1",
+            "mode": "night",
+            "implementation": "scene_mode",
+            "processing_ms": 241.52,
+            "bytes": 56222,
+            "path": "/storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/night_1790830819825.jpg",
+            "scene_mode": 5,
+            "scene_mode_in_result": 5,
+            "width": 1920,
+            "height": 1440
+          }
+        }
+      ],
+      "checks": [
+        {
+          "type": "expect",
+          "description": "${NIGHT_MODE} can be enabled",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Low-light capture completes successfully",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Processed image is generated",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "Camera remains responsive throughout capture and processing",
+          "passed": true,
+          "actual": "PASS"
+        },
+        {
+          "type": "expect",
+          "description": "No fatal CameraService or processing error occurs",
+          "passed": true,
+          "actual": "PASS"
+        }
+      ],
+      "derived": {},
+      "manual_steps": [
+        "Lab scene at 5 lux (a colour chart in a darkened room)."
+      ],
+      "host_steps": [
+        {
+          "command": "adb wait-for-device",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "rc": 0
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "rc": 0
+        },
+        {
+          "command": "adb logcat -d -v threadtime > cam_fun_020_logcat.txt",
+          "rc": 0
+        },
+        {
+          "command": "adb pull /storage/emulated/0/Android/data/com.example.cameratest/files/CameraTest/night_1790830819825.jpg night_1790830819825.jpg",
+          "rc": 0
+        },
+        {
+          "command": "adb shell am force-stop com.example.cameratest",
+          "rc": 0
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "rc": 0
+        }
+      ],
+      "evidence_files": [
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_020/cam_fun_020_logcat.txt",
+        "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20261001_102855_400168/executions/20261001_102942_030e/cam_fun_020/night_1790830819825.jpg"
+      ],
+      "notes": [],
+      "runtime_version": "1.2.0"
+    }
+  }
+}

@@ -67,11 +67,17 @@
                   </span>
                   <span>Device Selection</span>
                 </button>
+                <button type="button" class="nav-item hidden" data-view="operator-testing" id="nav-operator-testing">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12.5a7 7 0 0 1 14 0"/><path d="M8.5 12.5a3.5 3.5 0 0 1 7 0"/><path d="M12 12.5V21M9 21h6"/></svg>
+                  </span>
+                  <span>Operator Testing</span>
+                </button>
                 <button type="button" class="nav-item" data-view="feature-extraction" id="nav-feature-extraction">
                   <span class="nav-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
                   </span>
-                  <span>Feature Extraction</span>
+                  <span>Device Inventory</span>
                 </button>
                 <button type="button" class="nav-item" data-view="device-classification">
                   <span class="nav-icon" aria-hidden="true">
@@ -213,39 +219,39 @@
                     <h3 class="ds-panel-title">Test Focus</h3>
                   </div>
                   <div class="test-area-list test-area-cards" role="listbox" aria-label="Test focus areas" id="test-area-list">
-                    <button type="button" class="test-area-option" data-area="feature_testing" role="option">
+                    <button type="button" class="test-area-option" data-area="operator_testing" role="option">
                       <span class="test-area-index">01</span>
                       <span class="test-area-body">
-                        <span class="test-area-title">Feature Testing</span>
-                        <span class="test-area-desc">Capability and parameter validation</span>
+                        <span class="test-area-title">Operator Testing</span>
+                        <span class="test-area-desc">SFN, PAT, APT, maintenance, IDOT, bespoke, field, and FUT</span>
                       </span>
                     </button>
-                    <button type="button" class="test-area-option" data-area="hardware_bringup" role="option">
+                    <button type="button" class="test-area-option" data-area="module_peripheral" role="option">
                       <span class="test-area-index">02</span>
                       <span class="test-area-body">
-                        <span class="test-area-title">Hardware Bring-up Testing</span>
-                        <span class="test-area-desc">Boot, power, display, and components</span>
+                        <span class="test-area-title">Module / Peripheral Testing</span>
+                        <span class="test-area-desc">Hardware modules and preinstalled apps</span>
                       </span>
                     </button>
-                    <button type="button" class="test-area-option" data-area="android_os_kernel" role="option">
+                    <button type="button" class="test-area-option" data-area="protocol_testing" role="option">
                       <span class="test-area-index">03</span>
                       <span class="test-area-body">
-                        <span class="test-area-title">Android OS &amp; Kernel Testing</span>
-                        <span class="test-area-desc">OS, kernel, and driver stability</span>
+                        <span class="test-area-title">Protocol Testing</span>
+                        <span class="test-area-desc">Radio, antenna, PHY, and protocol</span>
                       </span>
                     </button>
-                    <button type="button" class="test-area-option" data-area="app_compatibility" role="option">
+                    <button type="button" class="test-area-option" data-area="security_testing" role="option">
                       <span class="test-area-index">04</span>
                       <span class="test-area-body">
-                        <span class="test-area-title">Application &amp; Compatibility Testing</span>
-                        <span class="test-area-desc">Apps and ecosystem compatibility</span>
+                        <span class="test-area-title">Security Testing</span>
+                        <span class="test-area-desc">Permissions, privacy, and data protection</span>
                       </span>
                     </button>
-                    <button type="button" class="test-area-option" data-area="ota_upgrade" role="option">
+                    <button type="button" class="test-area-option" data-area="connectivity_testing" role="option">
                       <span class="test-area-index">05</span>
                       <span class="test-area-body">
-                        <span class="test-area-title">OTA / Upgrade Testing</span>
-                        <span class="test-area-desc">Updates, rollback, and data retention</span>
+                        <span class="test-area-title">Connectivity Testing</span>
+                        <span class="test-area-desc">Wi-Fi, Bluetooth, NFC, and UWB</span>
                       </span>
                     </button>
                   </div>
@@ -260,8 +266,8 @@
                     type="button"
                     class="page-next-arrow"
                     id="goto-feature-extraction-btn"
-                    title="Go to Feature Extraction"
-                    aria-label="Go to Feature Extraction"
+                    title="Go to Device Inventory"
+                    aria-label="Go to Device Inventory"
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                       <path d="M9 6l6 6-6 6" />
@@ -271,10 +277,24 @@
               </div>
             </div>
 
-            <!-- FEATURE EXTRACTION -->
-            <div id="view-feature-extraction" class="view">
-              <div class="wb-breadcrumb">Workbench <span>/</span> Feature Extraction</div>
+            <!-- OPERATOR TESTING -->
+            <div id="view-operator-testing" class="view view-op">
+              <div class="wb-breadcrumb" id="op-breadcrumb">Workbench <span>/</span> Operator Testing</div>
+              <div id="op-root"></div>
+            </div>
 
+            <!-- DEVICE INVENTORY: feature extraction + installed apps -->
+            <div id="view-feature-extraction" class="view view-disc">
+              <div class="wb-breadcrumb">Workbench <span>/</span> Device Inventory</div>
+
+              <div class="disc-switcher" role="tablist" aria-label="Inventory source">
+                <button type="button" class="disc-switch is-active" role="tab" id="disc-tab-features" data-disc="features"
+                  aria-controls="disc-pane-features" aria-selected="true">Feature Extraction</button>
+                <button type="button" class="disc-switch" role="tab" id="disc-tab-apps" data-disc="apps"
+                  aria-controls="disc-pane-apps" aria-selected="false">Installed Apps</button>
+              </div>
+
+              <div id="disc-pane-features" class="disc-pane" role="tabpanel" aria-labelledby="disc-tab-features">
               <div id="fe-intake-section" class="fe-intake-section">
                 <div class="intake-hero panel">
                   <div class="intake-hero-top">
@@ -435,6 +455,26 @@
                   </svg>
                 </button>
               </div>
+              </div>
+
+              <div id="disc-pane-apps" class="disc-pane hidden" role="tabpanel" aria-labelledby="disc-tab-apps">
+                <section class="panel apps-scan">
+                  <div class="apps-scan-text">
+                    <h3 class="intake-hero-title">Installed apps</h3>
+                    <p class="intake-hero-copy">
+                      Scan the connected phone to list every app on it: system apps that ship with the phone and
+                      third-party apps installed later.
+                    </p>
+                  </div>
+                  <div class="apps-scan-controls">
+                    <select id="apps-device" class="select" aria-label="Device to scan"></select>
+                    <button type="button" class="secondary apps-icon-btn" id="apps-refresh-devices"
+                      aria-label="Refresh devices" title="Refresh devices">↻</button>
+                    <button type="button" class="primary" id="apps-scan-btn" disabled>Scan device</button>
+                  </div>
+                </section>
+                <div id="apps-body"></div>
+              </div>
             </div>
 
             <!-- DEVICE CLASSIFICATION -->
@@ -480,18 +520,33 @@
                   <div>
                     <h3 class="ds-panel-title">Test Case Generation</h3>
                     <p class="muted" id="tcg-rail-hint" style="margin: 4px 0 0; font-size: 12px;">
-                      Click a feature → category to view the full test case JSON.
+                      Select a feature → category → test case to view its details.
                     </p>
                   </div>
-                  <span class="status-pill" id="tcg-feature-count">0</span>
                 </div>
 
-                <div id="tcg-tree" class="tcg-tree" aria-label="Features and test cases">
-                  <!-- filled by app.js -->
-                </div>
+                <div class="tcg-cards">
+                  <section class="tcg-card tcg-list-card" aria-label="Features and test cases">
+                    <div class="tcg-card-head">
+                      <span class="tcg-card-title">Features</span>
+                      <span class="status-pill" id="tcg-feature-count">0</span>
+                    </div>
+                    <div id="tcg-tree" class="tcg-tree">
+                      <!-- filled by app.js -->
+                    </div>
+                    <div class="tcg-empty muted" id="tcg-empty">
+                      No extracted features yet. Run Feature Extraction first.
+                    </div>
+                  </section>
 
-                <div class="tcg-empty muted" id="tcg-empty">
-                  No extracted features yet. Run Feature Extraction first.
+                  <section class="tcg-card tcg-detail-card" aria-label="Test case details">
+                    <div class="tcg-card-head">
+                      <span class="tcg-card-title">Test Case Details</span>
+                    </div>
+                    <div id="tcg-detail" class="tcg-detail" aria-live="polite">
+                      <!-- filled by app.js -->
+                    </div>
+                  </section>
                 </div>
 
                 <div class="tcg-page-footer" aria-label="Continue to framework selection">
@@ -547,18 +602,315 @@
               </div>
             </div>
 
-            <div id="view-test-script-generation" class="view">
+            <div id="view-test-script-generation" class="view view-tsg">
               <div class="wb-breadcrumb">Workbench <span>/</span> Test Script Generation</div>
-              <div class="panel placeholder-panel">
-                <h2>Test Script Generation</h2>
-                <p class="muted" id="tsg-placeholder-copy">
-                  Scripts will be generated here by sending test cases to the LLM with the selected frameworks.
-                </p>
+
+              <div class="panel tsg-page">
+                <div class="panel-head-row tsg-page-head">
+                  <div>
+                    <h3 class="ds-panel-title">Test Script Generation</h3>
+                    <p class="muted" id="tsg-hint" style="margin: 4px 0 0; font-size: 12px;">
+                      Select test cases on the left, then click Generate Test Scripts.
+                    </p>
+                  </div>
+                  <div class="btn-row">
+                    <button type="button" class="secondary hidden" id="tsg-run-btn">Run on Device</button>
+                    <button type="button" class="primary" id="tsg-generate-btn" disabled>
+                      Generate Test Scripts
+                    </button>
+                  </div>
+                </div>
+
+                <div class="tsg-cards">
+                  <section class="tcg-card tsg-select-card" aria-label="Select test cases">
+                    <div class="tcg-card-head">
+                      <div>
+                        <span class="tcg-card-title">Select Test Cases</span>
+                        <p class="tsg-card-sub">Choose cases to generate scripts for</p>
+                      </div>
+                      <span class="status-pill" id="tsg-selected-count">0 selected</span>
+                    </div>
+                    <div id="tsg-tree" class="tcg-tree tsg-tree">
+                      <!-- filled by app.js -->
+                    </div>
+                    <div class="tcg-empty muted" id="tsg-empty">
+                      No extracted features yet. Run Feature Extraction first.
+                    </div>
+                  </section>
+
+                  <div class="tsg-output-col">
+                    <section class="tcg-card tsg-preview-card" aria-label="Generated script preview">
+                      <div class="tcg-card-head">
+                        <div>
+                          <span class="tcg-card-title">Generated Script Preview</span>
+                          <p class="tsg-card-sub" id="tsg-preview-sub">Script output</p>
+                        </div>
+                        <select id="tsg-script-select" class="tsg-script-select" aria-label="Generated script" disabled>
+                          <option value="">No scripts yet</option>
+                        </select>
+                      </div>
+                      <div class="tsg-card-body">
+                        <textarea
+                          id="tsg-script-preview"
+                          class="tsg-result-editor"
+                          readonly
+                          spellcheck="false"
+                          aria-label="Generated script preview"
+                        >Select test cases and click "Generate Test Scripts".</textarea>
+                      </div>
+                    </section>
+
+                    <section class="tcg-card tsg-suite-card" aria-label="Test suite output">
+                      <div class="tcg-card-head">
+                        <span class="tcg-card-title">Test Suite Output</span>
+                        <button type="button" class="secondary tsg-small-btn" id="tsg-full-output-btn" disabled>
+                          Show Complete Output
+                        </button>
+                      </div>
+                      <div class="tsg-card-body">
+                        <textarea
+                          id="tsg-suite-output"
+                          class="tsg-result-editor"
+                          readonly
+                          spellcheck="false"
+                          aria-label="Test suite output"
+                        >Generated scripts and their status will appear here.</textarea>
+                      </div>
+                    </section>
+                  </div>
+                </div>
               </div>
             </div>
-            <div id="view-test-execution" class="view">
+            <div id="view-test-execution" class="view view-tex">
               <div class="wb-breadcrumb">Workbench <span>/</span> Test Execution</div>
-              <div class="panel placeholder-panel"><h2>Test Execution</h2><p class="muted">Available in a later release.</p></div>
+
+              <div class="tex-page">
+                <div class="panel tex-head">
+                  <div>
+                    <h3 class="ds-panel-title">Test Execution</h3>
+                    <p class="muted tex-sub" id="tex-hint">
+                      Pick a device and a generated script set, choose the cases, then start the run.
+                    </p>
+                  </div>
+                  <div class="tex-tabs" role="tablist" aria-label="Test execution stages">
+                    <button type="button" class="tex-tab is-active" data-tex-tab="setup" role="tab" id="tex-tab-setup"
+                      aria-controls="tex-pane-setup" aria-selected="true" tabindex="0">Setup</button>
+                    <button type="button" class="tex-tab" data-tex-tab="live" role="tab" id="tex-tab-live"
+                      aria-controls="tex-pane-live" aria-selected="false" tabindex="-1">
+                      Live run <span class="tex-live-dot hidden" id="tex-live-dot" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="tex-tab" data-tex-tab="results" role="tab" id="tex-tab-results"
+                      aria-controls="tex-pane-results" aria-selected="false" tabindex="-1">
+                      Results <span class="tex-tab-badge hidden" id="tex-review-badge" title="Cases waiting for a manual review decision"></span>
+                    </button>
+                    <button type="button" class="tex-tab" data-tex-tab="history" role="tab" id="tex-tab-history"
+                      aria-controls="tex-pane-history" aria-selected="false" tabindex="-1">History</button>
+                  </div>
+                </div>
+
+                <!-- Setup -->
+                <section class="tex-pane is-active" data-tex-pane="setup" id="tex-pane-setup" role="tabpanel" aria-labelledby="tex-tab-setup">
+                  <div class="tex-setup-grid">
+                    <section class="tcg-card tex-cases-card">
+                      <div class="tcg-card-head">
+                        <div>
+                          <span class="tcg-card-title">Test cases</span>
+                          <p class="tsg-card-sub" id="tex-cases-sub">Select a script set</p>
+                        </div>
+                        <div class="btn-row">
+                          <button type="button" class="secondary tsg-small-btn" id="tex-select-ready">Select runnable</button>
+                          <button type="button" class="secondary tsg-small-btn" id="tex-select-none">Clear</button>
+                        </div>
+                      </div>
+                      <div class="tex-card-body tex-scroll" id="tex-cases"></div>
+                    </section>
+
+                    <div class="tex-col">
+                      <section class="tcg-card">
+                        <div class="tcg-card-head">
+                          <span class="tcg-card-title">Device</span>
+                          <button type="button" class="secondary tsg-small-btn tex-icon-btn" id="tex-refresh-devices"
+                            aria-label="Refresh devices" title="Refresh devices">↻</button>
+                        </div>
+                        <div class="tex-card-body">
+                          <select id="tex-device-select" class="select" aria-label="Device"></select>
+                          <div id="tex-device-info" class="tex-device-info"></div>
+                        </div>
+                      </section>
+
+                      <section class="tcg-card">
+                        <div class="tcg-card-head">
+                          <span class="tcg-card-title">Script set</span>
+                          <button type="button" class="secondary tsg-small-btn tex-icon-btn" id="tex-refresh-sets"
+                            aria-label="Refresh script sets" title="Refresh script sets">↻</button>
+                        </div>
+                        <div class="tex-card-body">
+                          <select id="tex-set-select" class="select" aria-label="Generated script set"></select>
+                          <div id="tex-set-info" class="tex-set-info"></div>
+                        </div>
+                      </section>
+
+                      <section class="tcg-card">
+                        <div class="tcg-card-head">
+                          <span class="tcg-card-title">Run options</span>
+                          <button type="button" class="secondary tsg-small-btn" id="tex-smoke-btn"
+                            title="Shorten cycle, iteration and duration variables for a quick check">
+                            Smoke-run preset
+                          </button>
+                        </div>
+                        <div class="tex-card-body">
+                          <label class="tex-field">
+                            <span>Case timeout (minutes)</span>
+                            <input id="tex-timeout" class="input" type="number" min="1" max="1440" value="60" />
+                          </label>
+                          <div class="tex-field-label">
+                            Variable overrides <span class="muted">· applied to every selected case</span>
+                          </div>
+                          <div id="tex-overrides" class="tex-overrides"></div>
+                          <button type="button" class="secondary tsg-small-btn" id="tex-add-override">+ Add override</button>
+                          <datalist id="tex-var-names"></datalist>
+                        </div>
+                      </section>
+
+                      <section class="tcg-card tex-warn-card hidden" id="tex-warn-card" aria-label="Before you start">
+                        <div class="tcg-card-head"><span class="tcg-card-title">Before you start</span></div>
+                        <div class="tex-card-body" id="tex-warnings"></div>
+                      </section>
+                    </div>
+                  </div>
+
+                  <div class="tex-start-bar" role="region" aria-label="Start execution">
+                    <span class="tex-start-summary" id="tex-start-summary"></span>
+                    <button type="button" class="tex-warn-badge hidden" id="tex-warn-badge"></button>
+                    <button type="button" class="primary" id="tex-start-btn" disabled>Start execution</button>
+                  </div>
+                </section>
+
+                <!-- Live run -->
+                <section class="tex-pane" data-tex-pane="live" id="tex-pane-live" role="tabpanel" aria-labelledby="tex-tab-live">
+                  <div class="tex-empty panel muted" id="tex-live-empty">No execution is running. Start one from Setup.</div>
+                  <div id="tex-live" class="hidden">
+                    <div class="panel tex-live-head">
+                      <div class="tex-live-title-row">
+                        <div>
+                          <div class="tex-live-title" id="tex-live-title">Execution</div>
+                          <div class="muted tex-live-meta" id="tex-live-meta"></div>
+                        </div>
+                        <div class="btn-row">
+                          <span class="status-pill" id="tex-live-state">Idle</span>
+                          <button type="button" class="secondary tsg-small-btn" id="tex-pause-btn">Pause</button>
+                          <button type="button" class="secondary tsg-small-btn" id="tex-skip-btn">Skip case</button>
+                          <button type="button" class="soft-danger tsg-small-btn" id="tex-stop-btn">Stop</button>
+                          <button type="button" class="primary tsg-small-btn hidden" id="tex-view-results-btn">View results</button>
+                        </div>
+                      </div>
+                      <div class="tex-progress" id="tex-progress" role="progressbar" aria-label="Cases finished" aria-valuemin="0"></div>
+                      <div class="tex-live-current" id="tex-live-current"></div>
+                    </div>
+
+                    <div class="tex-live-grid">
+                      <section class="tcg-card">
+                        <div class="tcg-card-head"><span class="tcg-card-title">Queue</span></div>
+                        <div class="tex-card-body tex-scroll tex-queue" id="tex-queue"></div>
+                      </section>
+
+                      <section class="tcg-card">
+                        <div class="tcg-card-head">
+                          <span class="tcg-card-title">Live log</span>
+                          <div class="btn-row">
+                            <select id="tex-log-filter" class="select tex-mini-select" aria-label="Log filter">
+                              <option value="all">All lines</option>
+                              <option value="current">Selected case</option>
+                              <option value="important">Operations, metrics, errors</option>
+                            </select>
+                            <label class="tex-check"><input type="checkbox" id="tex-autoscroll" checked /> Auto-scroll</label>
+                          </div>
+                        </div>
+                        <pre class="tex-log" id="tex-log"></pre>
+                      </section>
+
+                      <div class="tex-col tex-live-side">
+                        <section class="tcg-card">
+                          <div class="tcg-card-head">
+                            <span class="tcg-card-title">Device</span>
+                            <label class="tex-check"><input type="checkbox" id="tex-screen-toggle" /> Live screen</label>
+                          </div>
+                          <div class="tex-card-body">
+                            <div id="tex-health" class="tex-health"></div>
+                            <img id="tex-screen" class="tex-screen hidden" alt="Device screen" />
+                          </div>
+                        </section>
+                        <section class="tcg-card">
+                          <div class="tcg-card-head"><span class="tcg-card-title">Live metrics</span></div>
+                          <div class="tex-card-body" id="tex-metrics"></div>
+                        </section>
+                        <section class="tcg-card">
+                          <div class="tcg-card-head"><span class="tcg-card-title">Manual checkpoints</span></div>
+                          <div class="tex-card-body" id="tex-manual"></div>
+                        </section>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Results -->
+                <section class="tex-pane" data-tex-pane="results" id="tex-pane-results" role="tabpanel" aria-labelledby="tex-tab-results">
+                  <div class="tex-empty panel muted" id="tex-results-empty">No execution selected. Run one, or open one from History.</div>
+                  <div id="tex-results" class="hidden">
+                    <div class="panel tex-results-head" id="tex-results-head"></div>
+                    <div id="tex-review-banner"></div>
+                    <div class="tex-causes" id="tex-causes" role="group" aria-label="Filter by cause"></div>
+                    <div class="tex-results-grid">
+                      <section class="tcg-card">
+                        <div class="tcg-card-head">
+                          <span class="tcg-card-title">Cases</span>
+                          <span class="tex-muted-small" id="tex-results-count"></span>
+                        </div>
+                        <div class="tex-results-toolbar">
+                          <input type="search" id="tex-results-search" class="input" placeholder="Search case, name or reason"
+                            aria-label="Search cases" />
+                          <select id="tex-results-verdict" class="select tex-mini-select" aria-label="Filter by verdict"></select>
+                          <select id="tex-results-sort" class="select tex-mini-select" aria-label="Sort cases">
+                            <option value="default">Run order</option>
+                            <option value="severity">Worst first</option>
+                            <option value="duration">Slowest first</option>
+                            <option value="name">Name</option>
+                          </select>
+                          <button type="button" class="secondary tsg-small-btn hidden" id="tex-results-clear">Clear filters</button>
+                        </div>
+                        <div class="tex-card-body tex-scroll tex-table-wrap" id="tex-results-table"></div>
+                      </section>
+                      <section class="tcg-card">
+                        <div class="tcg-card-head"><span class="tcg-card-title">Case detail</span></div>
+                        <div class="tex-card-body tex-scroll tex-detail" id="tex-case-detail"></div>
+                      </section>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- History -->
+                <section class="tex-pane" data-tex-pane="history" id="tex-pane-history" role="tabpanel" aria-labelledby="tex-tab-history">
+                  <section class="tcg-card">
+                    <div class="tcg-card-head">
+                      <span class="tcg-card-title">Past executions</span>
+                      <div class="btn-row">
+                        <select id="tex-history-scope" class="select tex-mini-select" aria-label="History scope">
+                          <option value="all">All script sets</option>
+                          <option value="set">Selected script set</option>
+                        </select>
+                        <button type="button" class="secondary tsg-small-btn" id="tex-history-refresh">Refresh</button>
+                        <button type="button" class="primary tsg-small-btn" id="tex-compare-btn" disabled>Compare selected</button>
+                      </div>
+                    </div>
+                    <div class="tex-trend hidden" id="tex-trend" aria-label="Pass-rate trend per script set"></div>
+                    <div class="tex-card-body tex-table-wrap" id="tex-history"></div>
+                  </section>
+                  <section class="tcg-card tex-compare-card hidden" id="tex-compare-card">
+                    <div class="tcg-card-head"><span class="tcg-card-title">Comparison</span></div>
+                    <div class="tex-card-body tex-table-wrap" id="tex-compare"></div>
+                  </section>
+                </section>
+              </div>
             </div>
             <div id="view-rca" class="view">
               <div class="wb-breadcrumb">Workbench <span>/</span> RCA</div>
@@ -615,6 +967,43 @@
       </div>
     </div>
 
+    <div id="tex-file-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tex-file-title">
+      <div class="modal-backdrop" data-close-modal="tex-file-modal"></div>
+      <div class="modal-panel tex-file-panel">
+        <div class="modal-header">
+          <h4 id="tex-file-title">File</h4>
+          <div class="btn-row">
+            <button class="secondary tsg-small-btn" type="button" id="tex-file-download">Download</button>
+            <button class="modal-close" type="button" data-close-modal="tex-file-modal">Close</button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <pre class="tex-file-body" id="tex-file-body"></pre>
+          <img class="tex-file-media hidden" id="tex-file-image" alt="Captured image" />
+          <video class="tex-file-media hidden" id="tex-file-video" controls></video>
+        </div>
+      </div>
+    </div>
+
+    <div id="tex-dialog" class="modal hidden" role="alertdialog" aria-modal="true" aria-labelledby="tex-dialog-title"
+      aria-describedby="tex-dialog-body">
+      <div class="modal-backdrop" id="tex-dialog-backdrop"></div>
+      <div class="modal-panel tex-dialog-panel">
+        <div class="modal-header">
+          <h4 id="tex-dialog-title"></h4>
+        </div>
+        <div class="modal-body">
+          <div class="tex-dialog-body" id="tex-dialog-body"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="secondary" type="button" id="tex-dialog-cancel">Cancel</button>
+          <button class="primary" type="button" id="tex-dialog-ok">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tex-toasts" id="tex-toasts" aria-live="polite"></div>
+
     <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
       <div class="modal-backdrop" data-close-modal="settings-modal"></div>
       <div class="modal-panel">
@@ -635,6 +1024,10 @@
       </div>
     </div>
 
+    <script src="./data/test_case_briefs.js"></script>
     <script src="./app.js"></script>
+    <script src="./execution.js"></script>
+    <script src="./operator.js"></script>
+    <script src="./discovery.js"></script>
   </body>
 </html>

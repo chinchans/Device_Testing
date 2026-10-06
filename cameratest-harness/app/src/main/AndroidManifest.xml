@@ -7,6 +7,9 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
@@ -19,6 +22,9 @@
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
 
     <application
         android:label="Camera Test Harness"
@@ -26,12 +32,26 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         tools:ignore="MissingApplicationIcon">
-        <!-- No Activities: headless Camera2 instrumentation only. -->
+        <!-- Blank foreground screen used only by lifecycle / background probes.
+             Exported so the shell (`am start`) can bring it to the front. -->
+        <activity
+            android:name=".ProbeActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
+        <!-- Cold / warm launch probe: separate process so it can be killed between runs
+             without killing the instrumentation. -->
+        <activity
+            android:name=".LaunchProbeActivity"
+            android:exported="true"
+            android:process=":launchprobe"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
     </application>
 
     <instrumentation
         android:name="androidx.test.runner.AndroidJUnitRunner"
-        android:targetPackage="com.example.cameratest"
+        android:targetPackage="${applicationId}"
         android:functionalTest="true"
         android:handleProfiling="false"
         android:label="Camera Test Harness Instrumentation" />

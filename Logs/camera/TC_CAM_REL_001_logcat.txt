@@ -1,0 +1,375 @@
+--------- beginning of main
+09-30 14:55:16.930  6693  6693 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-30 14:55:16.934  6693  6693 I AndroidRuntime: Using default boot image
+09-30 14:55:16.934  6693  6693 I AndroidRuntime: Leaving lock profiling enabled
+09-30 14:55:16.936  6693  6693 I app_process: Core platform API reporting enabled, enforcing=false
+09-30 14:55:16.936  6693  6693 I app_process: Using CollectorTypeCC GC.
+09-30 14:55:16.989  6693  6693 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-30 14:55:16.997  6693  6693 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+09-30 14:55:16.997  6693  6693 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt72l.dat
+09-30 14:55:17.002  6693  6693 W app_process: Unexpected CPU variant for x86: x86_64.
+09-30 14:55:17.002  6693  6693 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+09-30 14:55:17.014  6693  6693 W libc    : Access denied finding property "ro.product.name_for_attestation"
+09-30 14:55:17.015  6693  6693 W libc    : Access denied finding property "ro.product.brand_for_attestation"
+09-30 14:55:17.015  6693  6693 W libc    : Access denied finding property "ro.product.model_for_attestation"
+09-30 14:55:17.015  6693  6693 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+09-30 14:55:17.013  6693  6693 W main    : type=1400 audit(0.0:54): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=86 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+09-30 14:55:17.017  6693  6693 D UiAutomationConnection: Created on user UserHandle{0}
+09-30 14:55:17.013  6693  6693 W main    : type=1400 audit(0.0:55): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=86 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+--------- beginning of system
+09-30 14:55:17.018   570   766 I ActivityManager: Force stopping com.example.cameratest appid=10192 user=0: start instr
+09-30 14:55:17.013  6693  6693 W main    : type=1400 audit(0.0:56): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=86 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+09-30 14:55:17.018   570   766 I ActivityManager: Killing 4193:com.google.android.gms.ui/u0a128 (adj 985): empty #17
+09-30 14:55:17.019   570   766 W ProcessStats: Tracking association SourceState{98ad9ea com.google.android.googlequicksearchbox:search/10132 BTop #3777} whose proc state 2 is better than process ProcessState{738b222 com.google.android.googlequicksearchbox:interactor/10132 pkg=com.google.android.googlequicksearchbox} proc state 4 (49 skipped)
+09-30 14:55:17.021   570   766 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10192; state: DISABLED
+09-30 14:55:17.021   570   766 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10192; state: DISABLED
+09-30 14:55:17.021   570   766 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10192; state: DISABLED
+09-30 14:55:17.021   570   766 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10192; state: ENABLED
+09-30 14:55:17.022   570   605 I libprocessgroup: Successfully killed process cgroup uid 10128 pid 4193 in 0ms
+09-30 14:55:17.022   570   649 D CompatibilityChangeReporter: Compat change id reported: 265195908; UID 10192; state: ENABLED
+09-30 14:55:17.022   570   603 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10192; state: ENABLED
+09-30 14:55:17.027   382   382 D Zygote  : Forked child process 6708
+09-30 14:55:17.027   570   603 I ActivityManager: Start proc 6708:com.example.cameratest/u0a192 for added application com.example.cameratest
+09-30 14:55:17.031   382   382 I Zygote  : Process 4193 exited due to signal 9 (Killed)
+09-30 14:55:17.052  6708  6708 I mple.cameratest: Late-enabling -Xcheck:jni
+09-30 14:55:17.067  6708  6708 I mple.cameratest: Using CollectorTypeCC GC.
+09-30 14:55:17.068  6708  6708 W mple.cameratest: Unexpected CPU variant for x86: x86_64.
+09-30 14:55:17.068  6708  6708 W mple.cameratest: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+09-30 14:55:17.089   457   467 I adbd    : jdwp connection from 6708
+09-30 14:55:17.094   570   953 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10192; state: DISABLED
+09-30 14:55:17.094   570   953 D CompatibilityChangeReporter: Compat change id reported: 273564678; UID 10192; state: DISABLED
+09-30 14:55:17.098  6708  6708 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10192; state: ENABLED
+09-30 14:55:17.098  6708  6708 D CompatibilityChangeReporter: Compat change id reported: 242716250; UID 10192; state: ENABLED
+09-30 14:55:17.101   570   953 D CompatibilityChangeReporter: Compat change id reported: 170503758; UID 10192; state: ENABLED
+09-30 14:55:17.104  6708  6708 W ziparchive: Unable to open '/data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/base.dm': No such file or directory
+09-30 14:55:17.104  6708  6708 W ziparchive: Unable to open '/data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/base.dm': No such file or directory
+09-30 14:55:17.118  6708  6708 D nativeloader: Configuring clns-6 for other apk /data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.example.cameratest
+09-30 14:55:17.123  6708  6708 V GraphicsEnvironment: Currently set values for:
+09-30 14:55:17.123  6708  6708 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-30 14:55:17.123  6708  6708 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-30 14:55:17.124  6708  6708 V GraphicsEnvironment: ANGLE GameManagerService for com.example.cameratest: false
+09-30 14:55:17.124  6708  6708 V GraphicsEnvironment: com.example.cameratest is not listed in per-application setting
+09-30 14:55:17.124  6708  6708 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-30 14:55:17.130  6708  6708 I AndroidJUnitRunner: newApplication android.app.Application
+09-30 14:55:17.130  6708  6708 I AndroidJUnitRunner: onCreate Bundle[mParcelledData.dataSize=104]
+09-30 14:55:17.131  6708  6708 D AndroidJUnitRunner: Use the raw file system for managing file I/O.
+09-30 14:55:17.135  6708  6708 V TestEventClient: No service name argument was given (testDiscoveryService, testRunEventService or orchestratorService)
+09-30 14:55:17.135  6708  6726 D AndroidJUnitRunner: onStart is called.
+09-30 14:55:17.135   570   953 I ActivityManager: Flag disabled. Ignoring finishAttachApplication from uid: 10192. pid: 6708
+09-30 14:55:17.138   570   953 D CompatibilityChangeReporter: Compat change id reported: 161145287; UID 10192; state: ENABLED
+09-30 14:55:17.138  6708  6726 I InstrConnection: Could not send broadcast or register receiver (isolatedProcess?)
+09-30 14:55:17.151  6708  6726 I TestRunner: run started: 1 tests
+09-30 14:55:17.152  6708  6726 I TestRunner: started: listCapabilities(com.example.cameratest.CapabilityTest)
+09-30 14:55:17.157  6708  6726 I CameraManagerGlobal: Connecting to camera service
+09-30 14:55:17.159  6708  6726 D CompatibilityChangeReporter: Compat change id reported: 250678880; UID 10192; state: ENABLED
+09-30 14:55:17.201   570   953 D ActivityManager: sync unfroze 4717 com.android.cameraextensions for 6
+09-30 14:55:17.201   570   953 D CompatibilityChangeReporter: Compat change id reported: 261072174; UID 10192; state: ENABLED
+09-30 14:55:17.233  6708  6726 I System.out: {"result":"PASS","cameras":[{"id":"1","facing":"FRONT","focalLength":4.380000114440918,"resolutions":["1920x1440","1920x1080","1920x960","1600x1200","1440x1080","1280x960","1280x720","1024x768","800x600","720x480","640x480","640x360","352x288","320x240"],"videoSizes":["1920x1440","1920x1080","1920x960","1600x1200","1440x1080","1280x960","1280x720","1024x768","800x600","720x480","640x480","640x360","352x288","320x240","176x144"],"fpsRanges":["15-15","7-30","15-30","30-30"],"afModes":["OFF","AUTO","MACRO","CONTINUOUS_VIDEO","CONTINUOUS_PICTURE"],"hasFlash":true,"zoomRatioRange":"1.0-12.931958","hardwareLevel":"FULL","capabilities":["BACKWARD_COMPATIBLE","READ_SENSOR_SETTINGS","MANUAL_SENSOR","BURST_CAPTURE","MANUAL_POST_PROCESSING","LOGICAL_MULTI_CAMERA","PRIVATE_REPROCESSING","CAPABILITY_16","YUV_REPROCESSING","RAW","CAPABILITY_17","CAPABILITY_18","CAPABILITY_19","CAPABILITY_20"],"burstCapture":true,"logicalMultiCamera":true,"zslReprocessing":true,"zslRequestKey":false,"afMaxRegions":1,"timestampSource":"REALTIME","equivalentFocalMm":26.9,"physicalCameras":[{"id":"3","focalLength":4.380000114440918,"equivalentFocalMm":26.9},{"id":"4","focalLength":5.840000152587891,"equivalentFocalMm":43.4}],"sceneModes":["PORTRAIT","NIGHT","HDR"],"extensions":[],"hlg10":true,"encoderVideoSizes":["1920x1440","1920x1080","1920x960","1600x1200","1440x1080","1280x960","1280x720","1024x768","800x600","720x480","640x480","640x360","352x288","320x240","176x144"],"aspectRatios":["4:3","16:9","18:9","3:2","1.22:1"]},{"id":"10","facing":"BACK","focalLength":1,"resolutions":["320x180","320x240","424x240","640x360","640x480"],"videoSizes":["320x180","320x240","424x240","640x360","640x480"],"fpsRanges":["2-15","15-15","2-30","30-30"],"afModes":["OFF","AUTO"],"hasFlash":false,"zoomRatioRange":"1.0-1.0","hardwareLevel":"LIMITED","capabilities":["BACKWARD_COMPATIBLE","READ_SENSOR_SETTINGS"],"burstCapture":false,"logicalMultiCamera":false,"zslReprocessing":false,"zslRequestKey":false,"afMaxRegions":0,"timestampSource":"UNKNOWN","equivalentFocalMm":27,"physicalCameras":[],"sceneModes":[],"extensions":[],"hlg10":false,"encoderVideoSizes":["320x180","320x240","424x240","640x360","640x480"],"aspectRatios":["16:9","4:3"]}],"sdk_int":34,"fingerprint":"google\/sdk_gphone64_x86_64\/emu64xa:14\/UE1A.230829.050\/12077443:userdebug\/dev-keys","manufacturer":"Google","model":"sdk_gphone64_x86_64","camera_privacy_toggle_supported":true,"concurrent_camera_ids":[["1"]]}
+09-30 14:55:17.234  6708  6726 I TestRunner: finished: listCapabilities(com.example.cameratest.CapabilityTest)
+09-30 14:55:17.235  6708  6726 I TestRunner: run finished: 1 tests, 0 failed, 0 ignored
+09-30 14:55:17.239   570   953 I ActivityManager: Force stopping com.example.cameratest appid=10192 user=0: finished inst
+09-30 14:55:17.241   570   953 E ActivityManager: Unable to freeze binder for 6708: -11
+--------- beginning of kernel
+09-30 14:55:17.282     0     0 I binder  : 570:953 ioctl 400c620e 7d4ea25e1930 returned -11
+09-30 14:55:17.282     0     0 I binder  : 570:953 ioctl 400c620e 7d4ea25e1930 returned -11
+09-30 14:55:17.241   570   589 D DisplayManagerService: Drop pending events for gone uid 10192
+09-30 14:55:17.241   570   953 I ActivityManager: Killing 6708:com.example.cameratest/u0a192 (adj 100): stop com.example.cameratest due to finished inst
+09-30 14:55:17.243  6693  6693 I app_process: System.exit called, status: 0
+09-30 14:55:17.243  6693  6693 I AndroidRuntime: VM exiting with result code 0.
+09-30 14:55:17.294     0     0 W binder_debug: 5 callbacks suppressed
+09-30 14:55:17.294     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+09-30 14:55:17.295     0     0 I binder  : undelivered transaction 248208, process died.
+09-30 14:55:17.253   570   583 V ActivityManager: Got obituary of 6708:com.example.cameratest
+09-30 14:55:17.255   382   382 I Zygote  : Process 6708 exited due to signal 9 (Killed)
+09-30 14:55:17.295     0     0 I binder  : undelivered transaction 248217, process died.
+09-30 14:55:17.296     0     0 I binder  : undelivered transaction 248202, process died.
+09-30 14:55:17.324  6735  6735 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-30 14:55:17.328  6735  6735 I AndroidRuntime: Using default boot image
+09-30 14:55:17.328  6735  6735 I AndroidRuntime: Leaving lock profiling enabled
+09-30 14:55:17.329  6735  6735 I app_process: Core platform API reporting enabled, enforcing=false
+09-30 14:55:17.330  6735  6735 I app_process: Using CollectorTypeCC GC.
+09-30 14:55:17.383  6735  6735 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-30 14:55:17.391  6735  6735 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+09-30 14:55:17.391  6735  6735 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt72l.dat
+09-30 14:55:17.395  6735  6735 W app_process: Unexpected CPU variant for x86: x86_64.
+09-30 14:55:17.395  6735  6735 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+09-30 14:55:17.408  6735  6735 W libc    : Access denied finding property "ro.product.name_for_attestation"
+09-30 14:55:17.408  6735  6735 W libc    : Access denied finding property "ro.product.brand_for_attestation"
+09-30 14:55:17.405  6735  6735 W main    : type=1400 audit(0.0:57): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=86 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+09-30 14:55:17.405  6735  6735 W main    : type=1400 audit(0.0:58): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=86 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+09-30 14:55:17.411  6735  6735 W libc    : Access denied finding property "ro.product.model_for_attestation"
+09-30 14:55:17.412  6735  6735 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+09-30 14:55:17.450     0     0 W audit   : audit_lost=3 audit_rate_limit=5 audit_backlog_limit=64
+09-30 14:55:17.452     0     0 E audit   : rate limit exceeded
+09-30 14:55:17.415  6735  6735 D UiAutomationConnection: Created on user UserHandle{0}
+09-30 14:55:17.416   570  1608 I ActivityManager: Force stopping com.example.cameratest appid=10192 user=0: start instr
+09-30 14:55:17.417   570  1608 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10192; state: DISABLED
+09-30 14:55:17.417   570  1608 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10192; state: DISABLED
+09-30 14:55:17.417   570  1608 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10192; state: DISABLED
+09-30 14:55:17.417   570  1608 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10192; state: ENABLED
+09-30 14:55:17.418   570   603 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10192; state: ENABLED
+09-30 14:55:17.421   382   382 D Zygote  : Forked child process 6750
+09-30 14:55:17.422   570   603 I ActivityManager: Start proc 6750:com.example.cameratest/u0a192 for added application com.example.cameratest
+09-30 14:55:17.439  6750  6750 I mple.cameratest: Late-enabling -Xcheck:jni
+09-30 14:55:17.452  6750  6750 I mple.cameratest: Using CollectorTypeCC GC.
+09-30 14:55:17.452  6750  6750 W mple.cameratest: Unexpected CPU variant for x86: x86_64.
+09-30 14:55:17.452  6750  6750 W mple.cameratest: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+09-30 14:55:17.485   457   467 I adbd    : jdwp connection from 6750
+09-30 14:55:17.492  6750  6750 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10192; state: ENABLED
+09-30 14:55:17.493  6750  6750 D CompatibilityChangeReporter: Compat change id reported: 242716250; UID 10192; state: ENABLED
+09-30 14:55:17.500  6750  6750 W ziparchive: Unable to open '/data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/base.dm': No such file or directory
+09-30 14:55:17.500  6750  6750 W ziparchive: Unable to open '/data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/base.dm': No such file or directory
+09-30 14:55:17.513  6750  6750 D nativeloader: Configuring clns-6 for other apk /data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~nwSRpSTcgQtwtkELGQkvhQ==/com.example.cameratest-YVm_Yrtwiuyt61kuqaek2w==/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.example.cameratest
+09-30 14:55:17.520  6750  6750 V GraphicsEnvironment: Currently set values for:
+09-30 14:55:17.520  6750  6750 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-30 14:55:17.520  6750  6750 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-30 14:55:17.520  6750  6750 V GraphicsEnvironment: ANGLE GameManagerService for com.example.cameratest: false
+09-30 14:55:17.520  6750  6750 V GraphicsEnvironment: com.example.cameratest is not listed in per-application setting
+09-30 14:55:17.520  6750  6750 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-30 14:55:17.525  6750  6750 I AndroidJUnitRunner: newApplication android.app.Application
+09-30 14:55:17.525  6750  6750 I AndroidJUnitRunner: onCreate Bundle[mParcelledData.dataSize=204]
+09-30 14:55:17.526  6750  6750 D AndroidJUnitRunner: Use the raw file system for managing file I/O.
+09-30 14:55:17.530  6750  6750 V TestEventClient: No service name argument was given (testDiscoveryService, testRunEventService or orchestratorService)
+09-30 14:55:17.530  6750  6768 D AndroidJUnitRunner: onStart is called.
+09-30 14:55:17.531   570  1608 I ActivityManager: Flag disabled. Ignoring finishAttachApplication from uid: 10192. pid: 6750
+09-30 14:55:17.534  6750  6768 I InstrConnection: Could not send broadcast or register receiver (isolatedProcess?)
+09-30 14:55:17.547  6750  6768 I TestRunner: run started: 1 tests
+09-30 14:55:17.549  6750  6768 I TestRunner: started: endurance(com.example.cameratest.CameraOpenCloseEnduranceTest)
+09-30 14:55:17.561  6750  6768 I UiAutomation: Initialized for user 0 on display 0
+09-30 14:55:17.563   570  1608 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+09-30 14:55:17.563   570  1608 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation) when called by user 0
+09-30 14:55:17.566   570  1608 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-30 14:55:17.567  6750  6771 V UiAutomation: Init UiAutomation@7788053[id=1, displayId=0, flags=1]
+09-30 14:55:17.567  1446  1474 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Predicting[0]: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: EchoTargets: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Filtered by AiAi flag check: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Predicting[0]: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: EchoTargets: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Filtered by AiAi flag check: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Predicting[0]: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: EchoTargets: 
+09-30 14:55:17.569  1446  1697 I AiAiEcho: Filtered by AiAi flag check: 
+09-30 14:55:17.570  1446  1697 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+09-30 14:55:17.570  1446  1697 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-30 14:55:17.571  1446  1697 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-30 14:55:17.572  1446  1697 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-30 14:55:17.572   570   570 D BatterySaverPolicy: accessibility changed to true, updating policy.
+09-30 14:55:17.581  1906  2279 I A       : NGA disabled since it's running Panthera and at least one a11y feature is on.
+09-30 14:55:17.581  1906  2279 I A       : Nga state changed to NgaStateDetails{state=DISABLED, isSpecialExperience=false}
+09-30 14:55:17.584   794   794 D SsMediaDataProvider: Forwarding Smartspace updates []
+09-30 14:55:17.584   794   794 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+09-30 14:55:17.587  1517  1903 I A       : Unsubscribed to apa or classic variant change.
+09-30 14:55:17.588  1517  2871 I A       : APA or Classic session decision: SessionDecision(sessionVariance=CLASSIC, platformVariance=CLASSIC, justification=CURRENT_PLATFORM_VARIANCE).
+09-30 14:55:17.588  1517  2871 I A       : [Memory] eligibility: StashEligibility{4}
+09-30 14:55:17.589  6750  6768 D CompatibilityChangeReporter: Compat change id reported: 250678880; UID 10192; state: ENABLED
+09-30 14:55:17.591  6750  6768 I CameraManagerGlobal: Connecting to camera service
+09-30 14:55:17.601   570  1608 W System.err: java.lang.SecurityException: Caller with uid 1047 is not android
+09-30 14:55:17.601   570  1608 W System.err: 	at com.android.server.devicepolicy.DevicePolicyManagerService.getCallerIdentity(DevicePolicyManagerService.java:2368)
+09-30 14:55:17.601   570  1608 W System.err: 	at com.android.server.devicepolicy.DevicePolicyManagerService.getCameraDisabled(DevicePolicyManagerService.java:9311)
+09-30 14:55:17.601   570  1608 W System.err: 	at android.app.admin.DevicePolicyManager.getCameraDisabled(DevicePolicyManager.java:8423)
+09-30 14:55:17.601   570  1608 W System.err: 	at com.android.server.camera.CameraServiceProxy$2.isCameraDisabled(CameraServiceProxy.java:622)
+09-30 14:55:17.601   570  1608 W System.err: 	at android.hardware.ICameraServiceProxy$Stub.onTransact(ICameraServiceProxy.java:174)
+09-30 14:55:17.601   570  1608 W System.err: 	at android.os.Binder.execTransactInternal(Binder.java:1344)
+09-30 14:55:17.601   570  1608 W System.err: 	at android.os.Binder.execTransact(Binder.java:1275)
+09-30 14:55:17.601   481  1814 I CameraService: CameraService::connect call (PID 6750 "com.example.cameratest", camera ID 10) and Camera API version 2
+09-30 14:55:17.602   481  1814 I Camera2ClientBase: Camera 10: Opened. Client: com.example.cameratest (PID 6750, UID 10192)
+09-30 14:55:17.602   481  1814 I CameraDeviceClient: CameraDeviceClient 10: Opened
+09-30 14:55:17.602   481  1814 I CameraService: makeClient: Camera2 API, override to portrait 1
+09-30 14:55:17.604   570  1608 E CameraService_proxy: Recent tasks don't include camera client package name: com.example.cameratest
+09-30 14:55:17.608   481  1814 D cameraserver: FGS Logger Transaction failed
+09-30 14:55:17.608   481  1814 D cameraserver: -129
+09-30 14:55:17.613  6750  6768 D CompatibilityChangeReporter: Compat change id reported: 236825255; UID 10192; state: ENABLED
+09-30 14:55:17.617   389   430 D camera.provider.ranchu: CameraDeviceSession:configureStreams:176 cfg={ .streams.size=1, .operationMode=0, .cfg.sessionParams.size()=64,  .streamConfigCounter=1, .multiResolutionInputImage=false }
+09-30 14:55:17.617   389   430 D camera.provider.ranchu: CameraDeviceSession:configureStreams:199 stream={ .id=0, .streamType=0, .width=640, .height=480, .format=YCBCR_420_888, .usage=0x3, .dataSpace={ .low=0x0, .s=2, .t=3, .r=1 }, .rotation=0, .physicalCameraId='', .bufferSize=0, .groupId=-1, .dynamicRangeProfile=0x1 }
+09-30 14:55:17.935   481  1814 D Camera3-Device: Set real time priority for request queue thread (tid 6784)
+09-30 14:55:17.944   181   181 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+09-30 14:55:17.944  6750  6765 I Gralloc4: mapper 4.x is not supported
+09-30 14:55:17.982     0     0 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+09-30 14:55:18.000   481  1814 D Camera2ClientBase: Camera 10: start to disconnect
+09-30 14:55:18.000   481  1814 D Camera2ClientBase: Camera 10: serializationLock acquired
+09-30 14:55:18.000   481  1814 D Camera2ClientBase: Camera 10: Shutting down
+09-30 14:55:18.000   481  1814 D Camera2ClientBase: Camera 10: start to cacheDump
+09-30 14:55:18.040   481  1814 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.040   481  1814 I CameraLatencyHistogram: ProcessCaptureRequest latency histogram (3) samples:
+09-30 14:55:18.040   481  1814 I CameraLatencyHistogram:        40     80    120    160    200    240    280    320    360    inf (max ms)
+09-30 14:55:18.040   481  1814 I CameraLatencyHistogram:      100.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00 (%)
+09-30 14:55:18.095   481  1814 I CameraLatencyHistogram: Stream 0 dequeueBuffer latency histogram (3) samples:
+09-30 14:55:18.095   481  1814 I CameraLatencyHistogram:         5     10     15     20     25     30     35     40     45    inf (max ms)
+09-30 14:55:18.095   481  1814 I CameraLatencyHistogram:      33.33   0.00   0.00   0.00   33.33   0.00   33.33   0.00   0.00   0.00 (%)
+09-30 14:55:18.095   481  1814 I Camera3-Device: disconnectImpl: X
+09-30 14:55:18.098   481  1814 I CameraService: disconnect: Disconnected client for camera 10 for PID 6750
+09-30 14:55:18.098   481  1814 D cameraserver: FGS Logger Transaction failed
+09-30 14:55:18.098   481  1814 D cameraserver: -129
+09-30 14:55:18.099   794   900 D EGL_emulation: app_time_stats: avg=18070.86ms min=18070.86ms max=18070.86ms count=1
+09-30 14:55:18.102   570   953 W System.err: java.lang.SecurityException: Caller with uid 1047 is not android
+09-30 14:55:18.103   570   953 W System.err: 	at com.android.server.devicepolicy.DevicePolicyManagerService.getCallerIdentity(DevicePolicyManagerService.java:2368)
+09-30 14:55:18.103   570   953 W System.err: 	at com.android.server.devicepolicy.DevicePolicyManagerService.getCameraDisabled(DevicePolicyManagerService.java:9311)
+09-30 14:55:18.103   570   953 W System.err: 	at android.app.admin.DevicePolicyManager.getCameraDisabled(DevicePolicyManager.java:8423)
+09-30 14:55:18.103   570   953 W System.err: 	at com.android.server.camera.CameraServiceProxy$2.isCameraDisabled(CameraServiceProxy.java:622)
+09-30 14:55:18.103   570   953 W System.err: 	at android.hardware.ICameraServiceProxy$Stub.onTransact(ICameraServiceProxy.java:174)
+09-30 14:55:18.103   570   953 W System.err: 	at android.os.Binder.execTransactInternal(Binder.java:1344)
+09-30 14:55:18.103   570   953 W System.err: 	at android.os.Binder.execTransact(Binder.java:1275)
+09-30 14:55:18.103   481  1814 I CameraService: CameraService::connect call (PID 6750 "com.example.cameratest", camera ID 10) and Camera API version 2
+09-30 14:55:18.103   481  1814 I Camera2ClientBase: Camera 10: Opened. Client: com.example.cameratest (PID 6750, UID 10192)
+09-30 14:55:18.103   481  1814 I CameraDeviceClient: CameraDeviceClient 10: Opened
+09-30 14:55:18.103   481  1814 I CameraService: makeClient: Camera2 API, override to portrait 1
+09-30 14:55:18.106   570  1608 E CameraService_proxy: Recent tasks don't include camera client package name: com.example.cameratest
+09-30 14:55:18.106   481  1814 D cameraserver: FGS Logger Transaction failed
+09-30 14:55:18.106   481  1814 D cameraserver: -129
+09-30 14:55:18.111   389   430 D camera.provider.ranchu: CameraDeviceSession:configureStreams:176 cfg={ .streams.size=1, .operationMode=0, .cfg.sessionParams.size()=64,  .streamConfigCounter=1, .multiResolutionInputImage=false }
+09-30 14:55:18.111   389   430 D camera.provider.ranchu: CameraDeviceSession:configureStreams:199 stream={ .id=0, .streamType=0, .width=640, .height=480, .format=YCBCR_420_888, .usage=0x3, .dataSpace={ .low=0x0, .s=2, .t=3, .r=1 }, .rotation=0, .physicalCameraId='', .bufferSize=0, .groupId=-1, .dynamicRangeProfile=0x1 }
+09-30 14:55:18.318   481  1814 D Camera3-Device: Set real time priority for request queue thread (tid 6794)
+09-30 14:55:18.419   481  1814 D Camera2ClientBase: Camera 10: start to disconnect
+09-30 14:55:18.419   481  1814 D Camera2ClientBase: Camera 10: serializationLock acquired
+09-30 14:55:18.420   481  1814 D Camera2ClientBase: Camera 10: Shutting down
+09-30 14:55:18.420   481  1814 D Camera2ClientBase: Camera 10: start to cacheDump
+09-30 14:55:18.449   481  1814 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.449   481  1814 I CameraLatencyHistogram: ProcessCaptureRequest latency histogram (5) samples:
+09-30 14:55:18.449   481  1814 I CameraLatencyHistogram:        40     80    120    160    200    240    280    320    360    inf (max ms)
+09-30 14:55:18.449   481  1814 I CameraLatencyHistogram:      100.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00 (%)
+09-30 14:55:18.510   481  1814 I CameraLatencyHistogram: Stream 0 dequeueBuffer latency histogram (5) samples:
+09-30 14:55:18.510   481  1814 I CameraLatencyHistogram:         5     10     15     20     25     30     35     40     45    inf (max ms)
+09-30 14:55:18.510   481  1814 I CameraLatencyHistogram:      60.00   0.00   0.00   0.00   0.00   0.00   20.00   0.00   0.00   20.00 (%)
+09-30 14:55:18.510   481  1814 I Camera3-Device: disconnectImpl: X
+09-30 14:55:18.511   481  1814 I CameraService: disconnect: Disconnected client for camera 10 for PID 6750
+09-30 14:55:18.511   481  1814 D cameraserver: FGS Logger Transaction failed
+09-30 14:55:18.511   481  1814 D cameraserver: -129
+09-30 14:55:18.513   570   953 W System.err: java.lang.SecurityException: Caller with uid 1047 is not android
+09-30 14:55:18.513   570   953 W System.err: 	at com.android.server.devicepolicy.DevicePolicyManagerService.getCallerIdentity(DevicePolicyManagerService.java:2368)
+09-30 14:55:18.513   570   953 W System.err: 	at com.android.server.devicepolicy.DevicePolicyManagerService.getCameraDisabled(DevicePolicyManagerService.java:9311)
+09-30 14:55:18.513   570   953 W System.err: 	at android.app.admin.DevicePolicyManager.getCameraDisabled(DevicePolicyManager.java:8423)
+09-30 14:55:18.513   570   953 W System.err: 	at com.android.server.camera.CameraServiceProxy$2.isCameraDisabled(CameraServiceProxy.java:622)
+09-30 14:55:18.513   570   953 W System.err: 	at android.hardware.ICameraServiceProxy$Stub.onTransact(ICameraServiceProxy.java:174)
+09-30 14:55:18.513   570   953 W System.err: 	at android.os.Binder.execTransactInternal(Binder.java:1344)
+09-30 14:55:18.513   570   953 W System.err: 	at android.os.Binder.execTransact(Binder.java:1275)
+09-30 14:55:18.514   481  1814 I CameraService: CameraService::connect call (PID 6750 "com.example.cameratest", camera ID 10) and Camera API version 2
+09-30 14:55:18.514   481  1814 I Camera2ClientBase: Camera 10: Opened. Client: com.example.cameratest (PID 6750, UID 10192)
+09-30 14:55:18.514   481  1814 I CameraDeviceClient: CameraDeviceClient 10: Opened
+09-30 14:55:18.514   481  1814 I CameraService: makeClient: Camera2 API, override to portrait 1
+09-30 14:55:18.516   570  2016 E CameraService_proxy: Recent tasks don't include camera client package name: com.example.cameratest
+09-30 14:55:18.516   481  1814 D cameraserver: FGS Logger Transaction failed
+09-30 14:55:18.516   481  1814 D cameraserver: -129
+09-30 14:55:18.519   389   429 D camera.provider.ranchu: CameraDeviceSession:configureStreams:176 cfg={ .streams.size=1, .operationMode=0, .cfg.sessionParams.size()=64,  .streamConfigCounter=1, .multiResolutionInputImage=false }
+09-30 14:55:18.519   389   429 D camera.provider.ranchu: CameraDeviceSession:configureStreams:199 stream={ .id=0, .streamType=0, .width=640, .height=480, .format=YCBCR_420_888, .usage=0x3, .dataSpace={ .low=0x0, .s=2, .t=3, .r=1 }, .rotation=0, .physicalCameraId='', .bufferSize=0, .groupId=-1, .dynamicRangeProfile=0x1 }
+09-30 14:55:18.725   481  1814 D Camera3-Device: Set real time priority for request queue thread (tid 6804)
+09-30 14:55:18.824   481  1814 D Camera2ClientBase: Camera 10: start to disconnect
+09-30 14:55:18.824   481  1814 D Camera2ClientBase: Camera 10: serializationLock acquired
+09-30 14:55:18.824   481  1814 D Camera2ClientBase: Camera 10: Shutting down
+09-30 14:55:18.824   481  1814 D Camera2ClientBase: Camera 10: start to cacheDump
+09-30 14:55:18.862   481  1814 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.862   481  1814 I CameraLatencyHistogram: ProcessCaptureRequest latency histogram (6) samples:
+09-30 14:55:18.862   481  1814 I CameraLatencyHistogram:        40     80    120    160    200    240    280    320    360    inf (max ms)
+09-30 14:55:18.862   481  1814 I CameraLatencyHistogram:      100.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00 (%)
+09-30 14:55:18.918   481  1814 I CameraLatencyHistogram: Stream 0 dequeueBuffer latency histogram (6) samples:
+09-30 14:55:18.918   481  1814 I CameraLatencyHistogram:         5     10     15     20     25     30     35     40     45    inf (max ms)
+09-30 14:55:18.918   481  1814 I CameraLatencyHistogram:      83.33   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   16.67 (%)
+09-30 14:55:18.918   481  1814 I Camera3-Device: disconnectImpl: X
+09-30 14:55:18.919   481  1814 I CameraService: disconnect: Disconnected client for camera 10 for PID 6750
+09-30 14:55:18.919   481  1814 D cameraserver: FGS Logger Transaction failed
+09-30 14:55:18.919   481  1814 D cameraserver: -129
+09-30 14:55:18.984     0     0 I logd    : logdr: UID=2000 GID=2000 PID=6810 n tail=0 logMask=4 pid=0 start=0ns deadline=0ns
+09-30 14:55:18.966  6750  6768 I System.out: {"result":"PASS","metric_value":3,"failures":0,"thermal_abort":false,"operation":"open_close","completed_cycles":3,"requested_cycles":3,"elapsed_sec":1.38,"thermal_status_end":0,"fatal_camera_errors":0,"camera_service_errors":0,"camera_device_errors":0,"camera_disconnects":0,"other_camera_errors":0,"app_crash_count":0,"anr_count":0,"crashed_packages":"","cameraserver_restarted":false,"camera_id":"10"}
+09-30 14:55:18.967  6750  6768 I TestRunner: finished: endurance(com.example.cameratest.CameraOpenCloseEnduranceTest)
+09-30 14:55:18.969  6750  6768 I TestRunner: run finished: 1 tests, 0 failed, 0 ignored
+09-30 14:55:18.973   570   583 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-30 14:55:18.973   570   583 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+09-30 14:55:18.974   570   570 D BatterySaverPolicy: accessibility changed to false, updating policy.
+09-30 14:55:18.974  1446  1852 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+09-30 14:55:18.976  1446  1697 I AiAiEcho: Predicting[0]: 
+09-30 14:55:18.976  1446  1697 I AiAiEcho: EchoTargets: 
+09-30 14:55:18.976  1446  1697 I AiAiEcho: Filtered by AiAi flag check: 
+09-30 14:55:18.976  1446  1697 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+09-30 14:55:18.976   570   953 I ActivityManager: Force stopping com.example.cameratest appid=10192 user=0: finished inst
+09-30 14:55:18.976  1446  1697 I AiAiEcho: Predicting[0]: 
+09-30 14:55:18.976  1446  1697 I AiAiEcho: EchoTargets: 
+09-30 14:55:18.976  1446  1697 I AiAiEcho: Filtered by AiAi flag check: 
+09-30 14:55:18.976  1446  1697 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+09-30 14:55:18.977  1446  1697 I AiAiEcho: Predicting[0]: 
+09-30 14:55:18.977  1446  1697 I AiAiEcho: EchoTargets: 
+09-30 14:55:18.977  1446  1697 I AiAiEcho: Filtered by AiAi flag check: 
+09-30 14:55:18.977  1446  1697 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+09-30 14:55:19.018     0     0 I binder  : 570:953 ioctl 400c620e 7d4ea25e1930 returned -11
+09-30 14:55:19.019     0     0 I binder  : 570:953 ioctl 400c620e 7d4ea25e1930 returned -11
+09-30 14:55:18.977   570   953 E ActivityManager: Unable to freeze binder for 6750: -11
+09-30 14:55:18.978   570   589 D DisplayManagerService: Drop pending events for gone uid 10192
+09-30 14:55:18.978  1906  2315 I A       : NGA enabled in interactor.
+09-30 14:55:18.979  1906  2315 I A       : Nga state changed to NgaStateDetails{state=ENABLED, isSpecialExperience=false}
+09-30 14:55:18.979  1446  1697 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-30 14:55:18.979   570   953 I ActivityManager: Killing 6750:com.example.cameratest/u0a192 (adj 0): stop com.example.cameratest due to finished inst
+09-30 14:55:18.980  1446  1697 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-30 14:55:18.980  1446  1697 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-30 14:55:18.981   794   794 D SsMediaDataProvider: Forwarding Smartspace updates []
+09-30 14:55:18.982  6735  6735 I app_process: System.exit called, status: 0
+09-30 14:55:18.982  6735  6735 I AndroidRuntime: VM exiting with result code 0.
+09-30 14:55:18.983   794   794 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+09-30 14:55:18.986  1517  2871 I A       : Initializing all components
+09-30 14:55:18.986  1517  1903 I A       : onIsEnabledChanged, isEnabled: false
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 I A       : onOpaVisibilityChanged: false
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.987  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 I A       : Setting session to type: NO_SESSION
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.988  1517  2871 I A       : APA or Classic session decision: SessionDecision(sessionVariance=CLASSIC, platformVariance=CLASSIC, justification=CURRENT_PLATFORM_VARIANCE).
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  2871 I A       : [Memory] eligibility: StashEligibility{6}
+09-30 14:55:18.989  1517  1903 I A       : setNavBarVisible: GestureNavBarVisible{navbarVisible=true}
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  1903 W A       : Disposing empty manager. Did you forgot to subscribe observables?
+09-30 14:55:18.989  1517  1903 I A       : onDisabled. Registered: false
+09-30 14:55:18.991   570   953 V ActivityManager: Got obituary of 6750:com.example.cameratest
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: start to disconnect
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: serializationLock acquired
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: Shutting down
+09-30 14:55:18.991   481   555 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.991   481   555 I Camera2ClientBase: ~Camera2ClientBase: Client object's dtor for Camera Id 10 completed. Client was: com.example.cameratest (PID 6750, UID 10192)
+09-30 14:55:18.991   481   555 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.991   481   555 I Camera3DeviceInjectionMethods: injectionDisconnectImpl: Injection camera disconnect
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: start to disconnect
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: serializationLock acquired
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: Shutting down
+09-30 14:55:18.991   481   555 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.991   481   555 I Camera2ClientBase: ~Camera2ClientBase: Client object's dtor for Camera Id 10 completed. Client was: com.example.cameratest (PID 6750, UID 10192)
+09-30 14:55:18.991   481   555 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.991   481   555 I Camera3DeviceInjectionMethods: injectionDisconnectImpl: Injection camera disconnect
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: start to disconnect
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: serializationLock acquired
+09-30 14:55:18.991   481   555 D Camera2ClientBase: Camera 10: Shutting down
+09-30 14:55:18.991   481   555 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.991   481   555 I Camera2ClientBase: ~Camera2ClientBase: Client object's dtor for Camera Id 10 completed. Client was: com.example.cameratest (PID 6750, UID 10192)
+09-30 14:55:18.991   481   555 I Camera3-Device: disconnectImpl: E
+09-30 14:55:18.991   481   555 I Camera3DeviceInjectionMethods: injectionDisconnectImpl: Injection camera disconnect
+09-30 14:55:18.994  1517  1874 I A       : Initialize
+09-30 14:55:18.995  1517  1874 I A       : stopListening(NGA_PAUSED_UNKNOWN_REASON, NGA_CREATE), idleOverride=NOT_LISTENING
+09-30 14:55:18.997   382   382 I Zygote  : Process 6750 exited due to signal 9 (Killed)
+09-30 14:55:19.002  1517  1517 E GsaVoiceSerConnection: gsaVis null binding
+09-30 14:55:19.004  1517  1874 I NgaEntryPointEventSendr: setupConnection
+09-30 14:55:19.006   914  1160 D BtGatt.ScanManager: uid 10128 isForeground true scanMode -1
+09-30 14:55:19.010  1517  1874 I NgaEntryPointEventSendr: State changed: Disconnected => Connecting
+09-30 14:55:19.014  1517  1874 I A       : on opa visibility changed false

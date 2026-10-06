@@ -1,0 +1,3724 @@
+{
+  "feature": "display",
+  "category": "functionality",
+  "suite_id": "DISPLAY_FUNCTIONAL_CODEGEN_V1",
+  "test_case_count": 20,
+  "suite_metadata": {
+    "suite_id": "DISPLAY_FUNCTIONAL_CODEGEN_V1",
+    "suite_name": "Display Functional Codegen-Ready Suite",
+    "schema_version": "1.0",
+    "test_case_count": 20,
+    "schema_note": "Same schema as Backend/data/test_cases/camera/functionality.json, extended with harness_requirement, real_world_reference and explicit ADB commands.",
+    "dut_spec_reference": {
+      "source_documents": [
+        "Product_Spec_Docs/91_mobiles_realme GT Master Edition 5G - Full Specifications & Price in India.pdf",
+        "Product_Spec_Docs/Realme GT Master Edition Phone Price, Specs, Comparison and Reviews _ Gadgets 360.pdf"
+      ],
+      "device_model": "realme GT Master Edition 5G",
+      "chipset": "Qualcomm Snapdragon 778G",
+      "launch_android_version": "Android 11",
+      "variables": {
+        "SPEC_PANEL_TYPE": "Super AMOLED",
+        "SPEC_SCREEN_SIZE_IN": 6.43,
+        "SPEC_RESOLUTION": "1080x2400",
+        "SPEC_ASPECT_RATIO": "20:9",
+        "SPEC_PPI": 409,
+        "SPEC_PEAK_REFRESH_HZ": 120,
+        "SPEC_PEAK_BRIGHTNESS_NITS": 1000,
+        "SPEC_CUTOUT_TYPE": "punch-hole (single, front camera)",
+        "SPEC_FINGERPRINT": "in-display (optical)",
+        "SPEC_DISPLAY_SENSORS": "ambient light, proximity"
+      },
+      "not_stated_in_spec_documents": [
+        "touch sampling rate",
+        "HDR10 / HDR10+ certification (91mobiles lists 'No HDR streaming available on Netflix' as a con)",
+        "colour gamut coverage (DCI-P3 / sRGB)",
+        "PWM dimming frequency / DC dimming",
+        "LTPO / minimum adaptive refresh rate"
+      ],
+      "rule": "Values not stated in the spec documents are discovered from the device at runtime and are never invented. Where a case compares against SPEC_* it uses the value above unless overridden with --var SPEC_X=value."
+    },
+    "harness_contract": {
+      "status": "NOT_YET_IMPLEMENTED - proposed contract; cases that need it state so in test_metadata.harness_requirement",
+      "harness_package": "com.example.displaytest",
+      "runner": "com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+      "invocation": "adb shell am instrument -w -r [-e key value ...] -e class com.example.displaytest.<ClassName> com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+      "result_transport": "Exactly one line 'INSTRUMENTATION_STATUS: harness_json=<single-line JSON>' per operation (same convention as cameratest-harness 2.0.0); host parses the last such line.",
+      "result_values": [
+        "PASS",
+        "FAIL",
+        "SKIPPED",
+        "NOT_APPLICABLE",
+        "BLOCKED_PRECONDITION",
+        "HARNESS_ERROR"
+      ],
+      "minimum_output_keys": [
+        "result",
+        "error (when result != PASS)",
+        "metric fields named in the case SLAs"
+      ],
+      "timing_clock": "SystemClock.elapsedRealtimeNanos / Choreographer frameTimeNanos (monotonic)",
+      "helper_apks": {
+        "com.example.displaytest.unprivileged": "No special permissions (no WRITE_SETTINGS, no SYSTEM_ALERT_WINDOW, targetSdk = device SDK). Used for negative security checks.",
+        "com.example.displaytest.overlay": "Declares SYSTEM_ALERT_WINDOW; AppOp is toggled by the host with 'appops set'."
+      },
+      "device_admin_component": "com.example.displaytest/.admin.TestDeviceAdminReceiver (android:testOnly=\"true\" so the host can remove it)",
+      "test_assets": {
+        "/sdcard/DisplayTest/hdr10_pq_1080p_10s.mp4": "HEVC Main10, BT.2020 PQ, static HDR10 metadata",
+        "/sdcard/DisplayTest/h264_1080p_23976_60s.mp4": "23.976 fps cadence clip with per-frame counter overlay",
+        "/sdcard/DisplayTest/h264_1080p_30_60s.mp4": "30 fps cadence clip with per-frame counter overlay",
+        "/sdcard/DisplayTest/h264_1080p_60_60s.mp4": "60 fps cadence clip with per-frame counter overlay"
+      }
+    },
+    "codegen_rules": [
+      "Read test_metadata.harness_requirement (or harness_requirement for functionality cases) before generating code.",
+      "harness_requirement.required == false: generate a pure host script (Python + ADB); do not reference any harness class.",
+      "harness_requirement.required == true: call only the named harness_class / helper_apks through 'adb shell am instrument'. If the package is not installed, classify BLOCKED_PRECONDITION - never FAIL and never substitute another method.",
+      "harness_requirement.lab_equipment non-empty: the script must pause for or accept the measured values via --var NAME=value (names listed in payload.manual_inputs); missing values -> BLOCKED_PRECONDITION.",
+      "Snapshot every setting a case modifies before the first mutation (setup step 'Snapshot display settings') and restore it in teardown even when the case fails. A BASELINE_* value of 'null' is restored with 'settings delete'.",
+      "Capability-gated cases resolve their capability first; absent capability -> NOT_APPLICABLE with the evidence line that proved it.",
+      "Never use 'input' event injection as a substitute for physical-touch or photon measurements; cases state when a measurement is software-path only.",
+      "All loops are bounded by explicit iteration counts or monotonic-time durations; poll intervals are stated per step.",
+      "Thermal status >= SEVERE (dumpsys thermalservice 'Current Status: 3' or higher) aborts the workload safely and is reported, not hidden.",
+      "Numeric SLA targets are defaults derived from the DUT spec / industry practice; product or golden-build baselines override them."
+    ],
+    "failure_classifications": {
+      "DUT_FIRMWARE_DEFECT": "Platform/OEM software behaviour violates the requirement.",
+      "DUT_HARDWARE_DEFECT": "Panel, touch controller or sensor behaves out of spec (lab-measured).",
+      "PERFORMANCE_REGRESSION": "Requirement met functionally but outside the performance target.",
+      "SYSTEM_SERVICE_CRASH": "SurfaceFlinger, SystemUI, system_server or HWC crashed/restarted.",
+      "APP_CRASH": "Harness, helper or target app crashed or ANR'd.",
+      "SECURITY_VULNERABILITY": "Protected content, setting or UI surface was accessible without authorization.",
+      "THERMAL_LIMITATION": "Result driven by thermal mitigation; recorded with thermal evidence.",
+      "TEST_ENVIRONMENT": "Precondition, harness or lab setup problem - not a DUT verdict."
+    },
+    "suite_constants": {
+      "SPEC_PANEL_TYPE": "Super AMOLED",
+      "SPEC_SCREEN_SIZE_IN": 6.43,
+      "SPEC_RESOLUTION": "1080x2400",
+      "SPEC_ASPECT_RATIO": "20:9",
+      "SPEC_PPI": 409,
+      "SPEC_PEAK_REFRESH_HZ": 120,
+      "SPEC_PEAK_BRIGHTNESS_NITS": 1000,
+      "SPEC_CUTOUT_TYPE": "punch-hole (single, front camera)",
+      "SPEC_FINGERPRINT": "in-display (optical)",
+      "SPEC_DISPLAY_SENSORS": "ambient light, proximity",
+      "SPEC_TOUCH_SAMPLING_HZ": null,
+      "TEST_PIN": "1397",
+      "PERF_ITERATIONS": 10,
+      "FRAME_TEST_DURATION_SEC": 30,
+      "FLING_COUNT": 20,
+      "SCREEN_CYCLES": 1000,
+      "SWITCH_CYCLES": 1000,
+      "ROTATION_CYCLES": 1000,
+      "ANIMATION_DURATION_SEC": 3600,
+      "RETENTION_EXPOSURE_SEC": 3600
+    },
+    "harness_summary": {
+      "no_harness": 11,
+      "on_device_harness_or_helper": 6,
+      "lab_equipment": 5
+    },
+    "harness_required_tests": [
+      "TC_DSP_FUNC_004",
+      "TC_DSP_FUNC_009",
+      "TC_DSP_FUNC_010",
+      "TC_DSP_FUNC_011",
+      "TC_DSP_FUNC_018",
+      "TC_DSP_FUNC_020"
+    ],
+    "lab_equipment_tests": [
+      "TC_DSP_FUNC_005",
+      "TC_DSP_FUNC_006",
+      "TC_DSP_FUNC_012",
+      "TC_DSP_FUNC_018",
+      "TC_DSP_FUNC_020"
+    ],
+    "semi_automated_tests": [
+      "TC_DSP_FUNC_005",
+      "TC_DSP_FUNC_006",
+      "TC_DSP_FUNC_008",
+      "TC_DSP_FUNC_010",
+      "TC_DSP_FUNC_016",
+      "TC_DSP_FUNC_017",
+      "TC_DSP_FUNC_018",
+      "TC_DSP_FUNC_020"
+    ]
+  },
+  "test_cases": [
+    {
+      "test_case_id": "TC_DSP_FUNC_001",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Native Resolution, Aspect Ratio and Pixel Density Conformance",
+      "execution": "AUTO",
+      "priority": "P0",
+      "objective": "Verify the built-in panel reports its native resolution, 20:9 aspect ratio and ~409 ppi exactly as specified, with no hidden resolution or density override.",
+      "real_world_reference": "Android CDD 7.1.1 (screen size, aspect ratio, density); product specification sheet",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "All observations are available from platform shell services (wm, dumpsys, settings, screencap).",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "expected_resolution": "${SPEC_RESOLUTION}",
+        "expected_ppi": "${SPEC_PPI}",
+        "ppi_tolerance_percent": 3,
+        "expected_aspect_ratio": "${SPEC_ASPECT_RATIO}",
+        "expected_diagonal_in": "${SPEC_SCREEN_SIZE_IN}",
+        "diagonal_tolerance_in": 0.1
+      },
+      "prerequisites": [
+        "Display resolution/size overrides recorded before the test (wm size / wm density)"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Read physical and override size",
+          "command": "adb shell wm size",
+          "expect": "'Physical size: (\\d+)x(\\d+)'; record 'Override size' if present"
+        },
+        {
+          "step": 2,
+          "action": "Read physical and override density",
+          "command": "adb shell wm density",
+          "expect": "'Physical density: (\\d+)'; record 'Override density' if present"
+        },
+        {
+          "step": 3,
+          "action": "Read panel x/y dpi of the INTERNAL display",
+          "command": "adb shell dumpsys display",
+          "expect": "'([0-9.]+) x ([0-9.]+) dpi' inside the DisplayDeviceInfo whose type is INTERNAL"
+        },
+        {
+          "step": 4,
+          "action": "Compare build density property",
+          "command": "adb shell getprop ro.sf.lcd_density",
+          "expect": "Equals Physical density"
+        },
+        {
+          "step": 5,
+          "action": "Host: compute aspect ratio = long/short edge and diagonal = hypot(w,h)/mean(xdpi,ydpi)",
+          "command": null,
+          "expect": "2400/1080 = 2.222 (20:9); diagonal ~6.43 in"
+        }
+      ],
+      "expected_results": [
+        "Physical size equals ${SPEC_RESOLUTION} (portrait order WxH)",
+        "Mean of xdpi/ydpi within ±3% of ${SPEC_PPI}",
+        "Computed aspect ratio within ±1% of 20:9",
+        "Computed diagonal within ±0.1 in of ${SPEC_SCREEN_SIZE_IN}",
+        "ro.sf.lcd_density equals Physical density",
+        "No Override size/density is active (or it is reported and excluded from the verdict)"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "resolution_match",
+          "operator": "==",
+          "target": 1
+        },
+        {
+          "metric": "ppi_error_percent",
+          "operator": "<=",
+          "target": 3
+        },
+        {
+          "metric": "aspect_ratio_error_percent",
+          "operator": "<=",
+          "target": 1
+        },
+        {
+          "metric": "diagonal_error_in",
+          "operator": "<=",
+          "target": 0.1
+        }
+      ],
+      "evidence": [
+        "wm_size_output",
+        "wm_density_output",
+        "dumpsys_display",
+        "computed_geometry_json"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_001_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_001_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_001_display.txt"
+          },
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_FUNC_001_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_001",
+      "source_id": "TC_DSP_FUNC_001"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_002",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Display Mode Enumeration and Peak Refresh-Rate Declaration",
+      "execution": "AUTO",
+      "priority": "P0",
+      "objective": "Verify the display advertises a native-resolution 120 Hz mode plus a 60 Hz mode, and that every advertised mode is selectable by the platform.",
+      "real_world_reference": "Android CDD 7.1.4 / Display.Mode API; CTS CtsDisplayTestCases (DisplayTest#testGetSupportedModes)",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "All observations are available from platform shell services (wm, dumpsys, settings, screencap).",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "expected_peak_refresh_hz": "${SPEC_PEAK_REFRESH_HZ}",
+        "required_rates_hz": [
+          60,
+          "${SPEC_PEAK_REFRESH_HZ}"
+        ],
+        "rate_tolerance_hz": 0.5
+      },
+      "prerequisites": [],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Dump display modes",
+          "command": "adb shell dumpsys display",
+          "expect": "supportedModes \\[...\\] with entries '{id=N, width=W, height=H, fps=F}'"
+        },
+        {
+          "step": 2,
+          "action": "Record default and active mode ids",
+          "command": "adb shell dumpsys display",
+          "expect": "'defaultModeId (\\d+)', 'modeId (\\d+)' (or mActiveSfDisplayMode on newer builds)"
+        },
+        {
+          "step": 3,
+          "action": "Cross-check SurfaceFlinger view",
+          "command": "adb shell dumpsys SurfaceFlinger",
+          "expect": "'refresh-rate\\s*:\\s*([0-9.]+) fps' and the display mode/config list"
+        }
+      ],
+      "expected_results": [
+        "At least one mode at ${SPEC_RESOLUTION} with fps within 0.5 Hz of ${SPEC_PEAK_REFRESH_HZ}",
+        "A 60 Hz mode exists at native resolution",
+        "Every mode listed by DisplayManager is also listed by SurfaceFlinger",
+        "Default mode id refers to an advertised mode"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "peak_mode_present",
+          "operator": "==",
+          "target": 1
+        },
+        {
+          "metric": "mode_60hz_present",
+          "operator": "==",
+          "target": 1
+        },
+        {
+          "metric": "dm_sf_mode_mismatch_count",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "dumpsys_display",
+        "dumpsys_surfaceflinger",
+        "parsed_modes_json"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_002_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_002_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_002_display.txt"
+          },
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_FUNC_002_surfaceflinger.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_002",
+      "source_id": "TC_DSP_FUNC_002"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_003",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "User Refresh-Rate Setting (Standard / High / Adaptive) Applied",
+      "execution": "AUTO",
+      "priority": "P0",
+      "objective": "Verify each user-selectable refresh-rate setting results in the correct active display rate during interaction and at idle.",
+      "real_world_reference": "AOSP DisplayModeDirector (peak_refresh_rate / min_refresh_rate); OEM 'Screen refresh rate' setting",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Rate is driven by Settings keys and observed via dumpsys SurfaceFlinger/display.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "${SUPPORTED_REFRESH_RATES} contains >= 2 rates"
+        ],
+        "condition": "len(${SUPPORTED_REFRESH_RATES}) >= 2",
+        "not_applicable_if": "Only one refresh rate is advertised"
+      },
+      "parameters": {
+        "modes": [
+          {
+            "name": "standard",
+            "peak": 60.0,
+            "min": 60.0,
+            "expect_touch": 60,
+            "expect_idle": 60
+          },
+          {
+            "name": "high",
+            "peak": "${SPEC_PEAK_REFRESH_HZ}",
+            "min": "${SPEC_PEAK_REFRESH_HZ}",
+            "expect_touch": "${SPEC_PEAK_REFRESH_HZ}",
+            "expect_idle": "${SPEC_PEAK_REFRESH_HZ}"
+          },
+          {
+            "name": "adaptive",
+            "peak": "${SPEC_PEAK_REFRESH_HZ}",
+            "min": 0.0,
+            "expect_touch": "${SPEC_PEAK_REFRESH_HZ}",
+            "expect_idle": "<= peak (record)"
+          }
+        ],
+        "settle_ms": 1500,
+        "idle_wait_sec": 5
+      },
+      "prerequisites": [
+        "Battery saver off",
+        "Settings app in foreground (scrollable content)"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "For each mode: set peak and min refresh",
+          "command": "adb shell settings put system peak_refresh_rate <peak> && adb shell settings put system min_refresh_rate <min>",
+          "expect": "Commands succeed"
+        },
+        {
+          "step": 2,
+          "action": "Open Settings and scroll to generate interaction",
+          "command": "adb shell am start -W -a android.settings.SETTINGS && adb shell input swipe 540 1900 540 600 300",
+          "expect": "Settings foreground"
+        },
+        {
+          "step": 3,
+          "action": "Sample active rate within 300 ms of the swipe",
+          "command": "adb shell dumpsys SurfaceFlinger",
+          "expect": "'refresh-rate\\s*:\\s*([0-9.]+) fps' == expect_touch"
+        },
+        {
+          "step": 4,
+          "action": "Wait idle_wait_sec without input, sample again",
+          "command": "adb shell dumpsys SurfaceFlinger",
+          "expect": "Rate == expect_idle (adaptive: record value)"
+        },
+        {
+          "step": 5,
+          "action": "If AOSP keys are ignored by the OEM build, switch via Settings > Display > Screen refresh rate using UiAutomator and mark the case AUTO_SEMI",
+          "command": "adb shell uiautomator dump /sdcard/ui.xml",
+          "expect": "OEM control located"
+        }
+      ],
+      "expected_results": [
+        "Standard mode: 60 Hz during touch and idle",
+        "High mode: ${SPEC_PEAK_REFRESH_HZ} Hz during touch and idle",
+        "Adaptive mode: ${SPEC_PEAK_REFRESH_HZ} Hz during touch; idle rate recorded",
+        "Settings changes take effect without reboot"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "mode_rate_mismatch_count",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "per_mode_rate_samples_json",
+        "dumpsys_surfaceflinger",
+        "settings_before_after"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_003_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_003_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_003_display.txt"
+          },
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_FUNC_003_surfaceflinger.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system peak_refresh_rate ${BASELINE_PEAK_REFRESH_RATE}",
+          "description": "Restore peak_refresh_rate.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system min_refresh_rate ${BASELINE_MIN_REFRESH_RATE}",
+          "description": "Restore min_refresh_rate.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "notes": "Battery saver and thermal policies may cap the rate; record 'dumpsys display' DisplayModeDirector votes on mismatch.",
+      "ui_id": "dsp_fun_003",
+      "source_id": "TC_DSP_FUNC_003"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_004",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "App-Requested Frame Rate Honoured (setFrameRate / preferredDisplayModeId)",
+      "execution": "AUTO",
+      "priority": "P1",
+      "objective": "Verify an app can request 60 Hz or the peak rate for its own window and the platform switches the display accordingly, then reverts when the app leaves.",
+      "real_world_reference": "Android Surface.setFrameRate (API 30) and WindowManager.LayoutParams.preferredDisplayModeId; CTS FrameRateCtsActivity",
+      "harness_requirement": {
+        "required": true,
+        "harness_types": [
+          "ON_DEVICE_INSTRUMENTATION_HARNESS"
+        ],
+        "harness_package": "com.example.displaytest",
+        "harness_class": "com.example.displaytest.FrameRateRequestTest",
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+        "reason": "Frame-rate requests are per-window app APIs; only an on-device app can issue them and observe Choreographer frame intervals.",
+        "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+      },
+      "applicability": {
+        "required_capabilities": [
+          "${SUPPORTED_REFRESH_RATES} contains >= 2 rates",
+          "${ANDROID_SDK_INT} >= 30 for setFrameRate"
+        ],
+        "condition": "len(${SUPPORTED_REFRESH_RATES}) >= 2",
+        "not_applicable_if": "Single refresh rate"
+      },
+      "parameters": {
+        "requests": [
+          {
+            "api": "setFrameRate",
+            "fps": 60
+          },
+          {
+            "api": "setFrameRate",
+            "fps": "${SPEC_PEAK_REFRESH_HZ}"
+          },
+          {
+            "api": "preferredDisplayModeId",
+            "fps": 60
+          },
+          {
+            "api": "preferredDisplayModeId",
+            "fps": "${SPEC_PEAK_REFRESH_HZ}"
+          }
+        ],
+        "switch_timeout_ms": 500,
+        "frames_measured": 240
+      },
+      "prerequisites": [
+        "User refresh setting = adaptive/high so app requests are allowed to raise the rate"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Run harness for each request",
+          "command": "adb shell am instrument -w -r -e api <api> -e fps <fps> -e frames 240 -e class com.example.displaytest.FrameRateRequestTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "harness_json with requested_fps, display_rate_hz, switch_latency_ms, mean_frame_interval_ms"
+        },
+        {
+          "step": 2,
+          "action": "Cross-check active rate while harness is foreground",
+          "command": "adb shell dumpsys SurfaceFlinger",
+          "expect": "refresh-rate equals requested (or an integer multiple for setFrameRate)"
+        },
+        {
+          "step": 3,
+          "action": "Press HOME and re-check after 2 s",
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "expect": "Rate returns to the user-setting policy"
+        }
+      ],
+      "expected_results": [
+        "Display rate equals the request (setFrameRate may choose an integer multiple) within 500 ms",
+        "Mean Choreographer interval within ±3% of 1000/display_rate_hz",
+        "Rate reverts after the app leaves the foreground"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "request_mismatch_count",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "max_switch_latency_ms",
+          "operator": "<=",
+          "target": 500
+        }
+      ],
+      "evidence": [
+        "harness_json_per_request",
+        "dumpsys_surfaceflinger",
+        "dumpsys_display_votes"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_004_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_004_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_004_display.txt"
+          },
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_FUNC_004_surfaceflinger.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system peak_refresh_rate ${BASELINE_PEAK_REFRESH_RATE}",
+          "description": "Restore peak_refresh_rate.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system min_refresh_rate ${BASELINE_MIN_REFRESH_RATE}",
+          "description": "Restore min_refresh_rate.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_004",
+      "source_id": "TC_DSP_FUNC_004"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_005",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Manual Brightness Range and Monotonic Control",
+      "execution": "AUTO_SEMI",
+      "priority": "P0",
+      "objective": "Verify manual brightness spans the full range, never reaches a black screen at minimum, and increases monotonically; optionally confirm luminance with a meter.",
+      "real_world_reference": "OEM display acceptance (brightness curve); DisplayPowerController brightness mapping",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "EXTERNAL_LAB_EQUIPMENT"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [
+          "luminance meter (optional, for photometric confirmation)"
+        ],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Brightness is set through Settings and read back from DisplayPowerState; a meter is optional.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "setting_values": [
+          1,
+          16,
+          32,
+          64,
+          96,
+          128,
+          160,
+          192,
+          224,
+          255
+        ],
+        "settle_ms": 800,
+        "meter_levels_percent": [
+          0,
+          50,
+          100
+        ]
+      },
+      "prerequisites": [
+        "Auto-brightness disabled for the duration",
+        "Full-screen white content for meter readings"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Disable auto brightness",
+          "command": "adb shell settings put system screen_brightness_mode 0",
+          "expect": "OK"
+        },
+        {
+          "step": 2,
+          "action": "For each setting value: apply and wait settle_ms",
+          "command": "adb shell settings put system screen_brightness <v>",
+          "expect": "OK"
+        },
+        {
+          "step": 3,
+          "action": "Read applied brightness",
+          "command": "adb shell dumpsys display",
+          "expect": "DisplayPowerState 'mScreenBrightness=([0-9.]+)' (float 0..1) and 'mScreenState=ON'"
+        },
+        {
+          "step": 4,
+          "action": "Record range limits",
+          "command": "adb shell dumpsys display",
+          "expect": "'mScreenBrightnessRangeMinimum=([0-9.]+)', 'mScreenBrightnessRangeMaximum=([0-9.]+)'"
+        },
+        {
+          "step": 5,
+          "action": "Optional: measure luminance at 0/50/100% with meter (enter via --var METER_NITS_<level>)",
+          "command": null,
+          "expect": "Monotonic increase"
+        }
+      ],
+      "expected_results": [
+        "Applied brightness strictly non-decreasing across the sweep",
+        "Setting 1 produces brightness > 0 and screen state ON (no black screen)",
+        "Setting 255 reaches mScreenBrightnessRangeMaximum (±1%)",
+        "Optional meter values monotonic"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "monotonic_violations",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "black_at_minimum",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "max_brightness_error_percent",
+          "operator": "<=",
+          "target": 1
+        }
+      ],
+      "evidence": [
+        "brightness_sweep_json",
+        "dumpsys_display",
+        "optional_meter_readings"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_005_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_005_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_005_display.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system screen_brightness_mode ${BASELINE_SCREEN_BRIGHTNESS_MODE}",
+          "description": "Restore screen_brightness_mode.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system screen_brightness ${BASELINE_SCREEN_BRIGHTNESS}",
+          "description": "Restore screen_brightness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_005",
+      "source_id": "TC_DSP_FUNC_005"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_006",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Adaptive Brightness Responds to Ambient Light",
+      "execution": "SEMI",
+      "priority": "P1",
+      "objective": "Verify auto-brightness lowers the screen in darkness and raises it in bright light, driven by the ambient light sensor.",
+      "real_world_reference": "AOSP AutomaticBrightnessController; OEM display acceptance",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "EXTERNAL_LAB_EQUIPMENT"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [
+          "controllable light source or torch",
+          "lux meter (optional)"
+        ],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Requires a real change of ambient light; observed via dumpsys display. No app needed.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "${LIGHT_SENSOR_PRESENT}"
+        ],
+        "condition": "${LIGHT_SENSOR_PRESENT} == true",
+        "not_applicable_if": "No ambient light sensor"
+      },
+      "parameters": {
+        "dark_lux_max": 10,
+        "bright_lux_min": 1000,
+        "dwell_sec": 15
+      },
+      "prerequisites": [
+        "Tester available to cover the sensor and apply bright light"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Enable auto brightness",
+          "command": "adb shell settings put system screen_brightness_mode 1",
+          "expect": "OK"
+        },
+        {
+          "step": 2,
+          "action": "Record baseline lux and brightness",
+          "command": "adb shell dumpsys display",
+          "expect": "'mAmbientLux=([0-9.]+)' and DisplayPowerState 'mScreenBrightness=([0-9.]+)'"
+        },
+        {
+          "step": 3,
+          "action": "Tester covers the light sensor (near the earpiece) for dwell_sec",
+          "command": null,
+          "expect": "mAmbientLux < dark_lux_max; brightness decreases"
+        },
+        {
+          "step": 4,
+          "action": "Tester shines bright light (>= bright_lux_min) for dwell_sec",
+          "command": null,
+          "expect": "mAmbientLux > bright_lux_min; brightness increases"
+        }
+      ],
+      "expected_results": [
+        "Brightness in darkness < baseline brightness",
+        "Brightness in bright light > baseline brightness",
+        "mAmbientLux tracks the change direction in both phases"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "dark_brightness_decreased",
+          "operator": "==",
+          "target": 1
+        },
+        {
+          "metric": "bright_brightness_increased",
+          "operator": "==",
+          "target": 1
+        }
+      ],
+      "evidence": [
+        "lux_brightness_timeseries_csv",
+        "dumpsys_display",
+        "tester_notes"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_006_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_006_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_006_display.txt"
+          },
+          {
+            "name": "sensorservice",
+            "command": "adb shell dumpsys sensorservice > TC_DSP_FUNC_006_sensorservice.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system screen_brightness_mode ${BASELINE_SCREEN_BRIGHTNESS_MODE}",
+          "description": "Restore screen_brightness_mode.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system screen_brightness ${BASELINE_SCREEN_BRIGHTNESS}",
+          "description": "Restore screen_brightness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_006",
+      "source_id": "TC_DSP_FUNC_006"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_007",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Screen Timeout, User-Activity Reset and Wake Sources",
+      "execution": "AUTO",
+      "priority": "P0",
+      "objective": "Verify the screen turns off after the configured timeout, user activity restarts the timer, and power/wake keys turn the screen back on.",
+      "real_world_reference": "AOSP PowerManagerService user-activity timeout; OEM power acceptance",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Timeout and wakefulness are observable from dumpsys power.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "timeouts_ms": [
+          15000,
+          30000
+        ],
+        "activity_injection_at_ms": 10000,
+        "tolerance_ms": 5000
+      },
+      "prerequisites": [
+        "No stay-awake (svc power stayon false)",
+        "No active wake locks from test apps"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Set timeout",
+          "command": "adb shell settings put system screen_off_timeout <t>",
+          "expect": "OK"
+        },
+        {
+          "step": 2,
+          "action": "Wake and start host timer",
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "expect": "Awake"
+        },
+        {
+          "step": 3,
+          "action": "Inject user activity at activity_injection_at_ms",
+          "command": "adb shell input tap 540 1200",
+          "expect": "Timer restarts"
+        },
+        {
+          "step": 4,
+          "action": "Poll wakefulness every 500 ms",
+          "command": "adb shell dumpsys power",
+          "expect": "'mWakefulness=(Awake|Asleep|Dozing|Dreaming)'"
+        },
+        {
+          "step": 5,
+          "action": "Wake with KEYCODE_POWER and KEYCODE_WAKEUP",
+          "command": "adb shell input keyevent KEYCODE_POWER",
+          "expect": "mWakefulness=Awake (dumpsys power) and 'mScreenState=ON' (dumpsys display)"
+        }
+      ],
+      "expected_results": [
+        "Screen still Awake at (activity time + timeout - tolerance)",
+        "Screen Asleep/Dozing by (last activity + timeout + tolerance)",
+        "Both wake keys return the display to ON"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "timeout_error_ms_max",
+          "operator": "<=",
+          "target": 5000
+        },
+        {
+          "metric": "activity_reset_failures",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "wake_failures",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "wakefulness_timeline_json",
+        "dumpsys_power"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_007_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_007_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "power",
+            "command": "adb shell dumpsys power > TC_DSP_FUNC_007_power.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system screen_off_timeout ${BASELINE_SCREEN_OFF_TIMEOUT}",
+          "description": "Restore screen_off_timeout.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_007",
+      "source_id": "TC_DSP_FUNC_007"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_008",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Auto-Rotate and Orientation Lock Behaviour",
+      "execution": "AUTO_SEMI",
+      "priority": "P1",
+      "objective": "Verify locked rotation holds the chosen orientation, each allowed rotation renders correctly, and auto-rotate follows a physical rotation.",
+      "real_world_reference": "AOSP WindowManager rotation policy; CTS CtsWindowManagerDeviceTestCases (rotation)",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Rotation is set via Settings and observed via dumpsys window/input and screencap geometry.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "accelerometer"
+        ],
+        "condition": "Always applicable (physical step needs accelerometer)"
+      },
+      "parameters": {
+        "user_rotations": [
+          0,
+          1,
+          3,
+          2
+        ],
+        "physical_rotation_timeout_ms": 1500
+      },
+      "prerequisites": [
+        "Settings app in foreground (supports rotation)"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Lock rotation",
+          "command": "adb shell settings put system accelerometer_rotation 0",
+          "expect": "OK"
+        },
+        {
+          "step": 2,
+          "action": "Apply each user_rotation",
+          "command": "adb shell settings put system user_rotation <r>",
+          "expect": "OK"
+        },
+        {
+          "step": 3,
+          "action": "Verify rotation",
+          "command": "adb shell dumpsys input",
+          "expect": "'SurfaceOrientation: (\\d)' == r (180 may be disallowed by config_allowAllRotations - record)"
+        },
+        {
+          "step": 4,
+          "action": "Verify framebuffer geometry",
+          "command": "adb exec-out screencap -p > rot_<r>.png",
+          "expect": "Landscape rotations produce 2400x1080 PNG"
+        },
+        {
+          "step": 5,
+          "action": "Semi: enable auto-rotate; tester turns device to landscape",
+          "command": "adb shell settings put system accelerometer_rotation 1",
+          "expect": "SurfaceOrientation changes within physical_rotation_timeout_ms"
+        }
+      ],
+      "expected_results": [
+        "Each allowed user_rotation applied and reflected in input + framebuffer geometry",
+        "Locked orientation does not change when the device is moved",
+        "Auto-rotate follows physical rotation within 1.5 s"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "rotation_mismatch_count",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "auto_rotate_latency_ms",
+          "operator": "<=",
+          "target": 1500
+        }
+      ],
+      "evidence": [
+        "rotation_screenshots",
+        "dumpsys_input",
+        "dumpsys_window"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_008_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_008_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_FUNC_008_window.txt"
+          },
+          {
+            "name": "input",
+            "command": "adb shell dumpsys input > TC_DSP_FUNC_008_input.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system accelerometer_rotation ${BASELINE_ACCELEROMETER_ROTATION}",
+          "description": "Restore accelerometer_rotation.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system user_rotation ${BASELINE_USER_ROTATION}",
+          "description": "Restore user_rotation.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_008",
+      "source_id": "TC_DSP_FUNC_008"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_009",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Display Cutout (Punch-Hole) Reporting and Safe-Area Layout",
+      "execution": "AUTO",
+      "priority": "P1",
+      "objective": "Verify the punch-hole cutout is reported with correct bounds and that each layoutInDisplayCutoutMode keeps content out of, or intentionally inside, the cutout area.",
+      "real_world_reference": "Android DisplayCutout API; CTS CtsWindowManagerDeviceTestCases (DisplayCutoutTests)",
+      "harness_requirement": {
+        "required": true,
+        "harness_types": [
+          "ON_DEVICE_INSTRUMENTATION_HARNESS"
+        ],
+        "harness_package": "com.example.displaytest",
+        "harness_class": "com.example.displaytest.DisplayCutoutTest",
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+        "reason": "Cutout bounds, safe insets and per-window cutout modes are only observable from inside an app window.",
+        "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+      },
+      "applicability": {
+        "required_capabilities": [
+          "display cutout present"
+        ],
+        "condition": "dumpsys display reports a non-empty cutout",
+        "not_applicable_if": "No cutout reported (then verify the spec also states no cutout)"
+      },
+      "parameters": {
+        "modes": [
+          "default",
+          "shortEdges",
+          "never",
+          "always"
+        ],
+        "expected_cutout": "${SPEC_CUTOUT_TYPE}"
+      },
+      "prerequisites": [],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Read cutout from the platform",
+          "command": "adb shell dumpsys display",
+          "expect": "'DisplayCutout\\{insets=Rect\\(.*?\\) .*?boundingRect=\\{Bounds=\\[(.*?)\\]'"
+        },
+        {
+          "step": 2,
+          "action": "Run harness per mode in portrait and landscape",
+          "command": "adb shell am instrument -w -r -e mode <mode> -e rotation <0|1> -e class com.example.displaytest.DisplayCutoutTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "harness_json with bounding_rects, safe_insets, window_frame, content_overlaps_cutout"
+        }
+      ],
+      "expected_results": [
+        "Exactly one bounding rect on the short (top) edge, matching the punch-hole location",
+        "Safe inset top >= cutout bottom",
+        "mode=never: window content never overlaps the cutout in any rotation",
+        "mode=shortEdges: content extends into the cutout edge in portrait",
+        "Status bar height >= cutout height"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "cutout_rect_count",
+          "operator": "==",
+          "target": 1
+        },
+        {
+          "metric": "never_mode_overlap_count",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "harness_json_per_mode",
+        "dumpsys_display",
+        "screenshots_per_mode"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_009_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_009_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_009_display.txt"
+          },
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_FUNC_009_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_009",
+      "source_id": "TC_DSP_FUNC_009"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_010",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "HDR Capability Declaration and HDR10 Playback Path",
+      "execution": "AUTO_SEMI",
+      "priority": "P1",
+      "objective": "Verify declared HDR types are consistent between platform and app APIs and that an HDR10 clip is decoded and composed with an HDR dataspace.",
+      "real_world_reference": "Android Display.getHdrCapabilities; CTS CtsMediaTestCases (HDR decode); streaming-service HDR certification",
+      "harness_requirement": {
+        "required": true,
+        "harness_types": [
+          "ON_DEVICE_INSTRUMENTATION_HARNESS"
+        ],
+        "harness_package": "com.example.displaytest",
+        "harness_class": "com.example.displaytest.HdrPlaybackTest",
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+        "reason": "Needs an app to query Display.getHdrCapabilities and play a 10-bit PQ clip into a SurfaceView.",
+        "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+      },
+      "applicability": {
+        "required_capabilities": [
+          "HdrCapabilities.mSupportedHdrTypes non-empty"
+        ],
+        "condition": "dumpsys display lists at least one HDR type",
+        "not_applicable_if": "No HDR types advertised (spec sheet does not claim HDR; 91mobiles notes no Netflix HDR)"
+      },
+      "parameters": {
+        "asset": "/sdcard/DisplayTest/hdr10_pq_1080p_10s.mp4",
+        "hdr_type_codes": {
+          "1": "DOLBY_VISION",
+          "2": "HDR10",
+          "3": "HLG",
+          "4": "HDR10_PLUS"
+        }
+      },
+      "prerequisites": [
+        "HDR test asset pushed to /sdcard/DisplayTest/"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Read platform HDR capabilities",
+          "command": "adb shell dumpsys display",
+          "expect": "'HdrCapabilities\\{mSupportedHdrTypes=\\[([0-9, ]*)\\], mMaxLuminance=([0-9.]+)'"
+        },
+        {
+          "step": 2,
+          "action": "Play HDR10 clip in harness",
+          "command": "adb shell am instrument -w -r -e asset /sdcard/DisplayTest/hdr10_pq_1080p_10s.mp4 -e class com.example.displaytest.HdrPlaybackTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "harness_json: app_hdr_types, decoder, frames_rendered, decode_errors"
+        },
+        {
+          "step": 3,
+          "action": "While playing, inspect video layer dataspace",
+          "command": "adb shell dumpsys SurfaceFlinger",
+          "expect": "SurfaceView layer dataspace BT2020_PQ (or equivalent HDR dataspace)"
+        },
+        {
+          "step": 4,
+          "action": "Semi: tester confirms highlights brighter than SDR UI and no clipping/banding",
+          "command": null,
+          "expect": "Tester verdict"
+        }
+      ],
+      "expected_results": [
+        "App-visible HDR types equal platform HDR types",
+        "HDR10 clip plays with 0 decode errors",
+        "Video layer composed with an HDR (PQ) dataspace",
+        "Tester confirms HDR presentation"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "hdr_type_mismatch",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "decode_errors",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "hdr_dataspace_observed",
+          "operator": "==",
+          "target": 1
+        }
+      ],
+      "evidence": [
+        "harness_json",
+        "dumpsys_surfaceflinger_during_playback",
+        "tester_verdict"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_010_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_010_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_010_display.txt"
+          },
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_FUNC_010_surfaceflinger.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_010",
+      "source_id": "TC_DSP_FUNC_010"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_011",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Wide Colour Gamut and System Colour Mode Selection",
+      "execution": "AUTO",
+      "priority": "P2",
+      "objective": "Verify wide-gamut capability is reported consistently and each system colour mode offered to the user is applied by SurfaceFlinger.",
+      "real_world_reference": "Android CDD 7.1.4.5 (wide-gamut displays); ColorDisplayService display_color_mode",
+      "harness_requirement": {
+        "required": true,
+        "harness_types": [
+          "ON_DEVICE_INSTRUMENTATION_HARNESS"
+        ],
+        "harness_package": "com.example.displaytest",
+        "harness_class": "com.example.displaytest.ColorModeTest",
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+        "reason": "Configuration.isScreenWideColorGamut and window colour-mode requests are app-side APIs.",
+        "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+      },
+      "applicability": {
+        "required_capabilities": [
+          "Wide-colour or multiple colour modes"
+        ],
+        "condition": "SurfaceFlinger lists more than one colour mode or wide-colour support",
+        "not_applicable_if": "Only sRGB/native single mode"
+      },
+      "parameters": {
+        "system_modes": {
+          "0": "NATURAL",
+          "1": "BOOSTED",
+          "2": "SATURATED",
+          "3": "AUTOMATIC"
+        },
+        "app_request": "ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT"
+      },
+      "prerequisites": [
+        "OEM may expose its own colour-mode keys (e.g. Vivid/Gentle); discover them from Settings UI if AOSP keys are ignored"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Read wide-colour info",
+          "command": "adb shell dumpsys SurfaceFlinger",
+          "expect": "'Wide-Color information' section and supported colour modes"
+        },
+        {
+          "step": 2,
+          "action": "Harness: query and request wide colour",
+          "command": "adb shell am instrument -w -r -e class com.example.displaytest.ColorModeTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "harness_json: is_wide_color_gamut, preferred_wide_gamut_space, window_color_mode_applied"
+        },
+        {
+          "step": 3,
+          "action": "Apply each available system mode",
+          "command": "adb shell settings put system display_color_mode <m>",
+          "expect": "dumpsys color_display reports the mode; SurfaceFlinger active colour mode changes"
+        }
+      ],
+      "expected_results": [
+        "Platform and app agree on wide-gamut capability",
+        "Wide-colour window request produces a wide-gamut (Display P3) layer dataspace",
+        "Each exposed system mode is reflected by color_display and SurfaceFlinger"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "capability_mismatch",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "mode_not_applied_count",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "harness_json",
+        "dumpsys_color_display",
+        "dumpsys_surfaceflinger"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_011_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_011_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "color_display",
+            "command": "adb shell dumpsys color_display > TC_DSP_FUNC_011_color_display.txt"
+          },
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_FUNC_011_surfaceflinger.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system display_color_mode ${BASELINE_DISPLAY_COLOR_MODE}",
+          "description": "Restore display_color_mode.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_011",
+      "source_id": "TC_DSP_FUNC_011"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_012",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Night Light (Blue-Light Filter) Activation, Intensity and Schedule",
+      "execution": "AUTO",
+      "priority": "P1",
+      "objective": "Verify Night Light turns on/off, intensity (colour temperature) changes take effect, and a custom schedule activates and deactivates it automatically.",
+      "real_world_reference": "AOSP ColorDisplayService Night Display; TÜV/SGS low-blue-light programmes (optional CCT check)",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "EXTERNAL_LAB_EQUIPMENT"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [
+          "colorimeter (optional CCT confirmation)"
+        ],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "State and colour temperature are exposed via Settings and dumpsys color_display.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "Night display available (config_nightDisplayAvailable)"
+        ],
+        "condition": "dumpsys color_display lists Night display",
+        "not_applicable_if": "Night display not available"
+      },
+      "parameters": {
+        "temperatures_k": [
+          4082,
+          3339,
+          2596
+        ],
+        "schedule_window_min": 10,
+        "optional_min_cct_drop_k": 1000
+      },
+      "prerequisites": [],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Activate",
+          "command": "adb shell settings put secure night_display_activated 1",
+          "expect": "OK"
+        },
+        {
+          "step": 2,
+          "action": "Verify state",
+          "command": "adb shell dumpsys color_display",
+          "expect": "Night display activated = true (parse key/value case-insensitively)"
+        },
+        {
+          "step": 3,
+          "action": "Apply each temperature",
+          "command": "adb shell settings put secure night_display_color_temperature <k>",
+          "expect": "color_display reports the new temperature"
+        },
+        {
+          "step": 4,
+          "action": "Custom schedule covering now (start = now-1 min, end = now+schedule_window_min)",
+          "command": "adb shell settings put secure night_display_auto_mode 1 && adb shell settings put secure night_display_custom_start_time <ms_of_day> && adb shell settings put secure night_display_custom_end_time <ms_of_day>",
+          "expect": "Activates automatically"
+        },
+        {
+          "step": 5,
+          "action": "Schedule excluding now",
+          "command": "(repeat with window in the past)",
+          "expect": "Deactivates"
+        }
+      ],
+      "expected_results": [
+        "Manual on/off reflected within 2 s",
+        "Each colour temperature reported by color_display",
+        "Schedule activates inside the window and deactivates outside it",
+        "Optional: measured CCT drops >= 1000 K at the warmest setting"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "state_mismatch_count",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "schedule_failures",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "dumpsys_color_display_per_step",
+        "settings_snapshot",
+        "optional_cct_readings"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_012_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_012_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "color_display",
+            "command": "adb shell dumpsys color_display > TC_DSP_FUNC_012_color_display.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure night_display_activated ${BASELINE_NIGHT_DISPLAY_ACTIVATED}",
+          "description": "Restore night_display_activated.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure night_display_color_temperature ${BASELINE_NIGHT_DISPLAY_COLOR_TEMPERATURE}",
+          "description": "Restore night_display_color_temperature.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure night_display_auto_mode ${BASELINE_NIGHT_DISPLAY_AUTO_MODE}",
+          "description": "Restore night_display_auto_mode.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "notes": "screencap output does not include the display colour transform; never validate Night Light from screenshots.",
+      "ui_id": "dsp_fun_012",
+      "source_id": "TC_DSP_FUNC_012"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_013",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "System-Wide Dark Theme Application",
+      "execution": "AUTO",
+      "priority": "P1",
+      "objective": "Verify dark theme switches system UI and Settings to dark rendering and back, measured from framebuffer luminance.",
+      "real_world_reference": "Android UiModeManager night mode; Material dark theme guidance",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "uimode is set via 'cmd uimode'; rendering verified from screencap luminance (colour transforms not involved).",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "UiModeManager"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "luminance_ratio_max": 0.35,
+        "surfaces": [
+          "Settings main list",
+          "Quick Settings panel"
+        ]
+      },
+      "prerequisites": [],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Light theme baseline",
+          "command": "adb shell cmd uimode night no && adb shell am start -W -a android.settings.SETTINGS",
+          "expect": "Settings foreground"
+        },
+        {
+          "step": 2,
+          "action": "Capture",
+          "command": "adb exec-out screencap -p > light.png",
+          "expect": "Host computes mean luma L_light"
+        },
+        {
+          "step": 3,
+          "action": "Switch to dark",
+          "command": "adb shell cmd uimode night yes",
+          "expect": "'cmd uimode night' prints 'Night mode: yes'"
+        },
+        {
+          "step": 4,
+          "action": "Relaunch and capture",
+          "command": "adb shell am start -W -a android.settings.SETTINGS && adb exec-out screencap -p > dark.png",
+          "expect": "Host computes L_dark"
+        },
+        {
+          "step": 5,
+          "action": "Quick Settings in both themes",
+          "command": "adb shell cmd statusbar expand-settings",
+          "expect": "Same luminance comparison"
+        }
+      ],
+      "expected_results": [
+        "L_dark <= 0.35 x L_light for every surface",
+        "Night mode reported as yes/no correctly",
+        "No SystemUI or Settings crash"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "max_luminance_ratio",
+          "operator": "<=",
+          "target": 0.35
+        },
+        {
+          "metric": "crash_count",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "light_dark_screenshots",
+        "luminance_json",
+        "dumpsys_uimode"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_013_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_013_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "uimode",
+            "command": "adb shell dumpsys uimode > TC_DSP_FUNC_013_uimode.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell cmd uimode night ${BASELINE_UI_NIGHT_MODE}",
+          "description": "Restore ui_night_mode.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell cmd statusbar collapse",
+          "description": "Collapse panel.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_013",
+      "source_id": "TC_DSP_FUNC_013"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_014",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Font Size and Display Size Scaling Without Truncation",
+      "execution": "AUTO",
+      "priority": "P1",
+      "objective": "Verify system UI and Settings remain usable at larger font and display-size settings: configuration applied, no crash, no off-screen or newly ellipsized primary text.",
+      "real_world_reference": "Android accessibility scaling (font_scale, display density); WCAG 1.4.4 resize text",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Scaling via settings/wm; layout inspected from 'uiautomator dump' XML on the host.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "font_scales": [
+          0.85,
+          1.0,
+          1.15,
+          1.3
+        ],
+        "density_factors": [
+          1.0,
+          1.15
+        ],
+        "new_ellipsis_tolerance": 2
+      },
+      "prerequisites": [],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Baseline dump at defaults",
+          "command": "adb shell am start -W -a android.settings.SETTINGS && adb shell uiautomator dump /sdcard/ui.xml && adb pull /sdcard/ui.xml base.xml",
+          "expect": "Host counts text nodes, ellipsized nodes, out-of-bounds nodes"
+        },
+        {
+          "step": 2,
+          "action": "For each font scale x density factor: apply",
+          "command": "adb shell settings put system font_scale <s> && adb shell wm density <round(physical*f)>",
+          "expect": "dumpsys activity shows fontScale=<s> and densityDpi"
+        },
+        {
+          "step": 3,
+          "action": "Relaunch Settings and dump",
+          "command": "adb shell am start -W -a android.settings.SETTINGS && adb shell uiautomator dump /sdcard/ui.xml",
+          "expect": "Host comparison vs baseline"
+        }
+      ],
+      "expected_results": [
+        "Configuration reports the applied fontScale/densityDpi",
+        "No text node bounds outside the screen",
+        "Ellipsized primary titles <= baseline + 2",
+        "No crash/ANR in Settings or SystemUI"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "out_of_bounds_text_nodes",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "new_ellipsized_nodes_max",
+          "operator": "<=",
+          "target": 2
+        },
+        {
+          "metric": "crash_count",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "uiautomator_xml_per_config",
+        "screenshots_per_config",
+        "analysis_json"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_014_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_014_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "activity",
+            "command": "adb shell dumpsys activity activities > TC_DSP_FUNC_014_activities.txt"
+          },
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_FUNC_014_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system font_scale ${BASELINE_FONT_SCALE}",
+          "description": "Restore font_scale.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell wm density reset",
+          "description": "Restore wm_density.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_014",
+      "source_id": "TC_DSP_FUNC_014"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_015",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Accessibility Colour Inversion and Colour Correction",
+      "execution": "AUTO",
+      "priority": "P2",
+      "objective": "Verify colour inversion and each daltonizer mode apply a display colour transform and remove it cleanly.",
+      "real_world_reference": "Android accessibility display settings; ColorDisplayService / DisplayTransformManager",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Settings keys drive the transform; state is visible in dumpsys color_display / SurfaceFlinger.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "daltonizer_modes": {
+          "0": "monochromacy",
+          "11": "protanomaly",
+          "12": "deuteranomaly",
+          "13": "tritanomaly"
+        }
+      },
+      "prerequisites": [],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Enable inversion",
+          "command": "adb shell settings put secure accessibility_display_inversion_enabled 1",
+          "expect": "Non-identity colour matrix reported"
+        },
+        {
+          "step": 2,
+          "action": "Read transform state",
+          "command": "adb shell dumpsys color_display",
+          "expect": "Inversion/daltonizer levels or matrix (fallback: dumpsys SurfaceFlinger colour transform)"
+        },
+        {
+          "step": 3,
+          "action": "Disable inversion, enable daltonizer, apply each mode",
+          "command": "adb shell settings put secure accessibility_display_daltonizer_enabled 1 && adb shell settings put secure accessibility_display_daltonizer <m>",
+          "expect": "Transform changes per mode"
+        },
+        {
+          "step": 4,
+          "action": "Disable all",
+          "command": "adb shell settings put secure accessibility_display_daltonizer_enabled 0",
+          "expect": "Identity transform restored"
+        }
+      ],
+      "expected_results": [
+        "Inversion and each daltonizer mode produce a distinct non-identity transform",
+        "Disabling restores identity",
+        "No SystemUI crash"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "transform_not_applied_count",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "identity_restored",
+          "operator": "==",
+          "target": 1
+        }
+      ],
+      "evidence": [
+        "dumpsys_color_display_per_mode",
+        "dumpsys_surfaceflinger"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_015_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_015_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "color_display",
+            "command": "adb shell dumpsys color_display > TC_DSP_FUNC_015_color_display.txt"
+          },
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_FUNC_015_surfaceflinger.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure accessibility_display_inversion_enabled ${BASELINE_INVERSION_ENABLED}",
+          "description": "Restore accessibility_display_inversion_enabled.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure accessibility_display_daltonizer_enabled ${BASELINE_DALTONIZER_ENABLED}",
+          "description": "Restore accessibility_display_daltonizer_enabled.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure accessibility_display_daltonizer ${BASELINE_DALTONIZER_MODE}",
+          "description": "Restore accessibility_display_daltonizer.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "notes": "Screenshots are taken before the display colour transform; validate from service state, optionally a colorimeter.",
+      "ui_id": "dsp_fun_015",
+      "source_id": "TC_DSP_FUNC_015"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_016",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Always-On Display Entry, Content and Exit",
+      "execution": "AUTO_SEMI",
+      "priority": "P2",
+      "objective": "Verify Always-On Display enters a low-power doze display state when the screen is turned off and exits on wake.",
+      "real_world_reference": "AOSP Doze / AmbientDisplayConfiguration; OEM AOD acceptance",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Doze state from dumpsys power/display; clock visibility confirmed by the tester.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "AOD available"
+        ],
+        "condition": "config_dozeAlwaysOnDisplayAvailable or OEM AOD setting present",
+        "not_applicable_if": "Device has no AOD"
+      },
+      "parameters": {
+        "enter_timeout_ms": 3000
+      },
+      "prerequisites": [
+        "Not connected to stay-awake",
+        "No secure lock (content check covered in security suite)"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Enable AOD",
+          "command": "adb shell settings put secure doze_always_on 1",
+          "expect": "OK"
+        },
+        {
+          "step": 2,
+          "action": "Screen off",
+          "command": "adb shell input keyevent KEYCODE_SLEEP",
+          "expect": "Host timer starts"
+        },
+        {
+          "step": 3,
+          "action": "Verify doze",
+          "command": "adb shell dumpsys power && adb shell dumpsys display",
+          "expect": "'mWakefulness=Dozing' and display state DOZE or DOZE_SUSPEND"
+        },
+        {
+          "step": 4,
+          "action": "Semi: tester confirms clock/notification icons visible",
+          "command": null,
+          "expect": "Tester verdict"
+        },
+        {
+          "step": 5,
+          "action": "Wake",
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "expect": "state ON"
+        },
+        {
+          "step": 6,
+          "action": "Disable AOD and turn off",
+          "command": "adb shell settings put secure doze_always_on 0 && adb shell input keyevent KEYCODE_SLEEP",
+          "expect": "Display state OFF (not DOZE)"
+        }
+      ],
+      "expected_results": [
+        "DOZE/DOZE_SUSPEND within 3 s with AOD on",
+        "OFF with AOD off",
+        "ON after wake",
+        "Tester confirms AOD content"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "doze_state_failures",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "dumpsys_power",
+        "dumpsys_display",
+        "tester_verdict"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_016_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_016_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "power",
+            "command": "adb shell dumpsys power > TC_DSP_FUNC_016_power.txt"
+          },
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_016_display.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure doze_always_on ${BASELINE_DOZE_ALWAYS_ON}",
+          "description": "Restore doze_always_on.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_016",
+      "source_id": "TC_DSP_FUNC_016"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_017",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Touchscreen Multi-Touch Capability and Feature Declaration",
+      "execution": "AUTO_SEMI",
+      "priority": "P1",
+      "objective": "Verify the touchscreen declares multi-touch features consistent with the controller, covers the full panel, and tracks at least 5 (target 10) simultaneous contacts.",
+      "real_world_reference": "Android CDD 7.2.4 (touchscreen input); PackageManager touchscreen features",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "Features from pm; controller ranges and live contacts from getevent (no app required).",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "touchscreen"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "required_features": [
+          "android.hardware.touchscreen",
+          "android.hardware.touchscreen.multitouch",
+          "android.hardware.touchscreen.multitouch.distinct",
+          "android.hardware.touchscreen.multitouch.jazzhand"
+        ],
+        "min_contacts": 5,
+        "target_contacts": 10
+      },
+      "prerequisites": [
+        "Tester available for the 10-finger step"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "List features",
+          "command": "adb shell pm list features",
+          "expect": "All required_features present"
+        },
+        {
+          "step": 2,
+          "action": "Inspect touch controller",
+          "command": "adb shell getevent -lp",
+          "expect": "Device with ABS_MT_POSITION_X/Y; 'ABS_MT_SLOT\\s*:\\s*value \\d+, min 0, max (\\d+)' (slots = max+1)"
+        },
+        {
+          "step": 3,
+          "action": "Confirm ranges cover resolution",
+          "command": "adb shell dumpsys input",
+          "expect": "Touch device raw X/Y ranges map to the full display"
+        },
+        {
+          "step": 4,
+          "action": "Semi: tester places 10 fingers for 3 s",
+          "command": "adb shell getevent -lt <touch_device>",
+          "expect": "Distinct ABS_MT_TRACKING_ID count >= target_contacts"
+        }
+      ],
+      "expected_results": [
+        "All four touchscreen features declared",
+        "Controller slots >= 10 (record) and >= 5 mandatory",
+        "Simultaneous tracked contacts >= min(slots, 10)"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "missing_features",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "max_simultaneous_contacts",
+          "operator": ">=",
+          "target": 5
+        }
+      ],
+      "evidence": [
+        "pm_features",
+        "getevent_lp",
+        "getevent_capture",
+        "dumpsys_input"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_017_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_017_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "input",
+            "command": "adb shell dumpsys input > TC_DSP_FUNC_017_input.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_017",
+      "source_id": "TC_DSP_FUNC_017"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_018",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Touch Accuracy, Linearity and Edge Response",
+      "execution": "SEMI",
+      "priority": "P1",
+      "objective": "Verify tap position error, line linearity and edge/corner registration meet accuracy targets across the panel.",
+      "real_world_reference": "OEM touch acceptance (robot/stylus jig methodology); Microsoft/Google touch accuracy guidance",
+      "harness_requirement": {
+        "required": true,
+        "harness_types": [
+          "ON_DEVICE_INSTRUMENTATION_HARNESS",
+          "EXTERNAL_LAB_EQUIPMENT"
+        ],
+        "harness_package": "com.example.displaytest",
+        "harness_class": "com.example.displaytest.TouchAccuracyTest",
+        "helper_apks": [],
+        "lab_equipment": [
+          "touch robot or conductive stylus with guide jig (recommended)"
+        ],
+        "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+        "reason": "Target grid rendering and MotionEvent coordinate capture require an on-device app; accuracy needs physical touches (shell 'input' injection bypasses the digitizer and is invalid here).",
+        "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+      },
+      "applicability": {
+        "required_capabilities": [
+          "touchscreen"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "grid": "5x5 incl. targets 2 mm from each edge and corners",
+        "lines": [
+          "horizontal",
+          "vertical",
+          "diagonal"
+        ],
+        "stylus_diameter_mm": 7,
+        "targets": {
+          "mean_error_mm": 1.0,
+          "max_error_mm": 2.0,
+          "line_deviation_mm": 1.0
+        }
+      },
+      "prerequisites": [
+        "Screen protector removed or recorded",
+        "Device on a flat, fixed stand"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Start harness grid mode",
+          "command": "adb shell am instrument -w -r -e mode grid -e class com.example.displaytest.TouchAccuracyTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "Harness shows targets and records touches"
+        },
+        {
+          "step": 2,
+          "action": "Tester/robot taps each target once",
+          "command": null,
+          "expect": "25 touches recorded"
+        },
+        {
+          "step": 3,
+          "action": "Start harness line mode",
+          "command": "adb shell am instrument -w -r -e mode lines -e class com.example.displaytest.TouchAccuracyTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "Tester/robot draws along guides"
+        },
+        {
+          "step": 4,
+          "action": "Collect result",
+          "command": "(harness_json)",
+          "expect": "mean_error_mm, max_error_mm, missed_taps, edge_missed, line_deviation_mm (px -> mm via xdpi/ydpi)"
+        }
+      ],
+      "expected_results": [
+        "Mean tap error <= 1.0 mm, max <= 2.0 mm (robot); manual stylus allows 1.5 / 3.0 mm with note",
+        "No missed taps, including edge and corner targets",
+        "Line deviation <= 1.0 mm; no gaps or jitter spikes"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "mean_error_mm",
+          "operator": "<=",
+          "target": 1.0
+        },
+        {
+          "metric": "max_error_mm",
+          "operator": "<=",
+          "target": 2.0
+        },
+        {
+          "metric": "missed_taps",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "line_deviation_mm",
+          "operator": "<=",
+          "target": 1.0
+        }
+      ],
+      "evidence": [
+        "harness_json",
+        "touch_trace_csv",
+        "method_note (robot/stylus/finger)"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_018_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_018_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "input",
+            "command": "adb shell dumpsys input > TC_DSP_FUNC_018_input.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_018",
+      "source_id": "TC_DSP_FUNC_018"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_019",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Screenshot and Screen-Recording Output Fidelity",
+      "execution": "AUTO",
+      "priority": "P2",
+      "objective": "Verify shell and user-initiated screenshots and screen recordings match display geometry and contain valid media.",
+      "real_world_reference": "Android screenshot (KEYCODE_SYSRQ) and screenrecord tooling; OEM screenshot acceptance",
+      "harness_requirement": {
+        "required": false,
+        "harness_types": [
+          "NONE"
+        ],
+        "harness_package": null,
+        "harness_class": null,
+        "helper_apks": [],
+        "lab_equipment": [],
+        "harness_status": "NOT_REQUIRED",
+        "reason": "screencap, KEYCODE_SYSRQ, screenrecord and MediaStore queries are shell-accessible.",
+        "fallback_without_harness": null
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "record_seconds": 10,
+        "min_avg_fps_with_motion": 30
+      },
+      "prerequisites": [
+        "Host has ffprobe available"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Shell screenshot",
+          "command": "adb exec-out screencap -p > shot.png",
+          "expect": "PNG dimensions equal logical display size for current rotation"
+        },
+        {
+          "step": 2,
+          "action": "User screenshot",
+          "command": "adb shell input keyevent KEYCODE_SYSRQ",
+          "expect": "New file in Pictures/Screenshots within 3 s"
+        },
+        {
+          "step": 3,
+          "action": "Locate newest screenshot",
+          "command": "adb shell content query --uri content://media/external/images/media --projection _display_name:width:height:date_added --sort 'date_added DESC'",
+          "expect": "width/height equal display size"
+        },
+        {
+          "step": 4,
+          "action": "Record with motion",
+          "command": "adb shell screenrecord --time-limit 10 /sdcard/dsp_rec.mp4 & (concurrently) adb shell input swipe 540 1900 540 600 300 (x10)",
+          "expect": "File created"
+        },
+        {
+          "step": 5,
+          "action": "Validate recording",
+          "command": "adb pull /sdcard/dsp_rec.mp4 && ffprobe -v error -show_streams -count_frames dsp_rec.mp4",
+          "expect": "Duration 9.5-10.5 s; aspect ratio equals display; avg fps >= 30"
+        }
+      ],
+      "expected_results": [
+        "Both screenshot paths match display geometry",
+        "Recording plays, duration 10 ± 0.5 s, aspect preserved, >= 30 fps average with motion"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "geometry_mismatch_count",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "recording_avg_fps",
+          "operator": ">=",
+          "target": 30
+        }
+      ],
+      "evidence": [
+        "screenshots",
+        "recording_mp4",
+        "ffprobe_json"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_019_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_019_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_019_display.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell rm -f /sdcard/dsp_rec.mp4",
+          "description": "Remove recording.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_019",
+      "source_id": "TC_DSP_FUNC_019"
+    },
+    {
+      "test_case_id": "TC_DSP_FUNC_020",
+      "feature": "Display",
+      "test_type": "Functional",
+      "test_name": "Full-Screen Test Patterns: Dead/Stuck Pixels, Banding and Uniformity",
+      "execution": "SEMI",
+      "priority": "P1",
+      "objective": "Verify the rendering path reproduces full-screen test patterns exactly and the panel shows no dead/stuck pixels, visible banding or gross non-uniformity.",
+      "real_world_reference": "ISO 9241-307 pixel-fault inspection; OEM factory 'LCD/OLED test' patterns",
+      "harness_requirement": {
+        "required": true,
+        "harness_types": [
+          "ON_DEVICE_INSTRUMENTATION_HARNESS",
+          "EXTERNAL_LAB_EQUIPMENT"
+        ],
+        "harness_package": "com.example.displaytest",
+        "harness_class": "com.example.displaytest.DisplayPatternTest",
+        "helper_apks": [],
+        "lab_equipment": [
+          "dark room",
+          "loupe; imaging colorimeter optional for mura"
+        ],
+        "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+        "reason": "Exact full-screen patterns (bypassing system UI) need an immersive on-device app; panel defects need human/optical inspection because screenshots only prove the framebuffer.",
+        "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+      },
+      "applicability": {
+        "required_capabilities": [
+          "built-in display"
+        ],
+        "condition": "Always applicable"
+      },
+      "parameters": {
+        "patterns": [
+          "black",
+          "white",
+          "red",
+          "green",
+          "blue",
+          "gray50",
+          "gray_ramp_8bit",
+          "checker_1px"
+        ],
+        "brightness": "100% manual",
+        "dwell_sec": 20
+      },
+      "prerequisites": [
+        "Dark room",
+        "Screen cleaned"
+      ],
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Show each pattern immersive",
+          "command": "adb shell am instrument -w -r -e pattern <p> -e dwell_sec 20 -e class com.example.displaytest.DisplayPatternTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+          "expect": "Pattern visible full-screen"
+        },
+        {
+          "step": 2,
+          "action": "Verify framebuffer while shown",
+          "command": "adb exec-out screencap -p > pattern_<p>.png",
+          "expect": "Host: 100% of pixels outside cutout/rounded-corner mask equal expected RGB"
+        },
+        {
+          "step": 3,
+          "action": "Tester inspects each pattern (bright pixels on black, dark pixels on white/colours, banding on ramp, tint/uniformity on gray50)",
+          "command": null,
+          "expect": "Tester records defects with coordinates"
+        }
+      ],
+      "expected_results": [
+        "Framebuffer matches every pattern exactly (outside masked regions)",
+        "Zero dead or stuck pixels",
+        "No visible banding on the 8-bit ramp",
+        "No visible tint shift or mura on gray50"
+      ],
+      "pass_criteria": [
+        {
+          "metric": "framebuffer_mismatch_pixels",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "pixel_defects",
+          "operator": "==",
+          "target": 0
+        },
+        {
+          "metric": "banding_or_mura_findings",
+          "operator": "==",
+          "target": 0
+        }
+      ],
+      "evidence": [
+        "pattern_screenshots",
+        "tester_defect_log",
+        "optional_colorimeter_images"
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_FUNC_020_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_FUNC_020_events.txt",
+          "filter_tags": [
+            "DisplayManagerService",
+            "DisplayPowerController",
+            "DisplayModeDirector",
+            "SurfaceFlinger",
+            "WindowManager",
+            "ColorDisplayService",
+            "AutomaticBrightnessController",
+            "InputReader",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_FUNC_020_display.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on FAIL, timeout, SurfaceFlinger/SystemUI crash, ANR or critical thermal state."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system screen_brightness_mode ${BASELINE_SCREEN_BRIGHTNESS_MODE}",
+          "description": "Restore screen_brightness_mode.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system screen_brightness ${BASELINE_SCREEN_BRIGHTNESS}",
+          "description": "Restore screen_brightness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_fun_020",
+      "source_id": "TC_DSP_FUNC_020"
+    }
+  ]
+}

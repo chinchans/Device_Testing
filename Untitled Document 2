@@ -1,0 +1,1 @@
+Cloud device farms. Use these if you don't have phones on hand. Options include Firebase Test Lab, AWS Device Farm, BrowserStack or LambdaTest real devices, and Samsung Remote Test Lab. All of them can run instrumentation APKs. Most only return logcat and files after the run, so fixing the result-reporting problem above matters even more here.

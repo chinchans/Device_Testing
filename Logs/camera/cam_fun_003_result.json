@@ -1,0 +1,132 @@
+{
+  "ui_id": "cam_fun_003",
+  "source_id": "TC_CAM_FUNC_003",
+  "name": "Front-to-Rear Camera Switching",
+  "category": "functionality",
+  "verdict": "PASS",
+  "reason": "",
+  "started_at": "2026-09-30T11:59:29",
+  "finished_at": "2026-09-30T11:59:31",
+  "serial": "emulator-5554",
+  "device": {
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "sdk_int": 34,
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+  },
+  "variables": {
+    "ENDURANCE_CYCLES": "10",
+    "REAR_PRIMARY_CAMERA_ID": "10",
+    "REAR_PRIMARY_PHOTO_RESOLUTION": "640x480",
+    "FRONT_PRIMARY_CAMERA_ID": "1",
+    "FRONT_PRIMARY_PHOTO_RESOLUTION": "1920x1440",
+    "TARGET_CAMERA_ID": "10",
+    "PHOTO_RESOLUTION": "640x480",
+    "MAX_SUPPORTED_PHOTO_RESOLUTION": "640x480",
+    "SUPPORTED_PHOTO_RESOLUTIONS": "640x480,640x360,424x240,320x240,320x180",
+    "SUPPORTED_PHOTO_ASPECT_RATIOS": "16:9,4:3",
+    "VIDEO_RESOLUTION": "640x480",
+    "SUPPORTED_VIDEO_RESOLUTIONS": "640x480,640x360,424x240",
+    "SUPPORTED_VIDEO_PROFILES": "640x480@30,640x360@30",
+    "MIN_ZOOM_RATIO": "1.0",
+    "MAX_ZOOM_RATIO": "1.0",
+    "MAX_DIGITAL_ZOOM_RATIO": "1.0",
+    "FLASH_SUPPORTED_CAMERA_ID": "1",
+    "NIGHT_MODE_SUPPORTED_CAMERA_ID": "1",
+    "PORTRAIT_SUPPORTED_CAMERA_ID": "1",
+    "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+    "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+    "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+    "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+  },
+  "spec_values": {
+    "REAR_PRIMARY_CAMERA": "50 MP rear primary camera",
+    "REAR_PRIMARY_CAMERA_SUPPORTED": "true",
+    "FRONT_PRIMARY_CAMERA": "12 MP front camera",
+    "FRONT_PRIMARY_CAMERA_SUPPORTED": "true"
+  },
+  "spec_source": "Samsung Samsung Galaxy S25",
+  "operations": [
+    {
+      "label": "main",
+      "class": "com.example.cameratest.CameraSwitchTest",
+      "args": {
+        "source_camera": "1",
+        "target_camera": "10",
+        "iterations": "1"
+      },
+      "duration_s": 1.26,
+      "result": {
+        "result": "PASS",
+        "completed_iterations": 1,
+        "failed_iterations": 0,
+        "latency_ms": 935
+      }
+    }
+  ],
+  "checks": [
+    {
+      "type": "expect",
+      "description": "Front camera closes cleanly",
+      "passed": true,
+      "actual": "PASS"
+    },
+    {
+      "type": "expect",
+      "description": "Rear camera opens successfully",
+      "passed": true,
+      "actual": "PASS"
+    },
+    {
+      "type": "expect",
+      "description": "Rear camera preview starts",
+      "passed": true,
+      "actual": "PASS"
+    },
+    {
+      "type": "expect",
+      "description": "No CameraService error occurs",
+      "passed": true,
+      "actual": "PASS"
+    },
+    {
+      "type": "expect",
+      "description": "Active camera ID equals 10",
+      "passed": true,
+      "actual": "PASS"
+    }
+  ],
+  "derived": {},
+  "manual_steps": [],
+  "host_steps": [
+    {
+      "command": "adb wait-for-device",
+      "rc": 0
+    },
+    {
+      "command": "adb shell input keyevent KEYCODE_WAKEUP",
+      "rc": 0
+    },
+    {
+      "command": "adb shell wm dismiss-keyguard",
+      "rc": 0
+    },
+    {
+      "command": "adb logcat -d -v threadtime > cam_fun_003_logcat.txt",
+      "rc": 0
+    },
+    {
+      "command": "adb shell am force-stop com.example.cameratest",
+      "rc": 0
+    },
+    {
+      "command": "adb shell input keyevent KEYCODE_HOME",
+      "rc": 0
+    }
+  ],
+  "evidence_files": [
+    "/home/tcs/Documents/Device_Testing/Backend/data/generated_scripts/20260930_115811_14b25b/executions/20260930_115927_5f82/cam_fun_003/cam_fun_003_logcat.txt"
+  ],
+  "notes": [],
+  "runtime_version": "1.1.0"
+}

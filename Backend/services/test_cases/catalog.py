@@ -8,6 +8,7 @@ script generation later.
 from __future__ import annotations
 
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -30,9 +31,19 @@ FEATURE_ALIASES = {
 }
 
 
+# Catalogs of other features stay on disk but are not served (no cases, no script generation).
+ENABLED_FEATURES = {
+    f.strip().lower() for f in os.getenv("ENABLED_TEST_FEATURES", "camera").split(",") if f.strip()
+}
+
+
 def _normalize_feature(feature: str) -> str:
     key = (feature or "").strip().lower().replace(" ", "_").replace("-", "_")
     return FEATURE_ALIASES.get(key, key)
+
+
+def is_feature_enabled(feature: str) -> bool:
+    return _normalize_feature(feature) in ENABLED_FEATURES
 
 
 def _feature_dir(feature: str) -> Path:
@@ -54,7 +65,7 @@ def list_features() -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for d in sorted(TEST_CASES_ROOT.iterdir()):
         catalog_path = d / "catalog.json"
-        if not catalog_path.is_file():
+        if not catalog_path.is_file() or not is_feature_enabled(d.name):
             continue
         try:
             data = _load_json(str(catalog_path))
@@ -78,6 +89,8 @@ def list_features() -> list[dict[str, Any]]:
 
 def get_feature_catalog(feature: str) -> dict[str, Any] | None:
     """UI-facing catalog: id, title, brief per category."""
+    if not is_feature_enabled(feature):
+        return None
     path = _feature_dir(feature) / "catalog.json"
     if not path.is_file():
         return None
@@ -87,7 +100,7 @@ def get_feature_catalog(feature: str) -> dict[str, Any] | None:
 def get_full_suite(feature: str, category: str) -> dict[str, Any] | None:
     """Full codegen-ready suite for a feature × category."""
     stem = CATEGORY_FILES.get((category or "").strip().lower())
-    if not stem:
+    if not stem or not is_feature_enabled(feature):
         return None
     path = _feature_dir(feature) / f"{stem}.json"
     if not path.is_file():

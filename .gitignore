@@ -28,6 +28,7 @@ Backend/data/cache/
 Backend/data/indexes/
 Backend/data/logs/
 Backend/data/traces/
+Backend/data/generated_scripts/
 Backend/uploads/
 *.log
 

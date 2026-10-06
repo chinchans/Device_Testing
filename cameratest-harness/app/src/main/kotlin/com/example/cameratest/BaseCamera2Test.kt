@@ -97,18 +97,37 @@ abstract class BaseCamera2Test {
         previewTexture = null
     }
 
-    /** Single-line JSON to stdout — the only harness → host contract channel. */
+    /**
+     * Single-line JSON — the only harness → host contract channel.
+     * `am instrument -w` does not forward System.out, so the line is also sent as the
+     * instrumentation status "stream" field (printed verbatim by `am instrument`).
+     */
     protected fun emit(fields: Map<String, Any?>) {
         val obj = JSONObject()
         for ((k, v) in fields) {
             if (v == null) continue
             when (v) {
                 is JSONObject, is JSONArray -> obj.put(k, v)
+                is Double -> if (v.isFinite()) obj.put(k, v)
+                is Float -> if (v.isFinite()) obj.put(k, v.toDouble())
                 is Number, is Boolean, is String -> obj.put(k, v)
                 else -> obj.put(k, v.toString())
             }
         }
-        println(obj.toString())
+        val line = obj.toString()
+        println(line)
+        try {
+            val status = Bundle().apply {
+                putString("stream", line + "\n")
+                putString("harness_json", line)
+            }
+            InstrumentationRegistry.getInstrumentation().sendStatus(STATUS_CODE_JSON, status)
+        } catch (_: Exception) {
+        }
+    }
+
+    companion object {
+        private const val STATUS_CODE_JSON = 2
     }
 
     protected fun emitPass(vararg pairs: Pair<String, Any?>) {

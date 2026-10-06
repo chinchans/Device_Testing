@@ -1,0 +1,4174 @@
+{
+  "feature": "display",
+  "category": "security",
+  "suite_id": "DISPLAY_SECURITY_CODEGEN_V1",
+  "test_case_count": 20,
+  "suite_metadata": {
+    "suite_id": "DISPLAY_SECURITY_CODEGEN_V1",
+    "suite_name": "Display Security / Privacy Codegen-Ready Suite",
+    "schema_version": "1.0",
+    "test_case_count": 20,
+    "schema_note": "Same schema as Backend/data/test_cases/camera/security.json, extended with harness_requirement, real_world_reference and explicit ADB commands.",
+    "dut_spec_reference": {
+      "source_documents": [
+        "Product_Spec_Docs/91_mobiles_realme GT Master Edition 5G - Full Specifications & Price in India.pdf",
+        "Product_Spec_Docs/Realme GT Master Edition Phone Price, Specs, Comparison and Reviews _ Gadgets 360.pdf"
+      ],
+      "device_model": "realme GT Master Edition 5G",
+      "chipset": "Qualcomm Snapdragon 778G",
+      "launch_android_version": "Android 11",
+      "variables": {
+        "SPEC_PANEL_TYPE": "Super AMOLED",
+        "SPEC_SCREEN_SIZE_IN": 6.43,
+        "SPEC_RESOLUTION": "1080x2400",
+        "SPEC_ASPECT_RATIO": "20:9",
+        "SPEC_PPI": 409,
+        "SPEC_PEAK_REFRESH_HZ": 120,
+        "SPEC_PEAK_BRIGHTNESS_NITS": 1000,
+        "SPEC_CUTOUT_TYPE": "punch-hole (single, front camera)",
+        "SPEC_FINGERPRINT": "in-display (optical)",
+        "SPEC_DISPLAY_SENSORS": "ambient light, proximity"
+      },
+      "not_stated_in_spec_documents": [
+        "touch sampling rate",
+        "HDR10 / HDR10+ certification (91mobiles lists 'No HDR streaming available on Netflix' as a con)",
+        "colour gamut coverage (DCI-P3 / sRGB)",
+        "PWM dimming frequency / DC dimming",
+        "LTPO / minimum adaptive refresh rate"
+      ],
+      "rule": "Values not stated in the spec documents are discovered from the device at runtime and are never invented. Where a case compares against SPEC_* it uses the value above unless overridden with --var SPEC_X=value."
+    },
+    "harness_contract": {
+      "status": "NOT_YET_IMPLEMENTED - proposed contract; cases that need it state so in test_metadata.harness_requirement",
+      "harness_package": "com.example.displaytest",
+      "runner": "com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+      "invocation": "adb shell am instrument -w -r [-e key value ...] -e class com.example.displaytest.<ClassName> com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+      "result_transport": "Exactly one line 'INSTRUMENTATION_STATUS: harness_json=<single-line JSON>' per operation (same convention as cameratest-harness 2.0.0); host parses the last such line.",
+      "result_values": [
+        "PASS",
+        "FAIL",
+        "SKIPPED",
+        "NOT_APPLICABLE",
+        "BLOCKED_PRECONDITION",
+        "HARNESS_ERROR"
+      ],
+      "minimum_output_keys": [
+        "result",
+        "error (when result != PASS)",
+        "metric fields named in the case SLAs"
+      ],
+      "timing_clock": "SystemClock.elapsedRealtimeNanos / Choreographer frameTimeNanos (monotonic)",
+      "helper_apks": {
+        "com.example.displaytest.unprivileged": "No special permissions (no WRITE_SETTINGS, no SYSTEM_ALERT_WINDOW, targetSdk = device SDK). Used for negative security checks.",
+        "com.example.displaytest.overlay": "Declares SYSTEM_ALERT_WINDOW; AppOp is toggled by the host with 'appops set'."
+      },
+      "device_admin_component": "com.example.displaytest/.admin.TestDeviceAdminReceiver (android:testOnly=\"true\" so the host can remove it)",
+      "test_assets": {
+        "/sdcard/DisplayTest/hdr10_pq_1080p_10s.mp4": "HEVC Main10, BT.2020 PQ, static HDR10 metadata",
+        "/sdcard/DisplayTest/h264_1080p_23976_60s.mp4": "23.976 fps cadence clip with per-frame counter overlay",
+        "/sdcard/DisplayTest/h264_1080p_30_60s.mp4": "30 fps cadence clip with per-frame counter overlay",
+        "/sdcard/DisplayTest/h264_1080p_60_60s.mp4": "60 fps cadence clip with per-frame counter overlay"
+      }
+    },
+    "codegen_rules": [
+      "Read test_metadata.harness_requirement (or harness_requirement for functionality cases) before generating code.",
+      "harness_requirement.required == false: generate a pure host script (Python + ADB); do not reference any harness class.",
+      "harness_requirement.required == true: call only the named harness_class / helper_apks through 'adb shell am instrument'. If the package is not installed, classify BLOCKED_PRECONDITION - never FAIL and never substitute another method.",
+      "harness_requirement.lab_equipment non-empty: the script must pause for or accept the measured values via --var NAME=value (names listed in payload.manual_inputs); missing values -> BLOCKED_PRECONDITION.",
+      "Snapshot every setting a case modifies before the first mutation (setup step 'Snapshot display settings') and restore it in teardown even when the case fails. A BASELINE_* value of 'null' is restored with 'settings delete'.",
+      "Capability-gated cases resolve their capability first; absent capability -> NOT_APPLICABLE with the evidence line that proved it.",
+      "Never use 'input' event injection as a substitute for physical-touch or photon measurements; cases state when a measurement is software-path only.",
+      "All loops are bounded by explicit iteration counts or monotonic-time durations; poll intervals are stated per step.",
+      "Thermal status >= SEVERE (dumpsys thermalservice 'Current Status: 3' or higher) aborts the workload safely and is reported, not hidden.",
+      "Numeric SLA targets are defaults derived from the DUT spec / industry practice; product or golden-build baselines override them."
+    ],
+    "failure_classifications": {
+      "DUT_FIRMWARE_DEFECT": "Platform/OEM software behaviour violates the requirement.",
+      "DUT_HARDWARE_DEFECT": "Panel, touch controller or sensor behaves out of spec (lab-measured).",
+      "PERFORMANCE_REGRESSION": "Requirement met functionally but outside the performance target.",
+      "SYSTEM_SERVICE_CRASH": "SurfaceFlinger, SystemUI, system_server or HWC crashed/restarted.",
+      "APP_CRASH": "Harness, helper or target app crashed or ANR'd.",
+      "SECURITY_VULNERABILITY": "Protected content, setting or UI surface was accessible without authorization.",
+      "THERMAL_LIMITATION": "Result driven by thermal mitigation; recorded with thermal evidence.",
+      "TEST_ENVIRONMENT": "Precondition, harness or lab setup problem - not a DUT verdict."
+    },
+    "suite_constants": {
+      "SPEC_PANEL_TYPE": "Super AMOLED",
+      "SPEC_SCREEN_SIZE_IN": 6.43,
+      "SPEC_RESOLUTION": "1080x2400",
+      "SPEC_ASPECT_RATIO": "20:9",
+      "SPEC_PPI": 409,
+      "SPEC_PEAK_REFRESH_HZ": 120,
+      "SPEC_PEAK_BRIGHTNESS_NITS": 1000,
+      "SPEC_CUTOUT_TYPE": "punch-hole (single, front camera)",
+      "SPEC_FINGERPRINT": "in-display (optical)",
+      "SPEC_DISPLAY_SENSORS": "ambient light, proximity",
+      "SPEC_TOUCH_SAMPLING_HZ": null,
+      "TEST_PIN": "1397",
+      "PERF_ITERATIONS": 10,
+      "FRAME_TEST_DURATION_SEC": 30,
+      "FLING_COUNT": 20,
+      "SCREEN_CYCLES": 1000,
+      "SWITCH_CYCLES": 1000,
+      "ROTATION_CYCLES": 1000,
+      "ANIMATION_DURATION_SEC": 3600,
+      "RETENTION_EXPOSURE_SEC": 3600
+    },
+    "harness_summary": {
+      "no_harness": 1,
+      "on_device_harness_or_helper": 19,
+      "lab_equipment": 1
+    },
+    "harness_required_tests": [
+      "TC_DSP_SEC_001",
+      "TC_DSP_SEC_002",
+      "TC_DSP_SEC_003",
+      "TC_DSP_SEC_004",
+      "TC_DSP_SEC_005",
+      "TC_DSP_SEC_006",
+      "TC_DSP_SEC_007",
+      "TC_DSP_SEC_008",
+      "TC_DSP_SEC_009",
+      "TC_DSP_SEC_010",
+      "TC_DSP_SEC_011",
+      "TC_DSP_SEC_012",
+      "TC_DSP_SEC_013",
+      "TC_DSP_SEC_014",
+      "TC_DSP_SEC_015",
+      "TC_DSP_SEC_016",
+      "TC_DSP_SEC_018",
+      "TC_DSP_SEC_019",
+      "TC_DSP_SEC_020"
+    ],
+    "lab_equipment_tests": [
+      "TC_DSP_SEC_020"
+    ],
+    "semi_automated_tests": [
+      "TC_DSP_SEC_015",
+      "TC_DSP_SEC_020"
+    ]
+  },
+  "test_cases": [
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_001",
+        "test_name": "FLAG_SECURE Window Excluded from Screenshots",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Shell and user screenshots of a FLAG_SECURE window",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "Android WindowManager.LayoutParams.FLAG_SECURE; CTS window-security tests; banking-app requirements",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.SecureWindowTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "A FLAG_SECURE window with a known marker must be created by an app.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Positive Control",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e secure false -e hold_sec 10 -e class com.example.displaytest.SecureWindowTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & adb exec-out screencap -p > ctrl.png",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "positive_control_detected",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Harness renders a unique marker (magenta/cyan 8x8 checker + token text 'DSP-SEC-<nonce>'). Host decodes the capture and computes marker_pixel_fraction inside the harness window bounds (from 'dumpsys window'). Leak = fraction > 0.1%. The same capture flow is first run with the protection OFF (positive control) and must detect >= 90% marker pixels; otherwise the verdict is TEST_ENVIRONMENT, not PASS."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Secure Shell Capture",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e secure true -e hold_sec 10 -e class com.example.displaytest.SecureWindowTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & adb exec-out screencap -p > sec.png",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "secure_content_leak_count",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Harness renders a unique marker (magenta/cyan 8x8 checker + token text 'DSP-SEC-<nonce>'). Host decodes the capture and computes marker_pixel_fraction inside the harness window bounds (from 'dumpsys window'). Leak = fraction > 0.1%. The same capture flow is first run with the protection OFF (positive control) and must detect >= 90% marker pixels; otherwise the verdict is TEST_ENVIRONMENT, not PASS."
+        },
+        {
+          "step_number": 3,
+          "step_name": "Secure User Screenshot",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell input keyevent KEYCODE_SYSRQ; adb logcat -d | grep -i screenshot",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "user_screenshot_leak",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)(can.t take screenshot|secure|Screenshot.*(blocked|fail))",
+            "timeout_sec": 20
+          },
+          "code_gen_hint": "Either no new file in Pictures/Screenshots, or the saved file has no marker pixels."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "positive_control_detected",
+          "metric_name": "Detection validated with protection off",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "secure_content_leak_count",
+          "metric_name": "Captures containing secure content",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_001_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_001_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_001_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_001",
+      "source_id": "TC_DSP_SEC_001"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_002",
+        "test_name": "FLAG_SECURE Window Excluded from Screen Recording",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "screenrecord of a FLAG_SECURE window",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "FLAG_SECURE on virtual displays / MediaProjection",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.SecureWindowTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Secure window with marker required.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Positive Control Recording",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e secure false -e hold_sec 8 -e class com.example.displaytest.SecureWindowTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & adb shell screenrecord --time-limit 6 /sdcard/sec_ctrl.mp4",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "positive_control_detected",
+            "log_source": "stdout",
+            "extraction_regex": "(.*)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Pull and extract 1 frame/s with ffmpeg; marker detection as in TC_DSP_SEC_001. Harness renders a unique marker (magenta/cyan 8x8 checker + token text 'DSP-SEC-<nonce>'). Host decodes the capture and computes marker_pixel_fraction inside the harness window bounds (from 'dumpsys window'). Leak = fraction > 0.1%. The same capture flow is first run with the protection OFF (positive control) and must detect >= 90% marker pixels; otherwise the verdict is TEST_ENVIRONMENT, not PASS."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Secure Recording",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e secure true -e hold_sec 8 -e class com.example.displaytest.SecureWindowTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & adb shell screenrecord --time-limit 6 /sdcard/sec_rec.mp4",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "secure_frames_leaked",
+            "log_source": "stdout",
+            "extraction_regex": "(.*)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Any frame with marker fraction > 0.1% counts as leaked."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "positive_control_detected",
+          "metric_name": "Detection validated",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "secure_frames_leaked",
+          "metric_name": "Recorded frames with secure content",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_002_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_002_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_002_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell rm -f /sdcard/sec_ctrl.mp4 /sdcard/sec_rec.mp4",
+          "description": "Cleanup.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_002",
+      "source_id": "TC_DSP_SEC_002"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_003",
+        "test_name": "FLAG_SECURE Content Hidden in Recents Thumbnail",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Task snapshot of a FLAG_SECURE activity in Overview",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "Android task snapshots honour FLAG_SECURE",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.SecureWindowTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Secure activity with marker required.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Open Secure Activity Then Overview",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e secure true -e hold_sec 15 -e class com.example.displaytest.SecureWindowTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & (sleep 3; adb shell input keyevent KEYCODE_APP_SWITCH; sleep 2; adb exec-out screencap -p > recents.png)",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "thumbnail_leak",
+            "log_source": "stdout",
+            "extraction_regex": "(.*)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Positive control with secure=false first (thumbnail must show the marker). Leak = marker in thumbnail region."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "positive_control_detected",
+          "metric_name": "Detection validated",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "thumbnail_leak",
+          "metric_name": "Secure content in Recents thumbnail",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_003_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_003_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "activity",
+            "command": "adb shell dumpsys activity activities > TC_DSP_SEC_003_activities.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_003",
+      "source_id": "TC_DSP_SEC_003"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_004",
+        "test_name": "FLAG_SECURE Content Not Shown on Non-Secure Secondary Display",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Secure activity launched on a simulated overlay display",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "Android: secure windows are not shown on non-secure displays (casting/mirroring)",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.SecureWindowTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Secure activity with marker required on a chosen display.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Create Overlay Display",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put global overlay_display_devices 1280x720/240",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "overlay_display_id",
+            "log_source": "stdout",
+            "extraction_regex": "Overlay #1.*?displayId (\\d+)|mDisplayId=(\\d+).*?Overlay",
+            "timeout_sec": 20
+          },
+          "code_gen_hint": "Resolve the new logical display id from 'dumpsys display'."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Launch Secure Activity On It",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell am start --display <id> -n com.example.displaytest/.SecureWindowActivity --ez secure true; sleep 3; adb exec-out screencap -p > overlay.png",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "secure_content_on_nonsecure_display",
+            "log_source": "stdout",
+            "extraction_regex": "(.*)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "The overlay display renders as a floating window on the primary display, so the primary capture shows it. Positive control with secure=false must show the marker there."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "positive_control_detected",
+          "metric_name": "Detection validated",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "secure_content_on_nonsecure_display",
+          "metric_name": "Secure content rendered on non-secure display",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_004_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_004_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_SEC_004_display.txt"
+          },
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_004_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put global overlay_display_devices \"${BASELINE_OVERLAY_DISPLAY_DEVICES}\"",
+          "description": "Restore overlay_display_devices.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_004",
+      "source_id": "TC_DSP_SEC_004"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_005",
+        "test_name": "Secure SurfaceView Layer Excluded from Capture",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "SurfaceView.setSecure(true) (DRM-style protected layer)",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "Protected video path (Widevine L1 style) – secure layers excluded from capture",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.SecureWindowTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Only an app can create a secure SurfaceView next to non-secure content.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Mixed Secure/Non-Secure Capture",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e mode secure_surfaceview -e hold_sec 10 -e class com.example.displaytest.SecureWindowTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & adb exec-out screencap -p > sv.png",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "secure_layer_leak",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "The non-secure part of the same window carries a second marker that MUST appear (in-capture positive control); the secure SurfaceView marker must not."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "nonsecure_control_visible",
+          "metric_name": "Non-secure control marker visible",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "secure_layer_leak",
+          "metric_name": "Secure layer pixels captured",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_005_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_005_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_005_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_005",
+      "source_id": "TC_DSP_SEC_005"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_006",
+        "test_name": "Unauthorized Screen Mirroring via VirtualDisplay Blocked",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Unprivileged app requests AUTO_MIRROR / SECURE virtual displays",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "DisplayManager CAPTURE_VIDEO_OUTPUT / CAPTURE_SECURE_VIDEO_OUTPUT enforcement; CTS VirtualDisplayTest",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "The attempt must come from an app without capture permissions.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Attempt Mirroring Displays",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.VirtualDisplayAbuseTest com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "mirror_blocked",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Try VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR and VIRTUAL_DISPLAY_FLAG_SECURE; each must throw SecurityException. Report mirror_blocked, secure_flag_blocked, frames_of_other_apps_captured."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "mirror_blocked",
+          "metric_name": "AUTO_MIRROR without permission blocked",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "secure_flag_blocked",
+          "metric_name": "SECURE flag without permission blocked",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "frames_of_other_apps_captured",
+          "metric_name": "Foreign frames captured",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_006_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_006_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "display",
+            "command": "adb shell dumpsys display > TC_DSP_SEC_006_display.txt"
+          },
+          {
+            "name": "package_unpriv",
+            "command": "adb shell dumpsys package com.example.displaytest.unprivileged > TC_DSP_SEC_006_package_unprivileged.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_006",
+      "source_id": "TC_DSP_SEC_006"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_007",
+        "test_name": "MediaProjection Requires Explicit User Consent",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Screen-capture request denied when the user does not consent",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Android MediaProjection consent dialog; PROJECT_MEDIA AppOp",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "The capture request must originate from a normal app.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Request Capture",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.ProjectionConsentTest com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "consent_dialog_shown",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Helper launches createScreenCaptureIntent(). Host: 'uiautomator dump' must show a com.android.systemui dialog; host presses BACK. Helper must get RESULT_CANCELED and no MediaProjection; a forged/empty Intent to getMediaProjection must fail."
+        },
+        {
+          "step_number": 2,
+          "step_name": "AppOp State",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell appops get com.example.displaytest.unprivileged PROJECT_MEDIA",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "projection_granted_without_consent",
+            "log_source": "stdout",
+            "extraction_regex": "PROJECT_MEDIA: (\\w+)",
+            "timeout_sec": 10
+          },
+          "code_gen_hint": "Must not be 'allow'."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "consent_dialog_shown",
+          "metric_name": "System consent dialog shown",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "projection_granted_without_consent",
+          "metric_name": "Projection obtained without consent",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_007_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_007_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_007_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_007",
+      "source_id": "TC_DSP_SEC_007"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_008",
+        "test_name": "SYSTEM_ALERT_WINDOW Overlay Permission Enforcement",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Overlay window add denied without the AppOp; removed on revoke",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Android SYSTEM_ALERT_WINDOW / TYPE_APPLICATION_OVERLAY policy",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.overlay"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Needs an app that declares SYSTEM_ALERT_WINDOW whose AppOp the host toggles.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.overlay",
+          "description": "Confirm com.example.displaytest.overlay is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Denied Attempt",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell appops set com.example.displaytest.overlay SYSTEM_ALERT_WINDOW deny; adb shell am instrument -w -r -e class com.example.displaytest.overlay.OverlayAttemptTest com.example.displaytest.overlay/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "overlay_added_without_permission",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Expect BadTokenException / 'permission denied for window type 2038'."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Positive Control",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell appops set com.example.displaytest.overlay SYSTEM_ALERT_WINDOW allow; adb shell am instrument -w -r -e class com.example.displaytest.overlay.OverlayAttemptTest -e hold_sec 20 com.example.displaytest.overlay/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "overlay_visible_with_permission",
+            "log_source": "stdout",
+            "extraction_regex": "ty=APPLICATION_OVERLAY|type=2038",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "'dumpsys window windows' must list the overlay window."
+        },
+        {
+          "step_number": 3,
+          "step_name": "Revoke While Shown",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell appops set com.example.displaytest.overlay SYSTEM_ALERT_WINDOW deny; sleep 5; adb shell dumpsys window windows",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "overlay_persisted_after_revoke",
+            "log_source": "stdout",
+            "extraction_regex": "ty=APPLICATION_OVERLAY|type=2038",
+            "timeout_sec": 20
+          },
+          "code_gen_hint": "Overlay must be removed or hidden within 5 s."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "overlay_added_without_permission",
+          "metric_name": "Overlay added without permission",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "overlay_visible_with_permission",
+          "metric_name": "Positive control overlay shown",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "overlay_persisted_after_revoke",
+          "metric_name": "Overlay visible after revoke",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_008_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_008_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_008_window.txt"
+          },
+          {
+            "name": "appops_overlay",
+            "command": "adb shell appops get com.example.displaytest.overlay > TC_DSP_SEC_008_appops_overlay.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell appops set com.example.displaytest.overlay SYSTEM_ALERT_WINDOW default",
+          "description": "Restore appops_saw.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.overlay",
+          "description": "Stop com.example.displaytest.overlay.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_008",
+      "source_id": "TC_DSP_SEC_008"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_009",
+        "test_name": "Overlays Hidden Over Sensitive System UI (Tapjacking Protection)",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Overlay above permission dialog; untrusted touch occlusion",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "HIDE_NON_SYSTEM_OVERLAY_WINDOWS in PermissionController; Android 12 untrusted-touch blocking",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS",
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.TouchProbeTest",
+          "helper_apks": [
+            "com.example.displaytest.overlay"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Needs an overlay app (attacker) and a victim window that reports whether touches arrived.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        },
+        {
+          "variable": "${UNTRUSTED_TOUCH_BLOCKING}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Sub-check 2 applies only when SDK >= 31; otherwise record NOT_APPLICABLE for that sub-check."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.overlay",
+          "description": "Confirm com.example.displaytest.overlay is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Overlay Over Permission Dialog",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell appops set com.example.displaytest.overlay SYSTEM_ALERT_WINDOW allow; start full-screen translucent overlay; trigger a runtime permission request from com.example.displaytest; adb shell dumpsys window windows",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "overlay_visible_over_dialog",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)isVisible=true|mHasSurface=true",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "The overlay window must be hidden while the permission dialog is shown."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Untrusted Touch Occlusion (SDK >= 31)",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e mode victim -e duration_sec 20 -e class com.example.displaytest.TouchProbeTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner; overlay opacity 0.9 FLAG_NOT_TOUCHABLE; adb shell input tap 540 1200",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "occluded_touches_delivered",
+            "log_source": "logcat",
+            "extraction_regex": "Untrusted touch due to occlusion by",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Victim must receive 0 touches; logcat InputDispatcher shows the block. Control: opacity 0.5 -> touch delivered."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "overlay_visible_over_dialog",
+          "metric_name": "Overlay visible over permission dialog",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "occluded_touches_delivered",
+          "metric_name": "Touches through untrusted opaque overlay",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_009_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_009_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_009_window.txt"
+          },
+          {
+            "name": "input",
+            "command": "adb shell dumpsys input > TC_DSP_SEC_009_input.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell appops set com.example.displaytest.overlay SYSTEM_ALERT_WINDOW default",
+          "description": "Restore appops_saw.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.overlay",
+          "description": "Stop com.example.displaytest.overlay.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_009",
+      "source_id": "TC_DSP_SEC_009"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_010",
+        "test_name": "Background Custom Toast Blocked",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Custom-view toast posted from background app",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Android 11 toast restrictions (NotificationManagerService)",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "A normal app targeting SDK >= 30 must attempt the toast from the background.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${SDK_GE_30}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "SDK < 30 -> NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Background Custom Toast",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.BackgroundToastTest -e kind custom com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "custom_toast_shown",
+            "log_source": "logcat",
+            "extraction_regex": "Blocking custom toast from package \\S+ due to package not in the foreground",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Helper goes to background (HOME) then posts; 'dumpsys window windows' must show no TOAST window from the helper."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Text Toast Control",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.BackgroundToastTest -e kind text com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "text_toast_rendered_by_systemui",
+            "log_source": "stdout",
+            "extraction_regex": "(.*)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Text toast allowed (rendered by SystemUI)."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "custom_toast_shown",
+          "metric_name": "Background custom toast displayed",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "text_toast_rendered_by_systemui",
+          "metric_name": "Control text toast shown",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_010_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_010_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_010_window.txt"
+          },
+          {
+            "name": "notification",
+            "command": "adb shell dumpsys notification --noredact > TC_DSP_SEC_010_notification.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_010",
+      "source_id": "TC_DSP_SEC_010"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_011",
+        "test_name": "WRITE_SETTINGS Enforcement for Display Settings",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Unprivileged app writes brightness, timeout, peak refresh",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Android Settings.System write protection (WRITE_SETTINGS AppOp); CTS SettingsTest",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Writes must originate from an app without WRITE_SETTINGS.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Denied Writes",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell appops set com.example.displaytest.unprivileged WRITE_SETTINGS deny; adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.SettingsWriteTest -e ns system com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "unauthorized_writes",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Attempt screen_brightness, screen_off_timeout, peak_refresh_rate; expect SecurityException; host re-reads values: unchanged."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Positive Control",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell appops set com.example.displaytest.unprivileged WRITE_SETTINGS allow; (repeat step 1 for screen_brightness only)",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "authorized_write_succeeded",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Must succeed, proving the path works."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "unauthorized_writes",
+          "metric_name": "Writes accepted without permission",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "authorized_write_succeeded",
+          "metric_name": "Control write succeeded",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_011_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_011_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "package_unpriv",
+            "command": "adb shell dumpsys package com.example.displaytest.unprivileged > TC_DSP_SEC_011_package_unprivileged.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell appops set com.example.displaytest.unprivileged WRITE_SETTINGS default",
+          "description": "Restore appops_write_settings.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system screen_brightness ${BASELINE_SCREEN_BRIGHTNESS}",
+          "description": "Restore screen_brightness.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system screen_off_timeout ${BASELINE_SCREEN_OFF_TIMEOUT}",
+          "description": "Restore screen_off_timeout.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system peak_refresh_rate ${BASELINE_PEAK_REFRESH_RATE}",
+          "description": "Restore peak_refresh_rate.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_011",
+      "source_id": "TC_DSP_SEC_011"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_012",
+        "test_name": "WRITE_SECURE_SETTINGS Enforcement for Display Settings",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Unprivileged app writes Night Light, inversion, forced density",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Signature|privileged WRITE_SECURE_SETTINGS protection",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Writes must originate from a normal app.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Secure Writes",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.SettingsWriteTest -e ns secure com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "unauthorized_secure_writes",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Attempt night_display_activated, accessibility_display_inversion_enabled, display_density_forced; expect SecurityException and unchanged values. Never grant WRITE_SECURE_SETTINGS to the helper."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "unauthorized_secure_writes",
+          "metric_name": "Secure writes accepted",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_012_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_012_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "package_unpriv",
+            "command": "adb shell dumpsys package com.example.displaytest.unprivileged > TC_DSP_SEC_012_package_unprivileged.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure night_display_activated ${BASELINE_NIGHT_DISPLAY_ACTIVATED}",
+          "description": "Restore night_display_activated.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure accessibility_display_inversion_enabled ${BASELINE_INVERSION_ENABLED}",
+          "description": "Restore accessibility_display_inversion_enabled.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_012",
+      "source_id": "TC_DSP_SEC_012"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_013",
+        "test_name": "Sensitive Notification Content Hidden on Secure Lock Screen",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Private notification text with 'hide sensitive content'",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Android lock-screen notification privacy (lock_screen_allow_private_notifications)",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "A helper posts a notification containing a secret token.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": true,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell locksettings set-pin ${TEST_PIN}",
+          "description": "Set test PIN (dedicated DUT, no existing credential).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Hide Sensitive Content",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put secure lock_screen_show_notifications 1 && adb shell settings put secure lock_screen_allow_private_notifications 0; helper posts notification 'DSP-SECRET-<nonce>'; adb shell input keyevent KEYCODE_SLEEP; sleep 2; adb shell input keyevent KEYCODE_WAKEUP; adb shell uiautomator dump /sdcard/ks.xml",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "secret_visible_on_lockscreen",
+            "log_source": "stdout",
+            "extraction_regex": "DSP-SECRET-[0-9a-f]+",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Token must be absent from the keyguard UI dump and screencap OCR; a redacted 'Contents hidden' style entry should be present."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Positive Control",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put secure lock_screen_allow_private_notifications 1; (repeat lock/wake/dump)",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "control_secret_visible",
+            "log_source": "stdout",
+            "extraction_regex": "DSP-SECRET-[0-9a-f]+",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Token must now be visible."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "secret_visible_on_lockscreen",
+          "metric_name": "Secret shown while hidden",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "control_secret_visible",
+          "metric_name": "Control shows secret",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_013_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_013_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "notification",
+            "command": "adb shell dumpsys notification --noredact > TC_DSP_SEC_013_notification.txt"
+          },
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_013_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure lock_screen_allow_private_notifications ${BASELINE_LOCK_SCREEN_ALLOW_PRIVATE_NOTIFICATIONS}",
+          "description": "Restore lock_screen_allow_private_notifications.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure lock_screen_show_notifications ${BASELINE_LOCK_SCREEN_SHOW_NOTIFICATIONS}",
+          "description": "Restore lock_screen_show_notifications.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell locksettings clear --old ${TEST_PIN}",
+          "description": "Restore pin.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_013",
+      "source_id": "TC_DSP_SEC_013"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_014",
+        "test_name": "Activities Cannot Display Over Secure Keyguard Without Authorization",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "App launch while device is locked",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "Android showWhenLocked / requestDismissKeyguard policy",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "A normal app attempts to show UI over the secure keyguard.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": true,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell locksettings set-pin ${TEST_PIN}",
+          "description": "Set test PIN (dedicated DUT, no existing credential).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Launch Without showWhenLocked",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell input keyevent KEYCODE_SLEEP; adb shell input keyevent KEYCODE_WAKEUP; adb shell am start -n com.example.displaytest.unprivileged/.PlainActivity; sleep 2; adb shell dumpsys window",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "unauthorized_display_over_keyguard",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)(isKeyguardShowing=true|mShowingLockscreen=true|showing=true)",
+            "timeout_sec": 30
+          },
+          "code_gen_hint": "Keyguard must still be showing and mCurrentFocus must not be the helper."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Dismiss Request Needs Credential",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell am start -n com.example.displaytest.unprivileged/.DismissKeyguardActivity; sleep 2; adb shell dumpsys window",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "keyguard_dismissed_without_credential",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)(isKeyguardShowing=true|mShowingLockscreen=true|showing=true)",
+            "timeout_sec": 30
+          },
+          "code_gen_hint": "requestDismissKeyguard must surface the bouncer; device remains locked until PIN entry."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "unauthorized_display_over_keyguard",
+          "metric_name": "App UI over secure keyguard",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "keyguard_dismissed_without_credential",
+          "metric_name": "Keyguard dismissed without PIN",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_014_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_014_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_014_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell locksettings clear --old ${TEST_PIN}",
+          "description": "Restore pin.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_014",
+      "source_id": "TC_DSP_SEC_014"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_015",
+        "test_name": "Screen Pinning Exit Requires Credential",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Unpin gesture with 'Ask for PIN before unpinning'",
+        "feasibility": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "Android lock-task (screen pinning) security",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.SecureWindowTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "A pinned task is needed; the unpin gesture must be a real user gesture.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": true,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell locksettings set-pin ${TEST_PIN}",
+          "description": "Set test PIN (dedicated DUT, no existing credential).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Pin Task",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put secure lock_to_app_exit_locked 1; start harness activity; adb shell am task lock <taskId>",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "pinned",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)mLockTaskModeState=(PINNED|LOCKED)",
+            "timeout_sec": 30
+          },
+          "code_gen_hint": "Resolve taskId from 'dumpsys activity activities'. If 'am task lock' is unavailable, tester pins via Overview."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Tester Unpins",
+          "action_type": "manual_measurement",
+          "payload": {
+            "command": "Tester performs the unpin gesture (Back + Overview hold, or OEM equivalent)",
+            "duration_sec": 0,
+            "manual_inputs": [
+              "TESTER_CONFIRMS_UNPIN_DONE"
+            ]
+          },
+          "validation_checkpoint": {
+            "metric_key": "unpinned_without_credential",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)(isKeyguardShowing=true|mShowingLockscreen=true|showing=true)",
+            "timeout_sec": 120
+          },
+          "code_gen_hint": "After unpin 'dumpsys window' must show the secure keyguard (device locked)."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "unpinned_without_credential",
+          "metric_name": "Unpinned without credential",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_015_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_015_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "activity",
+            "command": "adb shell dumpsys activity activities > TC_DSP_SEC_015_activities.txt"
+          },
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_015_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure lock_to_app_exit_locked ${BASELINE_LOCK_TO_APP_EXIT_LOCKED}",
+          "description": "Restore lock_to_app_exit_locked.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell locksettings clear --old ${TEST_PIN}",
+          "description": "Restore pin.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_015",
+      "source_id": "TC_DSP_SEC_015"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_016",
+        "test_name": "Device-Admin Maximum Screen-Off Timeout Enforced",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Enterprise policy caps screen timeout",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "DevicePolicyManager.setMaximumTimeToLock; enterprise MDM acceptance",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.DeviceAdminPolicyTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Policy must be set by an active device-admin app (testOnly).",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Activate Admin And Set Policy",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell dpm set-active-admin --user 0 com.example.displaytest/.admin.TestDeviceAdminReceiver; adb shell am instrument -w -r -e max_time_to_lock_ms 30000 -e class com.example.displaytest.DeviceAdminPolicyTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "policy_applied",
+            "log_source": "stdout",
+            "extraction_regex": "mMaximumScreenOffTimeoutFromDeviceAdmin=(\\d+)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Verify in 'dumpsys power'."
+        },
+        {
+          "step_number": 2,
+          "step_name": "User Sets Longer Timeout",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put system screen_off_timeout 600000; adb shell input keyevent KEYCODE_WAKEUP; <poll dumpsys power every 1 s>",
+            "duration_sec": 0,
+            "poll_interval_ms": 1000
+          },
+          "validation_checkpoint": {
+            "metric_key": "effective_timeout_ms",
+            "log_source": "stdout",
+            "extraction_regex": "mWakefulness=(Awake|Asleep|Dozing)",
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Screen must sleep within 30 s + 5 s tolerance of last activity despite the 10 min setting."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "policy_applied",
+          "metric_name": "Policy visible to PowerManager",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "TEST_ENVIRONMENT"
+        },
+        {
+          "metric_key": "effective_timeout_ms",
+          "metric_name": "Effective timeout",
+          "operator": "<=",
+          "target_value": 35000,
+          "critical_threshold": 60000,
+          "unit": "ms",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_016_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_016_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "power",
+            "command": "adb shell dumpsys power > TC_DSP_SEC_016_power.txt"
+          },
+          {
+            "name": "device_policy",
+            "command": "adb shell dumpsys device_policy > TC_DSP_SEC_016_device_policy.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put system screen_off_timeout ${BASELINE_SCREEN_OFF_TIMEOUT}",
+          "description": "Restore screen_off_timeout.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell dpm remove-active-admin --user 0 com.example.displaytest/.admin.TestDeviceAdminReceiver",
+          "description": "Restore device_admin.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_016",
+      "source_id": "TC_DSP_SEC_016"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_017",
+        "test_name": "Device Locks After Screen Timeout and Power Key",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "Secure keyguard required after timeout and power-key lock",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "execution_engine": "Python + ADB",
+        "codegen_eligible": true,
+        "real_world_reference": "Android keyguard lock-after-timeout and power-button-instantly-locks",
+        "harness_requirement": {
+          "required": false,
+          "harness_types": [
+            "NONE"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_REQUIRED",
+          "reason": "Lock state observable from dumpsys window; PIN set via locksettings.",
+          "fallback_without_harness": null
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": false,
+        "secure_lock_required": true,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell locksettings set-pin ${TEST_PIN}",
+          "description": "Set test PIN (dedicated DUT, no existing credential).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Timeout Lock",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put secure lock_screen_lock_after_timeout 0 && adb shell settings put system screen_off_timeout 15000; wait for Asleep; adb shell input keyevent KEYCODE_WAKEUP; adb shell dumpsys window",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "timeout_lock_bypass",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)(isKeyguardShowing=true|mShowingLockscreen=true|showing=true)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Keyguard must be showing and secure."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Power-Key Lock",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "unlock with 'adb shell input text ${TEST_PIN} && adb shell input keyevent KEYCODE_ENTER'; KEYCODE_POWER; KEYCODE_WAKEUP; dumpsys window",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "power_key_lock_bypass",
+            "log_source": "stdout",
+            "extraction_regex": "(?i)(isKeyguardShowing=true|mShowingLockscreen=true|showing=true)",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Immediately locked (instant-lock default)."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "timeout_lock_bypass",
+          "metric_name": "Unlocked after timeout",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "power_key_lock_bypass",
+          "metric_name": "Unlocked after power key",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_017_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_017_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_017_window.txt"
+          },
+          {
+            "name": "power",
+            "command": "adb shell dumpsys power > TC_DSP_SEC_017_power.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure lock_screen_lock_after_timeout ${BASELINE_LOCK_AFTER_TIMEOUT}",
+          "description": "Restore lock_screen_lock_after_timeout.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put system screen_off_timeout ${BASELINE_SCREEN_OFF_TIMEOUT}",
+          "description": "Restore screen_off_timeout.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell locksettings clear --old ${TEST_PIN}",
+          "description": "Restore pin.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_017",
+      "source_id": "TC_DSP_SEC_017"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_018",
+        "test_name": "Unprivileged SurfaceFlinger Debug Transactions Rejected",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "App binder calls to SurfaceFlinger debug codes",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "SurfaceFlinger transaction credential checks (ACCESS_SURFACE_FLINGER / HARDWARE_TEST)",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Calls must come from an app UID; shell is privileged and would give a false result.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Attempt Debug Transactions",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e class com.example.displaytest.unprivileged.SurfaceFlingerAbuseTest com.example.displaytest.unprivileged/androidx.test.runner.AndroidJUnitRunner",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "unauthorized_sf_changes",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Attempt show-updates (1002), colour-matrix (1015) and refresh-overlay (1034) codes. PASS if each is denied (PERMISSION_DENIED / SecurityException) or the binder cannot be obtained (hidden API) - record blocked_at_layer. Cross-check logcat 'Permission Denial: can't access SurfaceFlinger' and that the colour matrix is unchanged."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "unauthorized_sf_changes",
+          "metric_name": "SurfaceFlinger state changed by app",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_018_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_018_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "surfaceflinger",
+            "command": "adb shell dumpsys SurfaceFlinger > TC_DSP_SEC_018_surfaceflinger.txt"
+          },
+          {
+            "name": "package_unpriv",
+            "command": "adb shell dumpsys package com.example.displaytest.unprivileged > TC_DSP_SEC_018_package_unprivileged.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_018",
+      "source_id": "TC_DSP_SEC_018"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_019",
+        "test_name": "Screen-Capture Detection Callback (Android 14+)",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "App notified of user screenshots",
+        "feasibility": "FULLY_AUTOMATED",
+        "priority": "P2",
+        "execution_engine": "Python + ADB + Display Instrumentation Harness",
+        "codegen_eligible": true,
+        "real_world_reference": "Activity.registerScreenCaptureCallback (API 34, DETECT_SCREEN_CAPTURE)",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "ON_DEVICE_INSTRUMENTATION_HARNESS"
+          ],
+          "harness_package": "com.example.displaytest",
+          "harness_class": "com.example.displaytest.ScreenCaptureDetectTest",
+          "helper_apks": [],
+          "lab_equipment": [],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Callback registration is an app API.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${DISPLAY_HARNESS_INSTALLED}",
+          "command": "adb shell pm list instrumentation",
+          "extraction_regex": "instrumentation:com\\.example\\.displaytest/(\\S+)",
+          "code_gen_hint": "Absent -> BLOCKED_PRECONDITION (harness not installed); do not run the workload."
+        },
+        {
+          "variable": "${SDK_GE_34}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "SDK < 34 -> NOT_APPLICABLE (DUT launched on Android 11)."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": true,
+        "helper_apps_required": false,
+        "secure_lock_required": false,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell svc power stayon usb",
+          "description": "Keep screen on while USB-powered so timeouts do not disturb measurement.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest",
+          "description": "Confirm com.example.displaytest is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "User Screenshot",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "adb shell am instrument -w -r -e hold_sec 15 -e class com.example.displaytest.ScreenCaptureDetectTest com.example.displaytest/androidx.test.runner.AndroidJUnitRunner & (sleep 3; adb shell input keyevent KEYCODE_SYSRQ)",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "callback_received",
+            "log_source": "stdout",
+            "extraction_regex": "INSTRUMENTATION_STATUS: harness_json=(\\{.*\\})",
+            "timeout_sec": 60
+          },
+          "code_gen_hint": "Callback within 2 s of the screenshot."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "callback_received",
+          "metric_name": "Screenshot callback received",
+          "operator": "==",
+          "target_value": 1,
+          "critical_threshold": 0,
+          "unit": "boolean",
+          "evaluation_source": "stdout",
+          "failure_classification": "DUT_FIRMWARE_DEFECT"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_019_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_019_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "window",
+            "command": "adb shell dumpsys window > TC_DSP_SEC_019_window.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell am force-stop com.example.displaytest",
+          "description": "Stop com.example.displaytest.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_019",
+      "source_id": "TC_DSP_SEC_019"
+    },
+    {
+      "test_metadata": {
+        "test_id": "TC_DSP_SEC_020",
+        "test_name": "Always-On Display Does Not Reveal Private Notification Content",
+        "feature": "Display",
+        "test_type": "Security",
+        "target_scenario": "AOD with secure lock and hidden sensitive content",
+        "feasibility": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "execution_engine": "Python + ADB + Helper Test APK",
+        "codegen_eligible": true,
+        "real_world_reference": "OEM AOD privacy review",
+        "harness_requirement": {
+          "required": true,
+          "harness_types": [
+            "HELPER_TEST_APK",
+            "EXTERNAL_LAB_EQUIPMENT"
+          ],
+          "harness_package": null,
+          "harness_class": null,
+          "helper_apks": [
+            "com.example.displaytest.unprivileged"
+          ],
+          "lab_equipment": [
+            "camera for photographic evidence (optional)"
+          ],
+          "harness_status": "NOT_YET_IMPLEMENTED (proposed contract - see suite_metadata.harness_contract)",
+          "reason": "Helper posts the secret notification; AOD content cannot be captured by screencap in doze, so a tester/camera confirms.",
+          "fallback_without_harness": "BLOCKED_PRECONDITION - no equivalent host-only method"
+        }
+      },
+      "capability_discovery": [
+        {
+          "variable": "${ANDROID_SDK_INT}",
+          "command": "adb shell getprop ro.build.version.sdk",
+          "extraction_regex": "(\\d+)",
+          "code_gen_hint": "Record platform SDK; gate version-specific behaviour on it."
+        },
+        {
+          "variable": "${AOD_AVAILABLE}",
+          "command": "adb shell settings get secure doze_always_on",
+          "extraction_regex": "(\\d|null)",
+          "code_gen_hint": "No AOD -> NOT_APPLICABLE."
+        }
+      ],
+      "prerequisites": {
+        "device_scope": "dedicated test DUT only (no personal accounts or data)",
+        "display_harness_installed": false,
+        "helper_apps_required": true,
+        "secure_lock_required": true,
+        "existing_lock_credential": "none (the case sets and clears TEST_PIN itself)",
+        "user_data_protection": "Use only content generated by the harness/helper apps; never capture unrelated user data."
+      },
+      "setup_commands": [
+        {
+          "command": "adb wait-for-device",
+          "description": "Wait for DUT.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_WAKEUP",
+          "description": "Wake display.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell wm dismiss-keyguard",
+          "description": "Dismiss non-secure keyguard.",
+          "ignore_failure": true
+        },
+        {
+          "command": "adb shell 'for k in screen_brightness screen_brightness_mode screen_off_timeout peak_refresh_rate min_refresh_rate accelerometer_rotation user_rotation font_scale display_color_mode; do echo system.$k=$(settings get system $k); done; for k in night_display_activated night_display_color_temperature night_display_auto_mode accessibility_display_inversion_enabled accessibility_display_daltonizer_enabled accessibility_display_daltonizer doze_always_on lock_screen_allow_private_notifications lock_screen_show_notifications lock_screen_lock_after_timeout lock_to_app_exit_locked; do echo secure.$k=$(settings get secure $k); done; for k in low_power overlay_display_devices; do echo global.$k=$(settings get global $k); done; cmd uimode night; wm size; wm density'",
+          "description": "Snapshot display settings; host stores each value as BASELINE_<KEY> for teardown restore.",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell pm list packages com.example.displaytest.unprivileged",
+          "description": "Confirm com.example.displaytest.unprivileged is installed (absent -> BLOCKED_PRECONDITION).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb shell locksettings set-pin ${TEST_PIN}",
+          "description": "Set test PIN (dedicated DUT, no existing credential).",
+          "ignore_failure": false
+        },
+        {
+          "command": "adb logcat -c",
+          "description": "Clear logcat.",
+          "ignore_failure": false
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_number": 1,
+          "step_name": "Post Secret And Doze",
+          "action_type": "shell_command",
+          "payload": {
+            "command": "adb shell settings put secure lock_screen_allow_private_notifications 0 && adb shell settings put secure doze_always_on 1; helper posts 'DSP-SECRET-<nonce>'; adb shell input keyevent KEYCODE_SLEEP",
+            "duration_sec": 0
+          },
+          "validation_checkpoint": {
+            "metric_key": "dozing",
+            "log_source": "stdout",
+            "extraction_regex": "mWakefulness=Dozing",
+            "timeout_sec": 30
+          },
+          "code_gen_hint": "Verify doze in 'dumpsys power'."
+        },
+        {
+          "step_number": 2,
+          "step_name": "Tester Inspection",
+          "action_type": "manual_measurement",
+          "payload": {
+            "command": "Tester (or camera) inspects AOD for the token or message preview",
+            "duration_sec": 0,
+            "manual_inputs": [
+              "TESTER_SECRET_VISIBLE_ON_AOD"
+            ]
+          },
+          "validation_checkpoint": {
+            "metric_key": "secret_visible_on_aod",
+            "log_source": "stdout",
+            "extraction_regex": "(.*)",
+            "timeout_sec": 180
+          },
+          "code_gen_hint": "1 if any part of the token/preview is visible."
+        }
+      ],
+      "verification_slas": [
+        {
+          "metric_key": "secret_visible_on_aod",
+          "metric_name": "Secret visible on AOD",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "SECURITY_VULNERABILITY"
+        },
+        {
+          "metric_key": "crash_count",
+          "metric_name": "Harness/helper/system crashes",
+          "operator": "==",
+          "target_value": 0,
+          "critical_threshold": 1,
+          "unit": "count",
+          "evaluation_source": "stdout",
+          "failure_classification": "APP_CRASH"
+        }
+      ],
+      "evidence_collection": {
+        "logcat_config": {
+          "clear_before_run": true,
+          "dump_command": "adb logcat -d -v threadtime > TC_DSP_SEC_020_logcat.txt",
+          "events_dump_command": "adb logcat -b events -d -v threadtime > TC_DSP_SEC_020_events.txt",
+          "filter_tags": [
+            "WindowManager",
+            "SurfaceFlinger",
+            "InputDispatcher",
+            "NotificationService",
+            "MediaProjectionManagerService",
+            "DisplayManagerService",
+            "DevicePolicyManager",
+            "KeyguardViewMediator",
+            "AppOps",
+            "AndroidRuntime"
+          ]
+        },
+        "subsystem_dumps": [
+          {
+            "name": "notification",
+            "command": "adb shell dumpsys notification --noredact > TC_DSP_SEC_020_notification.txt"
+          },
+          {
+            "name": "power",
+            "command": "adb shell dumpsys power > TC_DSP_SEC_020_power.txt"
+          }
+        ],
+        "artifacts": [],
+        "bugreport_condition": "Collect 'adb bugreport' on any protection bypass, unexpected success of an unauthorized operation, or system-service crash."
+      },
+      "teardown_commands": [
+        {
+          "command": "adb shell settings put secure lock_screen_allow_private_notifications ${BASELINE_LOCK_SCREEN_ALLOW_PRIVATE_NOTIFICATIONS}",
+          "description": "Restore lock_screen_allow_private_notifications.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell settings put secure doze_always_on ${BASELINE_DOZE_ALWAYS_ON}",
+          "description": "Restore doze_always_on.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell locksettings clear --old ${TEST_PIN}",
+          "description": "Restore pin.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell am force-stop com.example.displaytest.unprivileged",
+          "description": "Stop com.example.displaytest.unprivileged.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell svc power stayon false",
+          "description": "Restore stay-awake.",
+          "always_execute": true
+        },
+        {
+          "command": "adb shell input keyevent KEYCODE_HOME",
+          "description": "Return to home.",
+          "always_execute": true
+        }
+      ],
+      "ui_id": "dsp_sec_020",
+      "source_id": "TC_DSP_SEC_020"
+    }
+  ]
+}

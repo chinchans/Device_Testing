@@ -27,10 +27,18 @@
     },
     tcSelectedFeatureId: null,
     tcSelectedCategoryId: null,
+    tcSelectedCaseId: null,
+    tsgOpenFeatureId: null,
+    tsgOpenCategoryId: null,
+    /** Test case ids ticked on the Test Script Generation page. */
+    tsgSelectedIds: new Set(),
+    tsgGenerating: false,
+    /** Responses of POST /api/test-scripts/generate (one per feature). */
+    tsgResults: [],
+    tsgActiveFile: "",
+    tsgShowDetails: false,
     /** featureId → { categories: { functionality: [...], ... } } */
     tcCatalogs: {},
-    /** `${featureKey}:${categoryId}` → full suite object (codegen JSON) */
-    tcSuites: {},
     /** Empty until user clicks Framework Selection (then ADB/Appium/UiAutomator2). */
     selectedFrameworks: [],
     frameworksConfirmed: false
@@ -142,6 +150,10 @@
     if (view === "framework-selection") {
       renderFrameworkSelection();
     }
+    if (view === "test-script-generation") {
+      renderTestScriptGeneration();
+    }
+    document.dispatchEvent(new CustomEvent("workbench:view", { detail: { view } }));
   }
 
   function openModal(id) {
@@ -365,11 +377,11 @@
   // ── Setup readiness / panes ─────────────────────────
 
   const TEST_AREA_LABELS = {
-    feature_testing: "Feature Testing",
-    hardware_bringup: "Hardware Bring-up Testing",
-    android_os_kernel: "Android OS & Kernel Testing",
-    app_compatibility: "Application & Compatibility Testing",
-    ota_upgrade: "OTA / Upgrade Testing"
+    operator_testing: "Operator Testing",
+    module_peripheral: "Module / Peripheral Testing",
+    protocol_testing: "Protocol Testing",
+    security_testing: "Security Testing",
+    connectivity_testing: "Connectivity Testing"
   };
 
   function updateSetupPanes() {
@@ -423,6 +435,7 @@
     $("ds-actions-row")?.classList.toggle("hidden", !deviceOk);
     $("ds-next-nav")?.classList.toggle("hidden", !deviceOk);
 
+    updateTestAreaNav();
     updateSetupPanes();
     updateExtractedFeaturesVisibility();
     updateHomeStats();
@@ -475,7 +488,24 @@
     const deviceLabel = $("device-type-select")?.selectedOptions[0]?.text || state.deviceType;
     $("shell-context").textContent = `${deviceLabel} · ${TEST_AREA_LABELS[area]}`;
     updateSetupReadiness();
-    showView("feature-extraction");
+    if (area === "operator_testing") document.dispatchEvent(new CustomEvent("operator:home"));
+    showView(testAreaStartView());
+  }
+
+  /** Operator Testing has its own page; every other focus starts at Device Inventory. */
+  function testAreaStartView() {
+    return state.testArea === "operator_testing" ? "operator-testing" : "feature-extraction";
+  }
+
+  function updateTestAreaNav() {
+    const operator = state.testArea === "operator_testing";
+    $("nav-operator-testing")?.classList.toggle("hidden", !operator);
+    const next = $("goto-feature-extraction-btn");
+    if (next) {
+      const label = operator ? "Go to Operator Testing" : "Go to Device Inventory";
+      next.title = label;
+      next.setAttribute("aria-label", label);
+    }
   }
 
   function resetSetup() {
@@ -491,6 +521,8 @@
     state.frameworksConfirmed = false;
     state.tcSelectedFeatureId = null;
     state.tcSelectedCategoryId = null;
+    state.tcSelectedCaseId = null;
+    resetTestScriptSelection();
 
     $("device-type-select").value = "";
     $("spec-file-name")?.classList.add("hidden");
@@ -910,7 +942,7 @@
           : deriveDeviceClassification(data)
       );
 
-      $("shell-context").textContent = `${deviceLabel} · ${TEST_AREA_LABELS[state.testArea] || "Feature Testing"}`;
+      $("shell-context").textContent = `${deviceLabel} · ${TEST_AREA_LABELS[state.testArea] || "Module / Peripheral Testing"}`;
       const coverage = data.coverage || (data.extraction && data.extraction.coverage) || {};
       const foundN = features.filter((f) => f.found && f.kind === "standard").length;
       const totalN = features.filter((f) => f.kind === "standard").length;
@@ -929,8 +961,9 @@
 
       state.tcSelectedFeatureId = null;
       state.tcSelectedCategoryId = null;
+      state.tcSelectedCaseId = null;
+      resetTestScriptSelection();
       state.tcCatalogs = {};
-      state.tcSuites = {};
       renderFeaturesWorkspace();
       updateExtractedFeaturesVisibility();
       renderTestCaseGeneration();
@@ -1112,7 +1145,7 @@
     if (!features.length) {
       const msg = state.extractionRegistered
         ? "No testable features to show."
-        : "No features yet. Complete Device Selection → Feature Testing → upload Product Spec → Extract Features.";
+        : "No features yet. Complete Device Selection → Module / Peripheral Testing → upload Product Spec → Extract Features.";
       list.innerHTML = `<div class="empty-inline">${msg}</div>`;
       return;
     }
@@ -1200,7 +1233,16 @@
     return raw;
   }
 
+  function tcgBriefsFor(feature, categoryId) {
+    const all = window.TEST_CASE_BRIEFS || {};
+    const entry = all[tcgFeatureKey(feature)];
+    const list = entry && entry.categories && entry.categories[categoryId];
+    return Array.isArray(list) ? list : [];
+  }
+
   function tcgCasesFor(feature, categoryId) {
+    const briefs = tcgBriefsFor(feature, categoryId);
+    if (briefs.length) return briefs;
     const buckets = (feature && feature.testCaseBuckets) || {};
     if (Array.isArray(buckets[categoryId]) && buckets[categoryId].length) {
       return buckets[categoryId];
@@ -1235,34 +1277,6 @@
     }
   }
 
-  function tcgSuiteCacheKey(feature, categoryId) {
-    return `${tcgFeatureKey(feature)}:${categoryId}`;
-  }
-
-  async function ensureTestCaseSuite(feature, categoryId) {
-    const featKey = tcgFeatureKey(feature);
-    if (!featKey || !categoryId) return null;
-    const cacheKey = `${featKey}:${categoryId}`;
-    if (Object.prototype.hasOwnProperty.call(state.tcSuites, cacheKey)) {
-      return state.tcSuites[cacheKey];
-    }
-    try {
-      const resp = await fetch(
-        `${apiBase()}/api/test-cases/${encodeURIComponent(featKey)}/${encodeURIComponent(categoryId)}`
-      );
-      if (!resp.ok) {
-        state.tcSuites[cacheKey] = null;
-        return null;
-      }
-      const suite = await resp.json();
-      state.tcSuites[cacheKey] = suite;
-      return suite;
-    } catch {
-      state.tcSuites[cacheKey] = null;
-      return null;
-    }
-  }
-
   async function hydrateTestCaseCatalogs(features) {
     const list = features || tcgFeatures();
     await Promise.all(list.map((f) => ensureTestCaseCatalog(f)));
@@ -1273,7 +1287,7 @@
     const hint = $("tcg-rail-hint");
     if (hint) {
       hint.textContent = features.length
-        ? "Click a feature → category to view the full test case JSON."
+        ? "Select a feature → category → test case to view its details."
         : "Run Feature Extraction first to populate features.";
     }
 
@@ -1287,18 +1301,119 @@
       });
     }
 
-    // Load full suite JSON when a category is open.
-    const openFeature = features.find((f) => f.id === state.tcSelectedFeatureId);
-    if (openFeature && state.tcSelectedCategoryId) {
-      const cacheKey = tcgSuiteCacheKey(openFeature, state.tcSelectedCategoryId);
-      if (!Object.prototype.hasOwnProperty.call(state.tcSuites, cacheKey)) {
-        ensureTestCaseSuite(openFeature, state.tcSelectedCategoryId).then(() => {
-          renderTestCaseGenerationPaint();
-        });
-      }
+    renderTestCaseGenerationPaint();
+  }
+
+  function tcgSelectedCase() {
+    if (!state.tcSelectedCaseId) return null;
+    const feature = tcgFeatures().find((f) => f.id === state.tcSelectedFeatureId);
+    if (!feature || !state.tcSelectedCategoryId) return null;
+    return (
+      tcgCasesFor(feature, state.tcSelectedCategoryId).find(
+        (c) => c.id === state.tcSelectedCaseId
+      ) || null
+    );
+  }
+
+  function tcgLine(text) {
+    return String(text || "").trim().replace(/\.+$/, "");
+  }
+
+  function renderTestCaseDetail() {
+    const box = $("tcg-detail");
+    if (!box) return;
+    const tc = tcgSelectedCase();
+    if (!tc) {
+      box.innerHTML = `<div class="tcg-detail-empty">
+        <div class="tcg-detail-empty-icon" aria-hidden="true">☰</div>
+        <p>Select a test case from the left panel to view its details.</p>
+      </div>`;
+      return;
     }
 
-    renderTestCaseGenerationPaint();
+    const feature = tcgFeatures().find((f) => f.id === state.tcSelectedFeatureId);
+    const category = TC_CATEGORIES.find((c) => c.id === state.tcSelectedCategoryId);
+    const prerequisites = Array.isArray(tc.prerequisites) ? tc.prerequisites : [];
+    const steps = Array.isArray(tc.steps) ? tc.steps : [];
+    const expected = Array.isArray(tc.expected_results) ? tc.expected_results : [];
+    const checks = Array.isArray(tc.verification) ? tc.verification : [];
+    const description = tc.description || tc.brief || tc.title || "";
+
+    const metaRows = [
+      ["Feature", tc.feature || (feature && feature.name) || "—"],
+      ["Category", tc.category || (category && category.name) || "—"],
+      ["Execution", tc.execution || "—"]
+    ]
+      .map(
+        ([k, v]) => `<div class="tcg-meta-item">
+          <span class="tcg-meta-key">${escapeHtml(k)}</span>
+          <span class="tcg-meta-val">${escapeHtml(v)}</span>
+        </div>`
+      )
+      .join("");
+
+    box.innerHTML = `
+      <div class="tcg-detail-head">
+        <span class="tcg-detail-id">${escapeHtml(tc.id)}</span>
+        <h4 class="tcg-detail-title">${escapeHtml(tc.title || tc.id)}</h4>
+        <p class="tcg-detail-desc">${escapeHtml(description)}</p>
+      </div>
+      <div class="tcg-meta">${metaRows}</div>
+      <section class="tcg-section">
+        <h5>Objective</h5>
+        <p>${escapeHtml(tc.objective || "—")}</p>
+      </section>
+      <section class="tcg-section">
+        <h5>Prerequisites</h5>
+        ${
+          prerequisites.length
+            ? `<ol class="tcg-list">${prerequisites
+                .map((s) => `<li>${escapeHtml(tcgLine(s))}</li>`)
+                .join("")}</ol>`
+            : `<p class="muted">No prerequisites listed.</p>`
+        }
+      </section>
+      <section class="tcg-section">
+        <h5>Test Steps</h5>
+        ${
+          steps.length
+            ? `<ol class="tcg-list">${steps
+                .map((s) => `<li>${escapeHtml(tcgLine(s))}</li>`)
+                .join("")}</ol>`
+            : `<p class="muted">No test steps available.</p>`
+        }
+      </section>
+      <section class="tcg-section">
+        <h5>Expected Results</h5>
+        ${
+          expected.length
+            ? `<ol class="tcg-list">${expected
+                .map((s) => `<li>${escapeHtml(tcgLine(s))}</li>`)
+                .join("")}</ol>`
+            : `<p class="muted">No expected results listed.</p>`
+        }
+      </section>
+      <section class="tcg-section">
+        <h5>Test Verification</h5>
+        ${
+          checks.length
+            ? `<ol class="tcg-list">${checks
+                .map((s) => `<li>${escapeHtml(tcgLine(s))}</li>`)
+                .join("")}</ol>`
+            : `<p class="muted">No verification checks available.</p>`
+        }
+      </section>`;
+    box.scrollTop = 0;
+  }
+
+  function markSelectedTestCase() {
+    const tree = $("tcg-tree");
+    if (!tree) return;
+    tree.querySelectorAll(".tcg-case").forEach((el) => {
+      const on = el.getAttribute("data-case-id") === state.tcSelectedCaseId;
+      el.classList.toggle("is-selected", on);
+      el.setAttribute("aria-pressed", String(on));
+    });
   }
 
   function renderTestCaseGenerationPaint() {
@@ -1312,6 +1427,7 @@
     ) {
       state.tcSelectedFeatureId = null;
       state.tcSelectedCategoryId = null;
+      state.tcSelectedCaseId = null;
     }
 
     const empty = $("tcg-empty");
@@ -1319,12 +1435,14 @@
     if (!features.length) {
       empty?.classList.remove("hidden");
       if (tree) tree.innerHTML = "";
+      renderTestCaseDetail();
       return;
     }
     empty?.classList.add("hidden");
 
     if (!tree) return;
 
+    const prevScroll = tree.scrollTop;
     tree.innerHTML = features
       .map((f) => {
         const featureOpen = state.tcSelectedFeatureId === f.id;
@@ -1338,21 +1456,21 @@
             featureOpen && state.tcSelectedCategoryId === cat.id;
           let bodyHtml = "";
           if (catOpen) {
-            const cacheKey = tcgSuiteCacheKey(f, cat.id);
-            const loading = !Object.prototype.hasOwnProperty.call(
-              state.tcSuites,
-              cacheKey
-            );
-            bodyHtml = `<div class="tcg-result-box tsg-result-box">
-              <textarea
-                class="tcg-result-editor tsg-result-editor"
-                data-suite-key="${escapeHtml(cacheKey)}"
-                data-loading="${loading ? "1" : "0"}"
-                readonly
-                spellcheck="false"
-                aria-label="${escapeHtml(cat.name)} test cases JSON"
-              ></textarea>
-            </div>`;
+            bodyHtml = cases.length
+              ? `<div class="tcg-cases">${cases
+                  .map((c) => {
+                    const on = state.tcSelectedCaseId === c.id;
+                    return `<button type="button" class="tcg-case${
+                      on ? " is-selected" : ""
+                    }" data-case-id="${escapeHtml(c.id)}" aria-pressed="${on}">
+                      <span class="tcg-case-id">${escapeHtml(c.id)}</span>
+                      <span class="tcg-case-desc">${escapeHtml(
+                        c.description || c.brief || c.title || ""
+                      )}</span>
+                    </button>`;
+                  })
+                  .join("")}</div>`
+              : `<div class="tcg-cases-empty muted">No test cases for this category.</div>`;
           }
           return `<div class="tcg-cat${catOpen ? " is-open" : ""}">
             <button type="button" class="tcg-cat-btn" data-feature-id="${escapeHtml(
@@ -1384,31 +1502,406 @@
         </div>`;
       })
       .join("");
+    fitCaseListsToVisibleRows(tree);
+    tree.scrollTop = prevScroll;
 
-    tree.querySelectorAll("textarea.tcg-result-editor[data-suite-key]").forEach((el) => {
-      const key = el.getAttribute("data-suite-key");
-      if (el.getAttribute("data-loading") === "1") {
-        el.value = "Loading test case suite…";
+    renderTestCaseDetail();
+  }
+
+  const TCG_VISIBLE_CASES = 5;
+
+  function fitCaseListsToVisibleRows(root) {
+    root.querySelectorAll(".tcg-cases").forEach((list) => {
+      const rows = list.querySelectorAll(".tcg-case, .tsg-case");
+      if (rows.length <= TCG_VISIBLE_CASES) {
+        list.style.maxHeight = "none";
         return;
       }
-      const suite = state.tcSuites[key];
-      if (!suite) {
-        el.value = "// No test case suite available for this category.\n";
-        return;
-      }
-      try {
-        el.value = JSON.stringify(suite, null, 2);
-      } catch {
-        el.value = String(suite);
-      }
+      const top = rows[0].getBoundingClientRect().top;
+      const bottom = rows[TCG_VISIBLE_CASES - 1].getBoundingClientRect().bottom;
+      const height = Math.ceil(bottom - top);
+      // Hidden view reports 0; keep the CSS fallback height.
+      if (height > 0) list.style.maxHeight = `${height}px`;
+    });
+  }
+
+  function resetTestScriptSelection() {
+    state.tsgOpenFeatureId = null;
+    state.tsgOpenCategoryId = null;
+    state.tsgSelectedIds = new Set();
+    state.tsgResults = [];
+    state.tsgActiveFile = "";
+    state.tsgShowDetails = false;
+    renderScriptSelect();
+    const preview = $("tsg-script-preview");
+    if (preview) preview.value = 'Select test cases and click "Generate Test Scripts".';
+    const suite = $("tsg-suite-output");
+    if (suite) suite.value = "Generated scripts and their status will appear here.";
+    const detailsBtn = $("tsg-full-output-btn");
+    if (detailsBtn) detailsBtn.disabled = true;
+  }
+
+  function tsgFeatureCaseIds(feature) {
+    return TC_CATEGORIES.flatMap((cat) => tcgCasesFor(feature, cat.id).map((c) => c.id));
+  }
+
+  function tsgSelectedFrameworkNames() {
+    return FRAMEWORKS.filter((f) => (state.selectedFrameworks || []).includes(f.id)).map(
+      (f) => f.name
+    );
+  }
+
+  function tsgCheckState(ids) {
+    const picked = ids.filter((id) => state.tsgSelectedIds.has(id)).length;
+    return { picked, total: ids.length, all: ids.length > 0 && picked === ids.length };
+  }
+
+  function renderTestScriptGeneration() {
+    const features = tcgFeatures();
+    const pending = features.filter(
+      (f) => !Object.prototype.hasOwnProperty.call(state.tcCatalogs, tcgFeatureKey(f))
+    );
+    if (pending.length) {
+      hydrateTestCaseCatalogs(pending).then(() => renderTestScriptGenerationPaint());
+    }
+    renderTestScriptGenerationPaint();
+  }
+
+  function renderTestScriptGenerationPaint() {
+    const features = tcgFeatures();
+    const tree = $("tsg-tree");
+    const empty = $("tsg-empty");
+
+    const frameworks = tsgSelectedFrameworkNames();
+    const sub = $("tsg-preview-sub");
+    if (sub) {
+      sub.textContent = frameworks.length
+        ? `Frameworks: ${frameworks.join(" · ")}`
+        : "No frameworks selected yet";
+    }
+
+    if (!features.length) {
+      empty?.classList.remove("hidden");
+      if (tree) tree.innerHTML = "";
+      syncTestScriptChecks();
+      return;
+    }
+    empty?.classList.add("hidden");
+    if (!tree) return;
+
+    const prevScroll = tree.scrollTop;
+    tree.innerHTML = features
+      .map((f) => {
+        const featureOpen = state.tsgOpenFeatureId === f.id;
+        const catsHtml = TC_CATEGORIES.map((cat) => {
+          const cases = tcgCasesFor(f, cat.id);
+          const catOpen = featureOpen && state.tsgOpenCategoryId === cat.id;
+          const casesHtml = !catOpen
+            ? ""
+            : cases.length
+              ? `<div class="tcg-cases">${cases
+                  .map(
+                    (c) => `<label class="tsg-case">
+                      <input type="checkbox" class="tsg-check" data-scope="case" data-case-id="${escapeHtml(
+                        c.id
+                      )}" ${state.tsgSelectedIds.has(c.id) ? "checked" : ""} />
+                      <span class="tsg-case-text">
+                        <span class="tcg-case-id">${escapeHtml(c.id)}</span>
+                        <span class="tcg-case-desc">${escapeHtml(
+                          c.description || c.brief || c.title || ""
+                        )}</span>
+                      </span>
+                    </label>`
+                  )
+                  .join("")}</div>`
+              : `<div class="tcg-cases-empty muted">No test cases for this category.</div>`;
+          return `<div class="tsg-cat${catOpen ? " is-open" : ""}">
+            <div class="tsg-row tsg-cat-row">
+              <input type="checkbox" class="tsg-check" data-scope="category" data-feature-id="${escapeHtml(
+                f.id
+              )}" data-category-id="${cat.id}" aria-label="Select all ${escapeHtml(
+                cat.name
+              )} test cases" ${cases.length ? "" : "disabled"} />
+              <button type="button" class="tsg-toggle" data-toggle="category" data-feature-id="${escapeHtml(
+                f.id
+              )}" data-category-id="${cat.id}" aria-expanded="${catOpen}">
+                <span class="tcg-chevron" aria-hidden="true">${catOpen ? "▾" : "▸"}</span>
+                <span class="tcg-cat-name">${escapeHtml(cat.name)}</span>
+                <span class="tcg-cat-meta" data-count-for="category" data-feature-id="${escapeHtml(
+                  f.id
+                )}" data-category-id="${cat.id}"></span>
+              </button>
+            </div>
+            ${casesHtml}
+          </div>`;
+        }).join("");
+
+        return `<div class="tsg-feature${featureOpen ? " is-open" : ""}">
+          <div class="tsg-row tsg-feature-row">
+            <button type="button" class="tsg-toggle" data-toggle="feature" data-feature-id="${escapeHtml(
+              f.id
+            )}" aria-expanded="${featureOpen}">
+              <span class="tcg-chevron" aria-hidden="true">${featureOpen ? "▾" : "▸"}</span>
+              <span class="tcg-feature-name">${escapeHtml(f.name)}</span>
+              <span class="tcg-feature-meta" data-count-for="feature" data-feature-id="${escapeHtml(
+                f.id
+              )}"></span>
+            </button>
+          </div>
+          <div class="tsg-categories">${catsHtml}</div>
+        </div>`;
+      })
+      .join("");
+    fitCaseListsToVisibleRows(tree);
+    tree.scrollTop = prevScroll;
+    syncTestScriptChecks();
+  }
+
+  /** Update feature/category checkboxes, counts and the Generate button without re-rendering. */
+  function syncTestScriptChecks() {
+    const features = tcgFeatures();
+    const tree = $("tsg-tree");
+    const byId = new Map(features.map((f) => [f.id, f]));
+
+    tree?.querySelectorAll('.tsg-check[data-scope="category"]').forEach((el) => {
+      const f = byId.get(el.getAttribute("data-feature-id"));
+      const ids = f ? tcgCasesFor(f, el.getAttribute("data-category-id")).map((c) => c.id) : [];
+      const s = tsgCheckState(ids);
+      el.checked = s.all;
+      el.indeterminate = s.picked > 0 && !s.all;
+    });
+    tree?.querySelectorAll("[data-count-for]").forEach((el) => {
+      const f = byId.get(el.getAttribute("data-feature-id"));
+      if (!f) return;
+      const ids =
+        el.getAttribute("data-count-for") === "feature"
+          ? tsgFeatureCaseIds(f)
+          : tcgCasesFor(f, el.getAttribute("data-category-id")).map((c) => c.id);
+      const s = tsgCheckState(ids);
+      el.textContent = s.total ? `${s.picked}/${s.total}` : "";
+    });
+    tree?.querySelectorAll('.tsg-check[data-scope="case"]').forEach((el) => {
+      el.checked = state.tsgSelectedIds.has(el.getAttribute("data-case-id"));
+      el.closest(".tsg-case")?.classList.toggle("is-selected", el.checked);
     });
 
-    requestAnimationFrame(() => {
-      const openCat = tree.querySelector(".tcg-cat.is-open");
-      if (openCat) {
-        openCat.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const count = state.tsgSelectedIds.size;
+    const pill = $("tsg-selected-count");
+    if (pill) {
+      pill.textContent = `${count} selected`;
+      pill.classList.toggle("is-ready", count > 0);
+    }
+    const btn = $("tsg-generate-btn");
+    if (btn) btn.disabled = count === 0 || state.tsgGenerating;
+  }
+
+  function setTestScriptSelection(ids, selected) {
+    ids.forEach((id) => {
+      if (selected) state.tsgSelectedIds.add(id);
+      else state.tsgSelectedIds.delete(id);
+    });
+    syncTestScriptChecks();
+  }
+
+  function tsgSelectedCases() {
+    return tcgFeatures().flatMap((f) =>
+      TC_CATEGORIES.flatMap((cat) =>
+        tcgCasesFor(f, cat.id)
+          .filter((c) => state.tsgSelectedIds.has(c.id))
+          .map((c) => ({ ...c, featureName: f.name, categoryName: cat.name }))
+      )
+    );
+  }
+
+  async function generateTestScripts() {
+    const cases = tsgSelectedCases();
+    if (!cases.length || state.tsgGenerating) return;
+    const preview = $("tsg-script-preview");
+    const suite = $("tsg-suite-output");
+    const btn = $("tsg-generate-btn");
+
+    const byFeature = new Map();
+    cases.forEach((c) => {
+      const f = tcgFeatures().find((x) => x.name === c.featureName);
+      const key = tcgFeatureKey(f) || "camera";
+      if (!byFeature.has(key)) byFeature.set(key, []);
+      byFeature.get(key).push(c.id);
+    });
+
+    state.tsgGenerating = true;
+    state.tsgResults = [];
+    state.tsgShowDetails = false;
+    syncRunOnDeviceButton();
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Generating…";
+    }
+    if (preview) preview.value = `# Generating ${cases.length} test script(s)…`;
+    if (suite) suite.value = "Sending test cases and harness operations to the LLM…";
+    renderScriptSelect();
+
+    // Values from the current extraction fill ${VAR} placeholders in these scripts only;
+    // the catalog files keep their placeholders.
+    const specFeatures = tcgFeatures().map((f) => ({ name: f.name, parameters: f.parameters || [] }));
+    const dc = state.deviceClassification || {};
+    const maker = String(dc.manufacturer || "").trim();
+    const model = String(dc.model || "").trim();
+    const productName =
+      (maker && model.toLowerCase().startsWith(maker.toLowerCase()) ? model : [maker, model].filter(Boolean).join(" ")) || null;
+
+    try {
+      for (const [feature, ids] of byFeature) {
+        const resp = await fetch(`${apiBase()}/api/test-scripts/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            feature,
+            case_ids: ids,
+            frameworks: state.selectedFrameworks || [],
+            spec_features: specFeatures,
+            product_name: productName
+          })
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.detail || `HTTP ${resp.status}`);
+        state.tsgResults.push(data);
+      }
+      const first = tsgGeneratedFiles()[0];
+      state.tsgActiveFile = first ? first.key : "";
+      renderScriptSelect();
+      showActiveScript();
+      renderGenerationSummary();
+      syncRunOnDeviceButton();
+    } catch (err) {
+      if (preview) preview.value = `# Script generation failed\n# ${err.message || err}`;
+      if (suite) suite.value = `Script generation failed: ${err.message || err}`;
+    } finally {
+      state.tsgGenerating = false;
+      if (btn) btn.textContent = "Generate Test Scripts";
+      syncTestScriptChecks();
+    }
+  }
+
+  /** Latest generation bundle with at least one script, for the "Run on Device" hand-off. */
+  function runnableGeneration() {
+    return (state.tsgResults || [])
+      .slice()
+      .reverse()
+      .find((r) => r.summary && r.summary.generated > 0);
+  }
+
+  function syncRunOnDeviceButton() {
+    $("tsg-run-btn")?.classList.toggle("hidden", !runnableGeneration());
+  }
+
+  /** Flat list of generated files (scripts + shared runtime) across all result bundles. */
+  function tsgGeneratedFiles() {
+    const files = [];
+    (state.tsgResults || []).forEach((res, i) => {
+      (res.scripts || []).forEach((s) => {
+        files.push({
+          key: `${i}:${s.case_id}`,
+          label: `${s.filename || s.case_id}${s.status === "ok" ? "" : " (failed)"}`,
+          code: s.code || `# ${s.case_id}: generation failed\n# ${(s.errors || []).join("\n# ")}`
+        });
+      });
+      if (res.runtime) {
+        files.push({
+          key: `${i}:runtime`,
+          label: `${res.runtime.filename} (shared runtime)`,
+          code: res.runtime.code
+        });
       }
     });
+    return files;
+  }
+
+  function renderScriptSelect() {
+    const select = $("tsg-script-select");
+    if (!select) return;
+    const files = tsgGeneratedFiles();
+    select.innerHTML = files.length
+      ? files
+          .map(
+            (f) =>
+              `<option value="${escapeHtml(f.key)}"${
+                f.key === state.tsgActiveFile ? " selected" : ""
+              }>${escapeHtml(f.label)}</option>`
+          )
+          .join("")
+      : `<option value="">No scripts yet</option>`;
+    select.disabled = !files.length;
+  }
+
+  function showActiveScript() {
+    const preview = $("tsg-script-preview");
+    const file = tsgGeneratedFiles().find((f) => f.key === state.tsgActiveFile);
+    if (preview && file) {
+      preview.value = file.code;
+      preview.scrollTop = 0;
+    }
+  }
+
+  function renderGenerationSummary() {
+    const suite = $("tsg-suite-output");
+    const detailsBtn = $("tsg-full-output-btn");
+    const results = state.tsgResults || [];
+    if (detailsBtn) {
+      detailsBtn.disabled = !results.length;
+      detailsBtn.textContent = state.tsgShowDetails ? "Show Summary" : "Show Complete Output";
+    }
+    if (!suite) return;
+    const lines = [];
+    results.forEach((res) => {
+      const sm = res.summary || {};
+      const gen = sm.by_generator || {};
+      lines.push(
+        `Run ${res.run_id}`,
+        `Generated ${sm.generated}/${sm.requested} script(s) · LLM ${gen.llm || 0} · template ${
+          gen.template || 0
+        }${sm.failed ? ` · failed ${sm.failed}` : ""}`,
+        res.llm_used ? "" : "LLM not configured: scripts were built from the fixed template.",
+        `Output folder: ${res.output_dir}`,
+        `Run one:  python3 test_<case_id>.py [--serial SERIAL]`,
+        `Run all:  python3 run_suite.py`,
+        ""
+      );
+      const applied = (res.spec_profile && res.spec_profile.applied) || {};
+      const appliedKeys = Object.keys(applied);
+      if (appliedKeys.length) {
+        const from = (res.spec_profile && res.spec_profile.product_name) || "the product spec";
+        lines.push(`Spec values from ${from} (${appliedKeys.length} placeholder(s) filled):`);
+        appliedKeys.forEach((k) => {
+          const item = applied[k] || {};
+          lines.push(
+            `  ${k} = ${item.value}${state.tsgShowDetails && item.source ? `   ← ${item.source}` : ""}`
+          );
+        });
+        lines.push("");
+      } else {
+        lines.push("Spec values: none applied (placeholders resolved from the device at runtime).", "");
+      }
+      (res.scripts || []).forEach((s) => {
+        const flag = s.status === "ok" ? "OK  " : "FAIL";
+        lines.push(
+          `${flag} ${String(s.case_id).padEnd(12)} ${String(s.generator || "-").padEnd(9)} ${
+            s.name || ""
+          }`
+        );
+        if (!state.tsgShowDetails) return;
+        const cls = s.harness_class ? s.harness_class.split(".").pop() : "";
+        if (cls) lines.push(`       harness: ${cls} · ${s.execution || ""}`);
+        const sv = Object.entries(s.spec_values || {});
+        if (sv.length) lines.push(`       spec: ${sv.map(([k, v]) => `${k}=${v}`).join(", ")}`);
+        (s.errors || []).forEach((e) => lines.push(`       error: ${e}`));
+        (s.warnings || []).forEach((w) => lines.push(`       warning: ${w}`));
+        (s.manual_steps || []).forEach((m) => lines.push(`       manual: ${m}`));
+        (s.notes || []).forEach((n) => lines.push(`       note: ${n}`));
+      });
+      lines.push("");
+    });
+    suite.value = lines.filter((l, i, a) => l !== "" || a[i - 1] !== "").join("\n");
+    suite.scrollTop = 0;
   }
 
   function renderFeaturesWorkspace() {
@@ -1809,7 +2302,7 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
     });
 
     $("goto-feature-extraction-btn")?.addEventListener("click", () => {
-      showView("feature-extraction");
+      showView(testAreaStartView());
     });
 
     $("goto-device-classification-btn")?.addEventListener("click", () => {
@@ -1847,21 +2340,76 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
 
     $("generate-test-scripts-btn")?.addEventListener("click", () => {
       if ($("generate-test-scripts-btn")?.disabled) return;
-      const names = FRAMEWORKS.filter((f) =>
-        (state.selectedFrameworks || []).includes(f.id)
-      )
-        .map((f) => f.name)
-        .join(", ");
-      const copy = $("tsg-placeholder-copy");
-      if (copy) {
-        copy.textContent =
-          `Ready for LLM script generation with: ${names || "—"}. ` +
-          "Test cases will be passed to the model in a later step.";
-      }
       showView("test-script-generation");
     });
 
+    $("tsg-tree")?.addEventListener("change", (e) => {
+      const box = e.target.closest(".tsg-check");
+      if (!box) return;
+      const scope = box.getAttribute("data-scope");
+      if (scope === "case") {
+        setTestScriptSelection([box.getAttribute("data-case-id")], box.checked);
+        return;
+      }
+      const feature = tcgFeatures().find((f) => f.id === box.getAttribute("data-feature-id"));
+      if (!feature) return;
+      const ids = tcgCasesFor(feature, box.getAttribute("data-category-id")).map((c) => c.id);
+      setTestScriptSelection(ids, box.checked);
+    });
+
+    $("tsg-tree")?.addEventListener("click", (e) => {
+      const toggle = e.target.closest(".tsg-toggle");
+      if (!toggle) return;
+      const featureId = toggle.getAttribute("data-feature-id");
+      if (toggle.getAttribute("data-toggle") === "feature") {
+        const closing = state.tsgOpenFeatureId === featureId;
+        state.tsgOpenFeatureId = closing ? null : featureId;
+        state.tsgOpenCategoryId = null;
+      } else {
+        const catId = toggle.getAttribute("data-category-id");
+        state.tsgOpenFeatureId = featureId;
+        state.tsgOpenCategoryId = state.tsgOpenCategoryId === catId ? null : catId;
+      }
+      renderTestScriptGenerationPaint();
+    });
+
+    $("tsg-generate-btn")?.addEventListener("click", () => {
+      if ($("tsg-generate-btn")?.disabled) return;
+      generateTestScripts();
+    });
+
+    $("tsg-run-btn")?.addEventListener("click", () => {
+      const bundle = runnableGeneration();
+      if (!bundle) return;
+      showView("test-execution");
+      document.dispatchEvent(new CustomEvent("execution:open-set", { detail: { runId: bundle.run_id } }));
+    });
+
+    $("tsg-script-select")?.addEventListener("change", (e) => {
+      state.tsgActiveFile = e.target.value;
+      showActiveScript();
+    });
+
+    $("tsg-full-output-btn")?.addEventListener("click", () => {
+      state.tsgShowDetails = !state.tsgShowDetails;
+      renderGenerationSummary();
+    });
+
+    window.addEventListener("resize", () => {
+      ["tcg-tree", "tsg-tree"].forEach((id) => {
+        const tree = $(id);
+        if (tree) fitCaseListsToVisibleRows(tree);
+      });
+    });
+
     $("tcg-tree")?.addEventListener("click", (e) => {
+      const caseBtn = e.target.closest(".tcg-case");
+      if (caseBtn) {
+        state.tcSelectedCaseId = caseBtn.getAttribute("data-case-id");
+        markSelectedTestCase();
+        renderTestCaseDetail();
+        return;
+      }
       const catBtn = e.target.closest(".tcg-cat-btn");
       if (catBtn) {
         const featureId = catBtn.getAttribute("data-feature-id");
@@ -1874,6 +2422,7 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
         } else {
           state.tcSelectedCategoryId = catId;
         }
+        state.tcSelectedCaseId = null;
         renderTestCaseGeneration();
         return;
       }
@@ -1887,6 +2436,7 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
           state.tcSelectedFeatureId = featureId;
           state.tcSelectedCategoryId = null;
         }
+        state.tcSelectedCaseId = null;
         renderTestCaseGeneration();
       }
     });
@@ -1900,6 +2450,8 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
       state.selectedFeatureId = null;
       state.tcSelectedFeatureId = null;
       state.tcSelectedCategoryId = null;
+      state.tcSelectedCaseId = null;
+      resetTestScriptSelection();
       state.extractionRegistered = false;
       document.querySelectorAll(".test-area-option").forEach((el) => el.classList.remove("is-selected"));
       $("spec-file-name")?.classList.add("hidden");
