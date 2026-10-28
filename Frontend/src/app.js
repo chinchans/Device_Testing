@@ -3,7 +3,6 @@
 
   const state = {
     deviceType: "",
-    testArea: "",
     productSpec: null,
     testSuite: null,
     documentId: null,
@@ -140,10 +139,7 @@
     const target = $(`view-${view}`);
     if (!target) return;
     document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
-    document.querySelectorAll(".nav-item[data-view]").forEach((el) => el.classList.remove("active"));
     target.classList.add("active");
-    const nav = document.querySelector(`.nav-item[data-view="${view}"]`);
-    if (nav) nav.classList.add("active");
     if (view === "test-case-generation") {
       renderTestCaseGeneration();
     }
@@ -376,20 +372,6 @@
 
   // ── Setup readiness / panes ─────────────────────────
 
-  const TEST_AREA_LABELS = {
-    operator_testing: "Operator Testing",
-    module_peripheral: "Module / Peripheral Testing",
-    protocol_testing: "Protocol Testing",
-    security_testing: "Security Testing",
-    connectivity_testing: "Connectivity Testing"
-  };
-
-  function updateSetupPanes() {
-    const areaBlock = $("test-area-block");
-    if (!areaBlock) return;
-    areaBlock.classList.toggle("hidden", !state.deviceType);
-  }
-
   function updateExtractedFeaturesVisibility() {
     const section = $("extracted-features-section");
     if (!section) return;
@@ -398,7 +380,6 @@
 
   function updateSetupReadiness() {
     const deviceOk = Boolean(state.deviceType);
-    const areaOk = Boolean(state.testArea);
     const specOk = Boolean(state.productSpec);
     const suiteOk = Boolean(state.testSuite);
 
@@ -412,16 +393,14 @@
 
     const hint = $("extract-hint");
     if (hint) {
-      if (specOk && suiteOk) {
+      if (!deviceOk) {
+        hint.textContent = "Select a device type on Device Selection to continue.";
+      } else if (specOk && suiteOk) {
         hint.textContent = "Both documents attached. Ready to extract.";
       } else if (specOk) {
         hint.textContent = "Product specification attached. Ready to extract.";
       } else if (suiteOk) {
         hint.textContent = "Product specification is still required.";
-      } else if (!deviceOk) {
-        hint.textContent = "Select a device type on Device Selection to continue.";
-      } else if (!areaOk) {
-        hint.textContent = "Select a test focus on Device Selection to continue.";
       } else {
         hint.textContent = "Upload a product specification to continue.";
       }
@@ -429,14 +408,11 @@
 
     const extractBtn = $("extract-features-btn");
     if (extractBtn) {
-      extractBtn.disabled = !(deviceOk && areaOk && specOk) || state.extracting;
+      extractBtn.disabled = !(deviceOk && specOk) || state.extracting;
     }
 
     $("ds-actions-row")?.classList.toggle("hidden", !deviceOk);
-    $("ds-next-nav")?.classList.toggle("hidden", !deviceOk);
 
-    updateTestAreaNav();
-    updateSetupPanes();
     updateExtractedFeaturesVisibility();
     updateHomeStats();
   }
@@ -479,38 +455,12 @@
     updateSetupReadiness();
   }
 
-  function selectTestArea(area) {
-    if (!area || !TEST_AREA_LABELS[area]) return;
-    state.testArea = area;
-    document.querySelectorAll(".test-area-option").forEach((el) => {
-      el.classList.toggle("is-selected", el.dataset.area === area);
-    });
-    const deviceLabel = $("device-type-select")?.selectedOptions[0]?.text || state.deviceType;
-    $("shell-context").textContent = `${deviceLabel} · ${TEST_AREA_LABELS[area]}`;
-    updateSetupReadiness();
-    if (area === "operator_testing") document.dispatchEvent(new CustomEvent("operator:home"));
-    showView(testAreaStartView());
-  }
-
-  /** Operator Testing has its own page; every other focus starts at Device Inventory. */
-  function testAreaStartView() {
-    return state.testArea === "operator_testing" ? "operator-testing" : "feature-extraction";
-  }
-
-  function updateTestAreaNav() {
-    const operator = state.testArea === "operator_testing";
-    $("nav-operator-testing")?.classList.toggle("hidden", !operator);
-    const next = $("goto-feature-extraction-btn");
-    if (next) {
-      const label = operator ? "Go to Operator Testing" : "Go to Device Inventory";
-      next.title = label;
-      next.setAttribute("aria-label", label);
-    }
+  function announceDevice() {
+    document.dispatchEvent(new CustomEvent("workbench:device", { detail: { deviceType: state.deviceType } }));
   }
 
   function resetSetup() {
     state.deviceType = "";
-    state.testArea = "";
     state.productSpec = null;
     state.testSuite = null;
     state.features = [];
@@ -535,10 +485,10 @@
     $("project-score-chip").textContent = "Score —";
     $("shell-context").textContent = "Bring-up to Release Validation";
     $("extract-pending-callout")?.classList.add("hidden");
-    document.querySelectorAll(".test-area-option").forEach((el) => el.classList.remove("is-selected"));
     clearDeviceClassificationFields();
     updateSetupReadiness();
     updateHomeStats();
+    announceDevice();
     showView("device-selection");
   }
 
@@ -942,7 +892,7 @@
           : deriveDeviceClassification(data)
       );
 
-      $("shell-context").textContent = `${deviceLabel} · ${TEST_AREA_LABELS[state.testArea] || "Module / Peripheral Testing"}`;
+      $("shell-context").textContent = `${deviceLabel} · FUT · OEM`;
       const coverage = data.coverage || (data.extraction && data.extraction.coverage) || {};
       const foundN = features.filter((f) => f.found && f.kind === "standard").length;
       const totalN = features.filter((f) => f.kind === "standard").length;
@@ -1076,7 +1026,7 @@
     return Math.round(avg);
   }
 
-  function updateHomeStats() {
+  function oemStats() {
     const features = state.features || [];
     const found = features.filter((f) => f.found !== false && f.status !== STATUS.NOT_FOUND);
     const caseCount = found.reduce((sum, f) => {
@@ -1096,7 +1046,19 @@
     const avg = scored.length
       ? Math.round(scored.reduce((sum, f) => sum + f.score, 0) / scored.length)
       : null;
-    const coverage = found.length ? 100 : 0;
+    return {
+      features: found.length,
+      cases: caseCount,
+      scripts: scriptCount,
+      executions: scored.length,
+      avgScore: avg,
+      frameworks: (state.selectedFrameworks || []).length
+    };
+  }
+
+  function updateHomeStats() {
+    const { features, cases, scripts, executions, avgScore } = oemStats();
+    const coverage = features ? 100 : 0;
     const docs = (state.productSpec ? 1 : 0) + (state.testSuite ? 1 : 0);
     const deviceEl = $("device-type-select");
     const deviceLabel =
@@ -1107,12 +1069,12 @@
       if (el) el.textContent = value;
     };
 
-    setText("home-stat-features", String(found.length));
-    setText("home-stat-cases", String(caseCount));
-    setText("home-stat-scripts", String(scriptCount));
+    setText("home-stat-features", String(features));
+    setText("home-stat-cases", String(cases));
+    setText("home-stat-scripts", String(scripts));
     setText("home-stat-coverage", `${coverage}%`);
-    setText("home-stat-executions", String(scored.length));
-    setText("home-stat-score", avg == null ? "—" : `${avg}%`);
+    setText("home-stat-executions", String(executions));
+    setText("home-stat-score", avgScore == null ? "—" : `${avgScore}%`);
     setText("home-stat-docs", String(docs));
     setText("home-stat-device", deviceLabel);
   }
@@ -1921,7 +1883,6 @@
   function renderFrameworkSelection() {
     const dc = state.deviceClassification || {};
     const typeLabel = deviceTypeLabel();
-    const focusLabel = (TEST_AREA_LABELS && TEST_AREA_LABELS[state.testArea]) || "";
     const modelBits = [dc.manufacturer, dc.model].filter(Boolean).join(" ");
     const hasDevice = Boolean(state.deviceType);
 
@@ -1936,7 +1897,7 @@
     }
     if (meta) {
       meta.textContent = hasDevice
-        ? [typeLabel, focusLabel].filter(Boolean).join(" · ") || "Device type selected"
+        ? [typeLabel, "FUT · OEM"].filter(Boolean).join(" · ")
         : "Complete Device Selection to continue.";
     }
     if (pill) {
@@ -2294,15 +2255,8 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
       showView("home");
     });
 
-    document.querySelectorAll(".nav-item[data-view]").forEach((item) => {
-      item.addEventListener("click", () => {
-        if (item.disabled) return;
-        showView(item.dataset.view);
-      });
-    });
-
-    $("goto-feature-extraction-btn")?.addEventListener("click", () => {
-      showView(testAreaStartView());
+    $("goto-certifications-btn")?.addEventListener("click", () => {
+      showView("certifications");
     });
 
     $("goto-device-classification-btn")?.addEventListener("click", () => {
@@ -2443,7 +2397,6 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
 
     $("device-type-select").addEventListener("change", (e) => {
       state.deviceType = e.target.value;
-      state.testArea = "";
       state.productSpec = null;
       state.testSuite = null;
       state.features = [];
@@ -2453,7 +2406,6 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
       state.tcSelectedCaseId = null;
       resetTestScriptSelection();
       state.extractionRegistered = false;
-      document.querySelectorAll(".test-area-option").forEach((el) => el.classList.remove("is-selected"));
       $("spec-file-name")?.classList.add("hidden");
       $("suite-file-name")?.classList.add("hidden");
       $("spec-upload-zone")?.classList.remove("has-file");
@@ -2467,14 +2419,10 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
         renderDeviceClassificationTable();
         updateDeviceClassificationStatus();
       }
+      const label = $("device-type-select")?.selectedOptions[0]?.text || state.deviceType;
+      $("shell-context").textContent = state.deviceType ? label : "Bring-up to Release Validation";
       updateSetupReadiness();
-    });
-
-    document.querySelectorAll(".test-area-option").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (btn.disabled) return;
-        selectTestArea(btn.dataset.area);
-      });
+      announceDevice();
     });
 
     renderDeviceClassificationTable();
@@ -2522,6 +2470,14 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
   }
 
   // ── Init ────────────────────────────────────────────
+
+  window.workbench = {
+    showView,
+    getState: () => state,
+    deviceLabel: deviceTypeLabel,
+    updateHomeStats,
+    oemStats
+  };
 
   bindEvents();
   updateSetupReadiness();

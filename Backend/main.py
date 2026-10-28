@@ -13,8 +13,10 @@ if str(BACKEND_ROOT) not in sys.path:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.certification_routes import router as certification_router
 from app.api.execution_routes import router as execution_router
 from app.api.routes import router
+from app.api.test_suite_routes import router as test_suite_router
 from core.config import get_settings
 from observability.logging import setup_logging
 
@@ -40,6 +42,8 @@ app.add_middleware(
 
 app.include_router(router)
 app.include_router(execution_router)
+app.include_router(certification_router)
+app.include_router(test_suite_router)
 
 
 if __name__ == "__main__":

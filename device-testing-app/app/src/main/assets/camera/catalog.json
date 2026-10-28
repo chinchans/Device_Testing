@@ -1,0 +1,734 @@
+{
+  "feature": "camera",
+  "feature_name": "Camera",
+  "categories": {
+    "functionality": [
+      {
+        "id": "cam_fun_001",
+        "source_id": "TC_CAM_FUNC_001",
+        "title": "Rear Primary Camera Photo Capture",
+        "brief": "Rear Primary Camera Photo Capture",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_002",
+        "source_id": "TC_CAM_FUNC_002",
+        "title": "Front Camera Photo Capture",
+        "brief": "Front Camera Photo Capture",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_003",
+        "source_id": "TC_CAM_FUNC_003",
+        "title": "Front-to-Rear Camera Switching",
+        "brief": "Front-to-Rear Camera Switching",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_004",
+        "source_id": "TC_CAM_FUNC_004",
+        "title": "Rear-to-Front Camera Switching",
+        "brief": "Rear-to-Front Camera Switching",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_005",
+        "source_id": "TC_CAM_FUNC_005",
+        "title": "Supported Photo Resolution Validation",
+        "brief": "Supported Photo Resolution Validation",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_006",
+        "source_id": "TC_CAM_FUNC_006",
+        "title": "Supported Aspect Ratio Validation",
+        "brief": "Supported Aspect Ratio Validation",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_007",
+        "source_id": "TC_CAM_FUNC_007",
+        "title": "Autofocus Operation",
+        "brief": "Autofocus Operation",
+        "execution": "AUTO_SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_008",
+        "source_id": "TC_CAM_FUNC_008",
+        "title": "Tap-to-Focus Operation",
+        "brief": "Tap-to-Focus Operation",
+        "execution": "SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_009",
+        "source_id": "TC_CAM_FUNC_009",
+        "title": "Flash ON Operation",
+        "brief": "Flash ON Operation",
+        "execution": "SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_010",
+        "source_id": "TC_CAM_FUNC_010",
+        "title": "Flash OFF Operation",
+        "brief": "Flash OFF Operation",
+        "execution": "SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_011",
+        "source_id": "TC_CAM_FUNC_011",
+        "title": "Flash Auto Operation",
+        "brief": "Flash Auto Operation",
+        "execution": "SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_012",
+        "source_id": "TC_CAM_FUNC_012",
+        "title": "Digital Zoom Operation",
+        "brief": "Digital Zoom Operation",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_013",
+        "source_id": "TC_CAM_FUNC_013",
+        "title": "Optical Zoom and Telephoto Lens Switching",
+        "brief": "Optical Zoom and Telephoto Lens Switching",
+        "execution": "AUTO_SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_014",
+        "source_id": "TC_CAM_FUNC_014",
+        "title": "Ultrawide Camera Switching",
+        "brief": "Ultrawide Camera Switching",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_015",
+        "source_id": "TC_CAM_FUNC_015",
+        "title": "Video Recording Start and Stop",
+        "brief": "Video Recording Start and Stop",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_016",
+        "source_id": "TC_CAM_FUNC_016",
+        "title": "Supported Video Resolution Validation",
+        "brief": "Supported Video Resolution Validation",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_017",
+        "source_id": "TC_CAM_FUNC_017",
+        "title": "Supported Video FPS Validation",
+        "brief": "Supported Video FPS Validation",
+        "execution": "AUTO",
+        "priority": null,
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_fun_018",
+        "source_id": "TC_CAM_FUNC_018",
+        "title": "HDR Photo and Video Operation",
+        "brief": "HDR Photo and Video Operation",
+        "execution": "AUTO_SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_019",
+        "source_id": "TC_CAM_FUNC_019",
+        "title": "Portrait Mode Operation",
+        "brief": "Portrait Mode Operation",
+        "execution": "SEMI",
+        "priority": null,
+        "codegen_eligible": false
+      },
+      {
+        "id": "cam_fun_020",
+        "source_id": "TC_CAM_FUNC_020",
+        "title": "Night and Low-Light Mode Operation",
+        "brief": "Night and Low-Light Mode Operation",
+        "execution": "SEMI_LAB",
+        "priority": null,
+        "codegen_eligible": false
+      }
+    ],
+    "performance": [
+      {
+        "id": "cam_per_001",
+        "source_id": "TC_CAM_PERF_001",
+        "title": "Cold Camera Launch Latency",
+        "brief": "Cold Camera Launch Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_002",
+        "source_id": "TC_CAM_PERF_002",
+        "title": "Warm Camera Launch Latency",
+        "brief": "Warm Camera Launch Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_003",
+        "source_id": "TC_CAM_PERF_003",
+        "title": "Time-to-First-Preview-Frame",
+        "brief": "Time-to-First-Preview-Frame",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_004",
+        "source_id": "TC_CAM_PERF_004",
+        "title": "Shutter-to-Capture Latency with ZSL Enabled",
+        "brief": "Shutter-to-Capture Latency with ZSL Enabled",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_005",
+        "source_id": "TC_CAM_PERF_005",
+        "title": "Shutter-to-Capture Latency with ZSL Disabled",
+        "brief": "Shutter-to-Capture Latency with ZSL Disabled",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_006",
+        "source_id": "TC_CAM_PERF_006",
+        "title": "Autofocus Acquisition Latency",
+        "brief": "Autofocus Acquisition Latency",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_007",
+        "source_id": "TC_CAM_PERF_007",
+        "title": "Front-to-Rear Camera Switching Latency",
+        "brief": "Front-to-Rear Camera Switching Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_008",
+        "source_id": "TC_CAM_PERF_008",
+        "title": "Rear-to-Front Camera Switching Latency",
+        "brief": "Rear-to-Front Camera Switching Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_009",
+        "source_id": "TC_CAM_PERF_009",
+        "title": "Primary-to-Ultrawide Switching Latency",
+        "brief": "Primary-to-Ultrawide Switching Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_010",
+        "source_id": "TC_CAM_PERF_010",
+        "title": "Primary-to-Telephoto Switching Latency",
+        "brief": "Primary-to-Telephoto Switching Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_011",
+        "source_id": "TC_CAM_PERF_011",
+        "title": "Photo Processing Latency",
+        "brief": "Photo Processing Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_012",
+        "source_id": "TC_CAM_PERF_012",
+        "title": "Photo Save-to-Storage Latency",
+        "brief": "Photo Save-to-Storage Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_013",
+        "source_id": "TC_CAM_PERF_013",
+        "title": "Burst Capture Throughput",
+        "brief": "Burst Capture Throughput",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_014",
+        "source_id": "TC_CAM_PERF_014",
+        "title": "Burst Capture Inter-Frame Latency",
+        "brief": "Burst Capture Inter-Frame Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_015",
+        "source_id": "TC_CAM_PERF_015",
+        "title": "Video Start Latency",
+        "brief": "Video Start Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_016",
+        "source_id": "TC_CAM_PERF_016",
+        "title": "Video Stop/Finalization Latency",
+        "brief": "Video Stop/Finalization Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_017",
+        "source_id": "TC_CAM_PERF_017",
+        "title": "Video Frame-Rate Stability",
+        "brief": "Video Frame-Rate Stability",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P0",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_018",
+        "source_id": "TC_CAM_PERF_018",
+        "title": "Camera Memory Usage During Capture",
+        "brief": "Camera Memory Usage During Capture",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_019",
+        "source_id": "TC_CAM_PERF_019",
+        "title": "Camera CPU Utilization During Recording",
+        "brief": "Camera CPU Utilization During Recording",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_per_020",
+        "source_id": "TC_CAM_PERF_020",
+        "title": "High-Resolution Capture Processing Latency",
+        "brief": "High-Resolution Capture Processing Latency",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      }
+    ],
+    "reliability": [
+      {
+        "id": "cam_rel_001",
+        "source_id": "TC_CAM_REL_001",
+        "title": "Camera Open/Close 1000 Cycles",
+        "brief": "Camera Open/Close 1000 Cycles",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_002",
+        "source_id": "TC_CAM_REL_002",
+        "title": "Rear Camera Capture 1000 Cycles",
+        "brief": "Rear Camera Capture 1000 Cycles",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_003",
+        "source_id": "TC_CAM_REL_003",
+        "title": "Front Camera Capture 1000 Cycles",
+        "brief": "Front Camera Capture 1000 Cycles",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_004",
+        "source_id": "TC_CAM_REL_004",
+        "title": "Front/Rear Switching 1000 Cycles",
+        "brief": "Front/Rear Switching 1000 Cycles",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_005",
+        "source_id": "TC_CAM_REL_005",
+        "title": "Video Recording Start/Stop 1000 Cycles",
+        "brief": "Video Recording Start/Stop 1000 Cycles",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_006",
+        "source_id": "TC_CAM_REL_006",
+        "title": "Repeated Primary/Ultrawide Switching",
+        "brief": "Repeated Primary/Ultrawide Switching",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_007",
+        "source_id": "TC_CAM_REL_007",
+        "title": "Repeated Primary/Telephoto Switching",
+        "brief": "Repeated Primary/Telephoto Switching",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_008",
+        "source_id": "TC_CAM_REL_008",
+        "title": "Repeated Digital Zoom Cycling",
+        "brief": "Repeated Digital Zoom Cycling",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_009",
+        "source_id": "TC_CAM_REL_009",
+        "title": "Repeated Autofocus Cycles",
+        "brief": "Repeated Autofocus Cycles",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_010",
+        "source_id": "TC_CAM_REL_010",
+        "title": "Repeated Flash Capture Cycles",
+        "brief": "Repeated Flash Capture Cycles",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_011",
+        "source_id": "TC_CAM_REL_011",
+        "title": "Long-Duration Preview Stability",
+        "brief": "Long-Duration Preview Stability",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_012",
+        "source_id": "TC_CAM_REL_012",
+        "title": "Long-Duration Video Recording Stability",
+        "brief": "Long-Duration Video Recording Stability",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_013",
+        "source_id": "TC_CAM_REL_013",
+        "title": "Camera Memory-Leak Detection Over Repeated Use",
+        "brief": "Camera Memory-Leak Detection Over Repeated Use",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_014",
+        "source_id": "TC_CAM_REL_014",
+        "title": "Camera Resource-Release Validation",
+        "brief": "Camera Resource-Release Validation",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_015",
+        "source_id": "TC_CAM_REL_015",
+        "title": "CameraService Stability Over Repeated Sessions",
+        "brief": "CameraService Stability Over Repeated Sessions",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_016",
+        "source_id": "TC_CAM_REL_016",
+        "title": "Camera Recovery After Repeated Background/Foreground Transitions",
+        "brief": "Camera Recovery After Repeated Background/Foreground Transitions",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_017",
+        "source_id": "TC_CAM_REL_017",
+        "title": "Camera Recovery After Screen Lock/Unlock",
+        "brief": "Camera Recovery After Screen Lock/Unlock",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_018",
+        "source_id": "TC_CAM_REL_018",
+        "title": "Camera Stability After Repeated Orientation Changes",
+        "brief": "Camera Stability After Repeated Orientation Changes",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_019",
+        "source_id": "TC_CAM_REL_019",
+        "title": "Media-File Integrity After Repeated Captures",
+        "brief": "Media-File Integrity After Repeated Captures",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_rel_020",
+        "source_id": "TC_CAM_REL_020",
+        "title": "Camera Crash/ANR Monitoring During Endurance Run",
+        "brief": "Camera Crash/ANR Monitoring During Endurance Run",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      }
+    ],
+    "security": [
+      {
+        "id": "cam_sec_001",
+        "source_id": "TC_CAM_SEC_001",
+        "title": "Camera Permission Grant Validation",
+        "brief": "Camera Permission Grant Validation",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_002",
+        "source_id": "TC_CAM_SEC_002",
+        "title": "Camera Permission Denial Enforcement",
+        "brief": "Camera Permission Denial Enforcement",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_003",
+        "source_id": "TC_CAM_SEC_003",
+        "title": "Camera Permission Revocation Enforcement",
+        "brief": "Camera Permission Revocation Enforcement",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_004",
+        "source_id": "TC_CAM_SEC_004",
+        "title": "One-Time Camera Permission Behavior",
+        "brief": "One-Time Camera Permission Behavior",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_005",
+        "source_id": "TC_CAM_SEC_005",
+        "title": "While-in-Use Camera Permission Enforcement",
+        "brief": "While-in-Use Camera Permission Enforcement",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_006",
+        "source_id": "TC_CAM_SEC_006",
+        "title": "Background Camera Access Restriction",
+        "brief": "Background Camera Access Restriction",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_007",
+        "source_id": "TC_CAM_SEC_007",
+        "title": "Camera Privacy Indicator Validation",
+        "brief": "Camera Privacy Indicator Validation",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_008",
+        "source_id": "TC_CAM_SEC_008",
+        "title": "Camera Privacy Toggle Blocking Validation",
+        "brief": "Camera Privacy Toggle Blocking Validation",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_009",
+        "source_id": "TC_CAM_SEC_009",
+        "title": "Camera Access After Privacy Toggle Restoration",
+        "brief": "Camera Access After Privacy Toggle Restoration",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_010",
+        "source_id": "TC_CAM_SEC_010",
+        "title": "Unauthorized App Camera Access Attempt",
+        "brief": "Unauthorized App Camera Access Attempt",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_011",
+        "source_id": "TC_CAM_SEC_011",
+        "title": "Camera Access After App Permission Reset",
+        "brief": "Camera Access After App Permission Reset",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_012",
+        "source_id": "TC_CAM_SEC_012",
+        "title": "Camera Access After App Data Reset",
+        "brief": "Camera Access After App Data Reset",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_013",
+        "source_id": "TC_CAM_SEC_013",
+        "title": "Concurrent Camera Permission Isolation Between Apps",
+        "brief": "Concurrent Camera Permission Isolation Between Apps",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_014",
+        "source_id": "TC_CAM_SEC_014",
+        "title": "Locked-Device Camera Access Behavior",
+        "brief": "Locked-Device Camera Access Behavior",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_015",
+        "source_id": "TC_CAM_SEC_015",
+        "title": "Secure Lock-Screen Camera Behavior",
+        "brief": "Secure Lock-Screen Camera Behavior",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_016",
+        "source_id": "TC_CAM_SEC_016",
+        "title": "Captured-Media Access Permission Validation",
+        "brief": "Captured-Media Access Permission Validation",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_017",
+        "source_id": "TC_CAM_SEC_017",
+        "title": "Camera Access Audit/Log Verification",
+        "brief": "Camera Access Audit/Log Verification",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_018",
+        "source_id": "TC_CAM_SEC_018",
+        "title": "Camera Resource Isolation Between Applications",
+        "brief": "Camera Resource Isolation Between Applications",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_019",
+        "source_id": "TC_CAM_SEC_019",
+        "title": "Camera Permission Persistence After Reboot",
+        "brief": "Camera Permission Persistence After Reboot",
+        "execution": "FULLY_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      },
+      {
+        "id": "cam_sec_020",
+        "source_id": "TC_CAM_SEC_020",
+        "title": "Camera Privacy Behavior After OTA Update",
+        "brief": "Camera Privacy Behavior After OTA Update",
+        "execution": "SEMI_AUTOMATED",
+        "priority": "P1",
+        "codegen_eligible": true
+      }
+    ]
+  }
+}

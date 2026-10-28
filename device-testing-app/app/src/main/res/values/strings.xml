@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Device Testing</string>
+    <string name="phone_diagnostics">Phone diagnostics</string>
+    <string name="normal">Normal</string>
+    <string name="action_required">Action required</string>
+    <string name="tap_hint">You can test a function individually by tapping its icon.</string>
+    <string name="test_all">Test all</string>
+    <string name="feature_not_ready">%1$s is not in this build yet</string>
+    <string name="ui_only_no_execution">preview only </string>
+    <string name="case_no_result_ui_only">No result yet. </string>
+</resources>

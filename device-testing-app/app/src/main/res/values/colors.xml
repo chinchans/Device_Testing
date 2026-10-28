@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ink">#F2F2F2</color>
+    <color name="muted">#9AA0A6</color>
+    <color name="line">#2A2A2A</color>
+    <color name="card">#1C1C1E</color>
+    <color name="page">#000000</color>
+    <color name="brand">#2F7BFF</color>
+    <color name="brand_pressed">#1F63D8</color>
+    <color name="pass">#2F7BFF</color>
+    <color name="fail">#FF8A00</color>
+    <color name="na">#9AA0A6</color>
+    <color name="pending">#5C5C5C</color>
+    <color name="icon_idle">#8E8E93</color>
+    <color name="badge_bg">#000000</color>
+    <color name="hint">#8E8E93</color>
+</resources>

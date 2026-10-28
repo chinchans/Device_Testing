@@ -7,5 +7,11 @@ contextBridge.exposeInMainWorld("platformConfig", {
 contextBridge.exposeInMainWorld("deviceTestingAPI", {
   openFileDialog: async (options) => {
     return ipcRenderer.invoke("show-open-file-dialog", options || {});
+  },
+  openFilesDialog: async (options) => {
+    return ipcRenderer.invoke("show-open-files-dialog", options || {});
+  },
+  openFolderDialog: async (options) => {
+    return ipcRenderer.invoke("show-open-folder-dialog", options || {});
   }
 });

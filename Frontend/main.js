@@ -3,6 +3,12 @@ const path = require("path");
 
 let mainWindow;
 
+// The GNOME portal file chooser cancels Electron's request immediately on this desktop;
+// forcing the built-in GTK dialog keeps document upload working.
+if (process.platform === "linux") {
+  app.commandLine.appendSwitch("xdg-portal-required-version", "999");
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1360,
@@ -60,4 +66,27 @@ ipcMain.handle("show-open-file-dialog", async (_event, options = {}) => {
     path: filePath,
     name
   };
+});
+
+ipcMain.handle("show-open-files-dialog", async (_event, options = {}) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: options.title || "Select documents",
+    properties: ["openFile", "multiSelections"],
+    filters: options.filters || [{ name: "All Files", extensions: ["*"] }]
+  });
+  if (result.canceled || !result.filePaths.length) {
+    return [];
+  }
+  return result.filePaths.map((filePath) => ({ path: filePath, name: path.basename(filePath) }));
+});
+
+ipcMain.handle("show-open-folder-dialog", async (_event, options = {}) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: options.title || "Select folder",
+    properties: ["openDirectory"]
+  });
+  if (result.canceled || !result.filePaths.length) {
+    return null;
+  }
+  return { path: result.filePaths[0], name: path.basename(result.filePaths[0]) };
 });

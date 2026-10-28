@@ -130,6 +130,7 @@ KNOWN_APPS: dict[str, str] = {
     "com.microsoft.office.outlook": "Outlook",
     "us.zoom.videomeetings": "Zoom",
     "com.jio.myjio": "MyJio",
+    "com.ludo.king": "Ludo King",
     # Test harness APKs (this project)
     "com.example.cameratest": "Camera Test Harness",
     "com.example.cameraunauthorized": "Camera Harness (Unauthorized Helper)",
