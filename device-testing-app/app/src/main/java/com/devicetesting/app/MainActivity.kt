@@ -48,19 +48,38 @@ class MainActivity : AppCompatActivity() {
     private var runPreviewHint: TextView? = null
     private var runLastShot: ImageView? = null
     private var runScreenReady = false
+    private var heartbeatReporter: HeartbeatReporter? = null
+    private var monitorStatusView: TextView? = null
+    private var lastMonitorStatus: String = "Monitor: starting…"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         cases = Catalog.load(this)
         store = ResultStore(this)
+        syncTestExecutionStatus()
+        heartbeatReporter = HeartbeatReporter(applicationContext) { status ->
+            lastMonitorStatus = status
+            monitorStatusView?.text = status
+        }.also { it.start() }
         showHome()
+    }
+
+    private fun syncTestExecutionStatus() {
+        val failures = store.last?.count("FAIL") ?: 0
+        if (running) {
+            TestExecutionStatus.setRunning(suite, null, failures)
+        } else {
+            TestExecutionStatus.setIdle(failures)
+        }
     }
 
     override fun onDestroy() {
         stop.set(true)
         engine?.close()
         worker.shutdownNow()
+        heartbeatReporter?.stop()
+        heartbeatReporter = null
         super.onDestroy()
     }
 
@@ -71,6 +90,8 @@ class MainActivity : AppCompatActivity() {
         val action = features.count { it.status == FeatureStatus.ACTION_REQUIRED }
         root.findViewById<TextView>(R.id.home_normal_count).text = normal.toString()
         root.findViewById<TextView>(R.id.home_action_count).text = action.toString()
+        monitorStatusView = root.findViewById(R.id.home_monitor_status)
+        monitorStatusView?.text = lastMonitorStatus
         root.findViewById<ImageButton>(R.id.home_back).setOnClickListener { finish() }
 
         val grid = root.findViewById<GridView>(R.id.home_features)

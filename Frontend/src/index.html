@@ -61,6 +61,11 @@
                 <div class="wb-nav-label">Insights</div>
                 <div id="pl-nav-insights"></div>
               </div>
+
+              <div class="wb-nav-section">
+                <div class="wb-nav-label">Monitoring</div>
+                <div id="pl-nav-monitoring"></div>
+              </div>
             </nav>
           </aside>
 
@@ -794,6 +799,10 @@
               <div class="wb-breadcrumb">Insights <span>/</span> Reports</div>
               <div id="reports-root"></div>
             </div>
+            <div id="view-device-monitoring" class="view view-flow">
+              <div class="wb-breadcrumb">Monitoring <span>/</span> Devices</div>
+              <div id="device-monitoring-root"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -891,6 +900,16 @@
             <input class="input" id="api-base-display" type="text" readonly />
             <div class="hint">Feature extraction uses the Agentic RAG backend at this URL.</div>
           </div>
+          <div class="field" style="margin-top: 12px;">
+            <label for="monitor-mode-display">Device Monitoring mode</label>
+            <input class="input" id="monitor-mode-display" type="text" readonly />
+            <div class="hint">Set in Frontend/monitor-config.js (wifi or cloud). Keep phone app monitor_transport in sync.</div>
+          </div>
+          <div class="field" style="margin-top: 12px;">
+            <label for="monitor-api-base-display">Device Monitoring API URL</label>
+            <input class="input" id="monitor-api-base-display" type="text" readonly />
+            <div class="hint">Resolved from mode: wifi → local FastAPI, cloud → AppSail.</div>
+          </div>
         </div>
         <div class="modal-footer">
           <button class="settings-btn settings-btn-primary" type="button" data-close-modal="settings-modal">Done</button>
@@ -907,5 +926,6 @@
     <script src="./stages.js"></script>
     <script src="./test_suite.js"></script>
     <script src="./certifications.js"></script>
+    <script src="./device_monitoring.js"></script>
   </body>
 </html>

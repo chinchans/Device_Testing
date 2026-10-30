@@ -7064,3 +7064,56 @@ kbd {
     grid-template-columns: 1fr;
   }
 }
+
+/* Device Monitoring */
+.dm-panel .panel-head-row {
+  align-items: center;
+}
+
+.dm-refresh {
+  font-size: 12px;
+}
+
+.dm-empty {
+  padding: 20px 4px;
+}
+
+.dm-error {
+  margin-bottom: 12px;
+}
+
+.dm-name {
+  font-weight: 600;
+}
+
+.dm-meta {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.dm-table-wrap {
+  overflow-x: auto;
+}
+
+.dm-table {
+  min-width: 980px;
+}
+
+.dm-table th,
+.dm-table td {
+  vertical-align: top;
+  white-space: normal;
+}
+
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+  min-width: 140px;
+}
+
+.dm-cell-main {
+  font-weight: 500;
+}
+
+.dm-row-offline {
+  opacity: 0.72;
+}

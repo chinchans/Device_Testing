@@ -1,0 +1,14 @@
+{
+  "command": "python3 -u main.py",
+  "build_path": ".",
+  "stack": "python_3_9",
+  "env_variables": {
+    "MONITOR_OFFLINE_AFTER_SEC": "90"
+  },
+  "memory": 256,
+  "minimum": 1,
+  "maximum": 5,
+  "scripts": {
+    "predeploy": "python3 -m pip install --no-cache-dir -r ./requirements.txt -t ./ --upgrade"
+  }
+}

@@ -9,4 +9,15 @@
     <string name="feature_not_ready">%1$s is not in this build yet</string>
     <string name="ui_only_no_execution">preview only </string>
     <string name="case_no_result_ui_only">No result yet. </string>
+
+    <!--
+      Device monitoring transport: "wifi" or "cloud".
+      wifi  → monitor_wifi_base_url  (PC FastAPI on same LAN; update IP if needed)
+      cloud → monitor_cloud_base_url (Catalyst AppSail; any network)
+      Keep Electron Frontend/monitor-config.js mode in sync.
+    -->
+    <string name="monitor_transport">cloud</string>
+    <string name="monitor_wifi_base_url">http://192.168.43.90:8000</string>
+    <string name="monitor_cloud_base_url">https://device-monitor-50047269636.development.catalystappsail.in</string>
+    <string name="monitor_status_starting">Monitor: starting…</string>
 </resources>

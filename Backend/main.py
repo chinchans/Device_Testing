@@ -14,6 +14,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.certification_routes import router as certification_router
+from app.api.device_monitoring_routes import router as device_monitoring_router
 from app.api.execution_routes import router as execution_router
 from app.api.routes import router
 from app.api.test_suite_routes import router as test_suite_router
@@ -44,6 +45,7 @@ app.include_router(router)
 app.include_router(execution_router)
 app.include_router(certification_router)
 app.include_router(test_suite_router)
+app.include_router(device_monitoring_router)
 
 
 if __name__ == "__main__":

@@ -289,7 +289,7 @@
 
   // ── Routing ─────────────────────────────────────────
 
-  const APP_VIEWS = ["home", "device-selection", "certifications"];
+  const APP_VIEWS = ["home", "device-selection", "certifications", "device-monitoring"];
 
   function viewForRoute(route) {
     if (APP_VIEWS.includes(route)) return route;
@@ -340,6 +340,7 @@
     if (route === "home") return [["Home"]];
     if (route === "device-selection") return [["Pipeline"], ["Device Selection"]];
     if (route === "certifications") return [["Pipeline"], ["Regulatory Certifications"]];
+    if (route === "device-monitoring") return [["Monitoring"], ["Devices"]];
     if (route === "operator") return [["Pipeline"], ["Operator Testing"]];
     if (head === "stage") {
       const stage = STAGES.find((s) => s.id === a);
@@ -477,6 +478,7 @@
     const overview = $("pl-nav-overview");
     const pipeline = $("pl-nav-pipeline");
     const insights = $("pl-nav-insights");
+    const monitoring = $("pl-nav-monitoring");
     if (!overview || !pipeline || !insights) return;
     revealRoute();
 
@@ -546,8 +548,17 @@
       children: reportChildren
     });
 
+    if (monitoring) {
+      monitoring.innerHTML = navItem({
+        route: "device-monitoring",
+        label: "Device Monitoring",
+        icon: "device-selection",
+        active: r === "device-monitoring"
+      });
+    }
+
     const activeItems = document.querySelectorAll(
-      "#pl-nav-overview .active, #pl-nav-pipeline .active, #pl-nav-insights .active"
+      "#pl-nav-overview .active, #pl-nav-pipeline .active, #pl-nav-insights .active, #pl-nav-monitoring .active"
     );
     const activeItem = activeItems[activeItems.length - 1];
     if (activeItem) activeItem.scrollIntoView({ block: "nearest" });

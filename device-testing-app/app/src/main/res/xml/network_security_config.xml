@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 24+: trust bundled Let's Encrypt roots in addition to the system store.
+     API 23 (Galaxy J5) ignores this file; MonitorSsl handles that path in code. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="@raw/isrg_root_x1" />
+            <certificates src="@raw/isrg_root_x2" />
+            <certificates src="@raw/isrg_root_yr" />
+            <certificates src="@raw/isrg_root_yr_x1" />
+            <certificates src="@raw/le_yr1" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

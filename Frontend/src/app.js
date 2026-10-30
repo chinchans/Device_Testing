@@ -2456,10 +2456,20 @@ ${feature.parameters.map((p) => `        "${p.name}": "${p.value}",`).join("\n")
     const settingsBtn = $("settings-btn");
     if (settingsBtn) {
       settingsBtn.addEventListener("click", () => {
-        const base =
-          (window.platformConfig && window.platformConfig.apiBaseUrl) ||
-          "http://127.0.0.1:8000";
+        const cfg = window.platformConfig || {};
+        const base = cfg.apiBaseUrl || "http://127.0.0.1:8000";
+        const mode = String(cfg.monitorMode || "cloud").toLowerCase();
+        const monitor =
+          cfg.monitorApiBaseUrl ||
+          (mode === "wifi" || mode === "lan" || mode === "local"
+            ? cfg.monitorWifiBaseUrl || base
+            : cfg.monitorCloudBaseUrl ||
+              "https://device-monitor-50047269636.development.catalystappsail.in");
         $("api-base-display").value = base;
+        const modeEl = $("monitor-mode-display");
+        if (modeEl) modeEl.value = mode === "wifi" || mode === "lan" || mode === "local" ? "wifi" : "cloud";
+        const monitorEl = $("monitor-api-base-display");
+        if (monitorEl) monitorEl.value = monitor;
         openModal("settings-modal");
       });
     }
