@@ -1,0 +1,2620 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "FUT_CALLS_SUITE_V1",
+  "suite_name": "Android FUT Calls Test Suite",
+  "description": "12 detailed voice-call test cases for a normal Android FUT APK, with lab-only cases explicitly blocked on remote devices.",
+  "validation_program": "FUT",
+  "feature": "calls",
+  "platform": "Android",
+  "execution_architecture": {
+    "remote": "FUT APK Kotlin executor -> HTTPS -> FastAPI -> Electron dashboard",
+    "lab": "Python/ADB and reference/network adapters as available",
+    "no_remote_adb": true,
+    "test_dispatch": "allowlisted_action_ids_only"
+  },
+  "suite_constants": {
+    "test_session_max_minutes": 45,
+    "network_poll_interval_sec": 5,
+    "api_upload_timeout_sec": 30
+  },
+  "safety_policy": {
+    "require_explicit_consent": true,
+    "allow_public_emergency_calls": false,
+    "allow_unapproved_numbers": false,
+    "require_operator_approved_lab_for_network_faults": true,
+    "no_unattended_repeated_calls": true,
+    "no_call_audio_recording_by_default": true
+  },
+  "result_statuses": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT_APPLICABLE",
+    "ERROR"
+  ],
+  "assertion_statuses": [
+    "PASS",
+    "FAIL",
+    "NOT_VERIFIED"
+  ],
+  "test_case_count": 12,
+  "test_cases": [
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-FUNC-001",
+        "title": "SIM and voice-service readiness",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "FUNCTIONAL",
+        "priority": "P1",
+        "execution_mode": "AUTOMATED",
+        "objective": "Check active subscription and voice service readiness without placing a call.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "ACTIVE_SUBSCRIPTION",
+          "VOICE_CAPABLE"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-FUNC-001-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "subscription_reader.read_active_subscriptions"
+          },
+          "validation_checkpoint": {
+            "metric_key": "read_active_subscriptions",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-001-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "telephony_reader.read_voice_service_state"
+          },
+          "validation_checkpoint": {
+            "metric_key": "read_voice_service_state",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "observation_window_sec": 15
+        },
+        "assertions": [
+          {
+            "id": "CALL-FUNC-001-A01",
+            "metric_key": "active_subscription_present",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-001-A02",
+            "metric_key": "voice_service_in_service",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "SIM absent, disabled or voice service unavailable must be BLOCKED, not a DUT call failure."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-FUNC-002",
+        "title": "Outgoing call initiation",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "FUNCTIONAL",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Verify an authorized outgoing call can be initiated and call-state transitions observed.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "AUTHORIZED_TEST_NUMBER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-FUNC-002-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-002-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "dialer_intent.open_system_dialer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "open_system_dialer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-002-STEP-03",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_place_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_place_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-002-STEP-04",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_offhook"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_offhook",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-002-STEP-05",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_end_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_end_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-002-STEP-06",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_idle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_idle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "call_start_timeout_sec": 60,
+          "call_end_timeout_sec": 60
+        },
+        "assertions": [
+          {
+            "id": "CALL-FUNC-002-A01",
+            "metric_key": "dialer_launched",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-002-A02",
+            "metric_key": "offhook_observed",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-002-A03",
+            "metric_key": "returned_to_idle",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-002-A04",
+            "metric_key": "user_confirmed_call_placed",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "OFFHOOK is not proof of remote answer or audio; separately record unverified assertions."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-FUNC-003",
+        "title": "Incoming call detection",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "FUNCTIONAL",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Verify the DUT observes incoming ringing and returns to idle after user handles the call.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "REFERENCE_CALLER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-FUNC-003-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-003-STEP-02",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_reference_incoming_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_reference_incoming_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-003-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_ringing"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_ringing",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-003-STEP-04",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_answer_or_reject"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_answer_or_reject",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-003-STEP-05",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_idle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_idle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "ring_wait_timeout_sec": 90,
+          "idle_wait_timeout_sec": 90
+        },
+        "assertions": [
+          {
+            "id": "CALL-FUNC-003-A01",
+            "metric_key": "ringing_observed",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-003-A02",
+            "metric_key": "returned_to_idle",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-003-A03",
+            "metric_key": "user_confirmed_incoming_call",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Call initiation from the reference endpoint is an external human/fixture action."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-FUNC-004",
+        "title": "Answered call and termination",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "FUNCTIONAL",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Verify user-confirmed answered call remains active and ends cleanly.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "REFERENCE_CALLER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-FUNC-004-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-02",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_reference_incoming_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_reference_incoming_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_ringing"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_ringing",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-04",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_answer_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_answer_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-05",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_offhook"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_offhook",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-06",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_confirm_two_way_audio"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_confirm_two_way_audio",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-07",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_end_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_end_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-FUNC-004-STEP-08",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_idle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_idle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "ring_wait_timeout_sec": 90,
+          "call_hold_sec": 20,
+          "idle_wait_timeout_sec": 60
+        },
+        "assertions": [
+          {
+            "id": "CALL-FUNC-004-A01",
+            "metric_key": "ringing_observed",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-004-A02",
+            "metric_key": "offhook_observed",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-004-A03",
+            "metric_key": "returned_to_idle",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-FUNC-004-A04",
+            "metric_key": "user_confirmed_audio",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Two-way audio evidence is user-confirmed, not automatically measured."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-PERF-001",
+        "title": "Outgoing call setup timing (approximate)",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "PERFORMANCE",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Measure app-observable time from user initiation marker to OFFHOOK; do not claim network answer time.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "AUTHORIZED_TEST_NUMBER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-PERF-001-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-001-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "dialer_intent.open_system_dialer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "open_system_dialer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-001-STEP-03",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_place_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_place_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-PERF-001-STEP-04",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.capture_user_initiation_marker"
+          },
+          "validation_checkpoint": {
+            "metric_key": "capture_user_initiation_marker",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-PERF-001-STEP-05",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_offhook"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_offhook",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-001-STEP-06",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_end_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_end_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-PERF-001-STEP-07",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_idle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_idle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "measurement_timeout_sec": 90,
+          "max_initiation_to_offhook_ms": null
+        },
+        "assertions": [
+          {
+            "id": "CALL-PERF-001-A01",
+            "metric_key": "offhook_observed",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-PERF-001-A02",
+            "metric_key": "timing_measurement_present",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "PASS for timing requires operator-defined maximum; without threshold mark timing assertion NOT_VERIFIED."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-PERF-002",
+        "title": "Incoming notification delay (instrumented)",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "PERFORMANCE",
+        "priority": "P2",
+        "execution_mode": "LAB_AUTOMATED",
+        "objective": "Measure reference-call initiation to DUT ringing using synchronized reference and DUT timestamps.",
+        "remote_fut_supported": false,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "AUTOMATED_REFERENCE_CALLER",
+          "CLOCK_SYNCHRONIZATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "CONTROLLED_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-PERF-002-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_reference_adapter.synchronize_clocks"
+          },
+          "validation_checkpoint": {
+            "metric_key": "synchronize_clocks",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-002-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-002-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_reference_adapter.trigger_reference_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "trigger_reference_call",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-002-STEP-04",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_ringing"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_ringing",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-002-STEP-05",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_reference_adapter.collect_reference_timestamp"
+          },
+          "validation_checkpoint": {
+            "metric_key": "collect_reference_timestamp",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-002-STEP-06",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.collect_dut_timestamp"
+          },
+          "validation_checkpoint": {
+            "metric_key": "collect_dut_timestamp",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-002-STEP-07",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_reference_adapter.terminate_reference_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "terminate_reference_call",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "ring_wait_timeout_sec": 90,
+          "max_notification_delay_ms": null
+        },
+        "assertions": [
+          {
+            "id": "CALL-PERF-002-A01",
+            "metric_key": "ringing_observed",
+            "expected": true,
+            "evidence_source": "LAB_AND_DUT",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-PERF-002-A02",
+            "metric_key": "synchronized_timestamps_available",
+            "expected": true,
+            "evidence_source": "LAB_AND_DUT",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Remote APK alone cannot establish accurate caller-side start timestamp; BLOCKED without reference fixture."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-PERF-003",
+        "title": "Call duration observation accuracy",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "PERFORMANCE",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Compare observed OFFHOOK interval with a user-confirmed reference duration, noting limited answer-state visibility.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "REFERENCE_CALLER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-PERF-003-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-003-STEP-02",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_reference_incoming_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_reference_incoming_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-PERF-003-STEP-03",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_answer_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_answer_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-PERF-003-STEP-04",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_offhook"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_offhook",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-003-STEP-05",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_end_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_end_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-PERF-003-STEP-06",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_idle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_idle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-PERF-003-STEP-07",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.capture_user_reference_duration"
+          },
+          "validation_checkpoint": {
+            "metric_key": "capture_user_reference_duration",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "minimum_observation_sec": 20,
+          "max_duration_delta_sec": null
+        },
+        "assertions": [
+          {
+            "id": "CALL-PERF-003-A01",
+            "metric_key": "offhook_interval_recorded",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-PERF-003-A02",
+            "metric_key": "reference_duration_recorded",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "The observed OFFHOOK interval is not guaranteed to equal connected-call duration."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-REL-001",
+        "title": "Repeated outgoing call sessions",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "RELIABILITY",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Execute bounded authorized outgoing call sessions and verify clean return to idle.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "AUTHORIZED_TEST_NUMBER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-REL-001-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 120
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-001-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "bounded_call_cycle.repeat_authorized_call_cycle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "repeat_authorized_call_cycle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 120
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-001-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "test_recorder.collect_each_cycle_result"
+          },
+          "validation_checkpoint": {
+            "metric_key": "collect_each_cycle_result",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 120
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "cycle_count": 3,
+          "per_cycle_timeout_sec": 120,
+          "inter_cycle_pause_sec": 15
+        },
+        "assertions": [
+          {
+            "id": "CALL-REL-001-A01",
+            "metric_key": "all_cycles_returned_to_idle",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-REL-001-A02",
+            "metric_key": "no_unexpected_test_app_crash",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Requires explicit user approval for each call or a tightly scoped consented session; never loop unattended."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-REL-002",
+        "title": "Long-duration call stability",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "RELIABILITY",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "objective": "Observe a user-approved call over a bounded hold period and check for unexpected state changes.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "REFERENCE_CALLER",
+          "USER_CONFIRMATION"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-REL-002-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-002-STEP-02",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_reference_incoming_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_reference_incoming_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-REL-002-STEP-03",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_answer_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_answer_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-REL-002-STEP-04",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_offhook"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_offhook",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-002-STEP-05",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.monitor_call_state"
+          },
+          "validation_checkpoint": {
+            "metric_key": "monitor_call_state",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-002-STEP-06",
+          "action_type": "manual_prompt",
+          "payload": {
+            "command": "user_checkpoint.prompt_user_end_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "prompt_user_end_call",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "User action must be acknowledged before continuation."
+        },
+        {
+          "step_id": "CALL-REL-002-STEP-07",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.observe_idle"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_idle",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "hold_duration_sec": 300,
+          "sampling_interval_sec": 5,
+          "idle_wait_timeout_sec": 60
+        },
+        "assertions": [
+          {
+            "id": "CALL-REL-002-A01",
+            "metric_key": "offhook_maintained_during_window",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-REL-002-A02",
+            "metric_key": "returned_to_idle",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Cannot prove speech quality or network-side continuity using call state alone."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-REL-003",
+        "title": "Call recovery after controlled network interruption",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "RELIABILITY",
+        "priority": "P2",
+        "execution_mode": "LAB_AUTOMATED",
+        "objective": "Validate behavior after a controlled lab network interruption without manipulating a commercial network.",
+        "remote_fut_supported": false,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "VOICE_CAPABLE",
+          "ACTIVE_SUBSCRIPTION"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE"
+        ],
+        "resources": [
+          "CONTROLLED_NETWORK_FIXTURE",
+          "REFERENCE_CALLER",
+          "OPERATOR_APPROVAL"
+        ],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "CONTROLLED_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-REL-003-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_network_adapter.verify_lab_isolation"
+          },
+          "validation_checkpoint": {
+            "metric_key": "verify_lab_isolation",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-003-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "call_state_observer.start_call_state_observer"
+          },
+          "validation_checkpoint": {
+            "metric_key": "start_call_state_observer",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-003-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_reference_adapter.establish_reference_call"
+          },
+          "validation_checkpoint": {
+            "metric_key": "establish_reference_call",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-003-STEP-04",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_network_adapter.inject_controlled_network_interruption"
+          },
+          "validation_checkpoint": {
+            "metric_key": "inject_controlled_network_interruption",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-003-STEP-05",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "lab_network_adapter.restore_network"
+          },
+          "validation_checkpoint": {
+            "metric_key": "restore_network",
+            "log_source": "LAB_FIXTURE_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-003-STEP-06",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "telephony_reader.observe_service_recovery"
+          },
+          "validation_checkpoint": {
+            "metric_key": "observe_service_recovery",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-REL-003-STEP-07",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "evidence_collector.collect_network_and_dut_traces"
+          },
+          "validation_checkpoint": {
+            "metric_key": "collect_network_and_dut_traces",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "recovery_observation_timeout_sec": 180,
+          "max_recovery_time_sec": null
+        },
+        "assertions": [
+          {
+            "id": "CALL-REL-003-A01",
+            "metric_key": "network_restored",
+            "expected": true,
+            "evidence_source": "LAB_AND_DUT",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-REL-003-A02",
+            "metric_key": "voice_service_recovered",
+            "expected": true,
+            "evidence_source": "LAB_AND_DUT",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-REL-003-A03",
+            "metric_key": "network_trace_available",
+            "expected": true,
+            "evidence_source": "LAB_AND_DUT",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "BLOCKED for remote FUT; requires isolated approved lab and equipment adapter."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-SEC-001",
+        "title": "Call permission handling",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "SECURITY",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "objective": "Verify runtime permission state and graceful behavior when telephony permission is denied.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "ANDROID_TELEPHONY"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [],
+        "resources": [],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-SEC-001-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "permission_manager.inspect_permission_state"
+          },
+          "validation_checkpoint": {
+            "metric_key": "inspect_permission_state",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-SEC-001-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "permission_manager.simulate_permission_denied_path_in_app"
+          },
+          "validation_checkpoint": {
+            "metric_key": "simulate_permission_denied_path_in_app",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-SEC-001-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "permission_manager.verify_no_privileged_call_state_access_without_permission"
+          },
+          "validation_checkpoint": {
+            "metric_key": "verify_no_privileged_call_state_access_without_permission",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "check_timeout_sec": 20
+        },
+        "assertions": [
+          {
+            "id": "CALL-SEC-001-A01",
+            "metric_key": "permission_denial_handled",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-SEC-001-A02",
+            "metric_key": "no_crash_on_denial",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Do not automatically revoke OS permissions or change device policy."
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "CALL-SEC-002",
+        "title": "Call-data minimization and access control",
+        "validation_program": "FUT",
+        "feature": "calls",
+        "test_type": "SECURITY",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "objective": "Verify evidence payload excludes unnecessary phone numbers and sensitive call records.",
+        "remote_fut_supported": true,
+        "version": "1.0"
+      },
+      "capability_discovery": {
+        "required_capabilities": [
+          "ANDROID_TELEPHONY"
+        ],
+        "discovery_source": "Android SDK / local permission state",
+        "unknown_capability_policy": "BLOCKED_PENDING_DISCOVERY",
+        "unsupported_capability_policy": "NOT_APPLICABLE"
+      },
+      "prerequisites": {
+        "permissions": [],
+        "resources": [],
+        "device_state": [
+          "DUT powered on",
+          "test session foreground or permitted foreground service",
+          "user consent for call operations where applicable"
+        ],
+        "environment": "REMOTE_FUT_OR_LAB",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "setup_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.prepare_test_session"
+          },
+          "code_gen_hint": "Invoke local Kotlin CallsTestManager; never invoke adb on remote DUT."
+        }
+      ],
+      "execution_procedure": [
+        {
+          "step_id": "CALL-SEC-002-STEP-01",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "test_recorder.generate_synthetic_call_evidence"
+          },
+          "validation_checkpoint": {
+            "metric_key": "generate_synthetic_call_evidence",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-SEC-002-STEP-02",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "privacy_validator.inspect_upload_payload"
+          },
+          "validation_checkpoint": {
+            "metric_key": "inspect_upload_payload",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        },
+        {
+          "step_id": "CALL-SEC-002-STEP-03",
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "privacy_validator.verify_redaction_and_minimization"
+          },
+          "validation_checkpoint": {
+            "metric_key": "verify_redaction_and_minimization",
+            "log_source": "FUT_APK_EVENT_LOG",
+            "extraction_regex": null,
+            "timeout_sec": 90
+          },
+          "code_gen_hint": "Dispatch through allowlisted Kotlin module or approved equipment adapter."
+        }
+      ],
+      "verification_slas": {
+        "numeric_parameters": {
+          "inspection_timeout_sec": 20
+        },
+        "assertions": [
+          {
+            "id": "CALL-SEC-002-A01",
+            "metric_key": "no_raw_phone_number_in_upload",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-SEC-002-A02",
+            "metric_key": "no_call_log_access",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          },
+          {
+            "id": "CALL-SEC-002-A03",
+            "metric_key": "only_allowlisted_fields_uploaded",
+            "expected": true,
+            "evidence_source": "FUT_APK_OR_USER",
+            "on_missing_evidence": "NOT_VERIFIED"
+          }
+        ],
+        "threshold_source": "operator_policy_or_suite_configuration",
+        "unset_threshold_policy": "NOT_VERIFIED_NOT_PASS",
+        "validation_owner": "DETERMINISTIC_VALIDATOR"
+      },
+      "evidence_collection": {
+        "required": [
+          "test_run_id",
+          "device_pseudonymous_id",
+          "android_api_level",
+          "app_version",
+          "test_start_utc",
+          "test_end_utc",
+          "permission_snapshot",
+          "call_state_events_with_monotonic_timestamps",
+          "step_outcomes",
+          "validation_assertions",
+          "error_codes"
+        ],
+        "optional": [
+          "battery_level",
+          "network_type",
+          "voice_service_state",
+          "redacted_user_confirmation",
+          "reference_device_timestamps",
+          "lab_network_trace"
+        ],
+        "privacy": [
+          "No audio recording by default",
+          "Do not upload raw phone numbers",
+          "Do not access call log",
+          "Use pseudonymous device IDs",
+          "Explicit consent for call initiation and uploads"
+        ]
+      },
+      "teardown_commands": [
+        {
+          "action_type": "instrumentation",
+          "payload": {
+            "command": "calls.stop_observer_and_close_session"
+          },
+          "code_gen_hint": "Release listeners, cancel timers, flush redacted evidence; do not hang up calls without authorized control."
+        }
+      ],
+      "expected_result": {
+        "status_if_all_required_assertions_pass": "PASS",
+        "status_if_verified_behavior_violates_criteria": "FAIL",
+        "status_if_missing_resource_or_permission": "BLOCKED",
+        "status_if_capability_unsupported": "NOT_APPLICABLE",
+        "status_if_runner_crashes": "ERROR",
+        "partial_assertion_status": "NOT_VERIFIED"
+      },
+      "failure_classification_candidates": [
+        "DUT_FIRMWARE_DEFECT",
+        "APP_CRASH",
+        "TEST_ARTIFACT",
+        "NOT_APPLICABLE",
+        "NETWORK_OR_OPERATOR_ISSUE",
+        "INSUFFICIENT_EVIDENCE"
+      ],
+      "limitations": "Checks the FUT application data-handling contract; does not prove Android platform security."
+    }
+  ]
+}

@@ -16,12 +16,46 @@
         android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/feature_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Camera"
-        android:textColor="@color/ink"
+        android:textColor="@color/brand"
         android:textSize="22sp"
         android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/call_number_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/call_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_suite_idle"
+            android:hint="Default test number"
+            android:inputType="phone"
+            android:padding="12dp"
+            android:textColor="@color/ink"
+            android:textColorHint="@color/hint"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/call_number_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_test_all"
+            android:text="Save"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
     <HorizontalScrollView
         android:layout_width="match_parent"

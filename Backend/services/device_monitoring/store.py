@@ -115,6 +115,12 @@ class DeviceMonitorStore:
                 return None
             return self._public(entry, now)
 
+    def clear(self) -> int:
+        with self._lock:
+            n = len(self._devices)
+            self._devices.clear()
+            return n
+
     def _public(self, entry: dict[str, Any], now: float) -> dict[str, Any]:
         last_seen = float(entry.get("last_seen") or 0)
         age = max(0.0, now - last_seen)

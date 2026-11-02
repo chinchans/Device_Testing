@@ -19,10 +19,12 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Sends device registration + periodic heartbeats (incl. health metrics) to the monitor API.
  * Runs on a background scheduler while the host activity is alive.
+ * Idle → every 30s; while a suite is running → every 5s (plus [pulse] on case changes).
  */
 class HeartbeatReporter(
     private val context: Context,
@@ -33,6 +35,8 @@ class HeartbeatReporter(
     private val started = AtomicBoolean(false)
     private var future: ScheduledFuture<*>? = null
     private val registered = AtomicBoolean(false)
+    private val lastSentAtMs = AtomicLong(0L)
+    private val forceNext = AtomicBoolean(false)
 
     private val deviceId: String by lazy {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
@@ -73,26 +77,44 @@ class HeartbeatReporter(
         scheduler.execute {
             runCatching {
                 ensureRegistered()
-                sendHeartbeat()
+                sendHeartbeat(force = true)
                 publishStatus("Monitor ($transport): OK ($deviceName)")
             }.onFailure { publishStatus("Monitor ($transport): FAIL — ${shortError(it)}") }
         }
+        // Short tick; send cadence adapts to idle vs running suite.
         future = scheduler.scheduleAtFixedRate(
             {
                 runCatching {
                     ensureRegistered()
-                    sendHeartbeat()
-                    publishStatus("Monitor ($transport): OK ($deviceName)")
+                    if (sendHeartbeat(force = false)) {
+                        publishStatus("Monitor ($transport): OK ($deviceName)")
+                    }
                 }.onFailure {
                     Log.w(TAG, "heartbeat failed: ${it.message}")
                     publishStatus("Monitor ($transport): FAIL — ${shortError(it)}")
                 }
             },
-            INTERVAL_SEC,
-            INTERVAL_SEC,
+            TICK_SEC,
+            TICK_SEC,
             TimeUnit.SECONDS
         )
         Log.i(TAG, "HeartbeatReporter started mode=$transport → $baseUrl device=$deviceId")
+    }
+
+    /** Push an immediate heartbeat (e.g. when the current test case changes). */
+    fun pulse() {
+        if (!started.get()) return
+        forceNext.set(true)
+        scheduler.execute {
+            runCatching {
+                ensureRegistered()
+                sendHeartbeat(force = true)
+                publishStatus("Monitor ($transport): OK ($deviceName)")
+            }.onFailure {
+                Log.w(TAG, "pulse failed: ${it.message}")
+                publishStatus("Monitor ($transport): FAIL — ${shortError(it)}")
+            }
+        }
     }
 
     fun stop() {
@@ -123,7 +145,13 @@ class HeartbeatReporter(
         registered.set(true)
     }
 
-    private fun sendHeartbeat() {
+    /** @return true if a heartbeat was actually sent */
+    private fun sendHeartbeat(force: Boolean): Boolean {
+        val now = System.currentTimeMillis()
+        val forced = force || forceNext.getAndSet(false)
+        val intervalMs = if (TestExecutionStatus.isRunning()) RUNNING_INTERVAL_MS else IDLE_INTERVAL_MS
+        if (!forced && now - lastSentAtMs.get() < intervalMs) return false
+
         val battery = readBattery()
         val health = DeviceHealthCollector.collect(context)
         val body = JSONObject()
@@ -139,6 +167,8 @@ class HeartbeatReporter(
             .put("thermal", health.optJSONObject("thermal"))
             .put("test_execution", health.optJSONObject("test_execution"))
         postJson("/api/monitor/heartbeat", body)
+        lastSentAtMs.set(now)
+        return true
     }
 
     private data class BatteryInfo(val percent: Double, val charging: Boolean)
@@ -184,6 +214,8 @@ class HeartbeatReporter(
 
     companion object {
         private const val TAG = "HeartbeatReporter"
-        private const val INTERVAL_SEC = 30L
+        private const val TICK_SEC = 5L
+        private const val IDLE_INTERVAL_MS = 30_000L
+        private const val RUNNING_INTERVAL_MS = 5_000L
     }
 }

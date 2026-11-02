@@ -74,6 +74,7 @@ def root():
                 "POST /api/monitor/register",
                 "POST /api/monitor/heartbeat",
                 "GET /api/monitor/devices",
+                "DELETE /api/monitor/devices",
                 "GET /health",
             ],
         }
@@ -176,6 +177,13 @@ def get_device(device_id: str):
     if not entry:
         return jsonify({"error": f"device {device_id} not found"}), 404
     return jsonify({"device": _public(entry, time.time())})
+
+
+@app.delete("/api/monitor/devices")
+def clear_devices():
+    removed = len(_DEVICES)
+    _DEVICES.clear()
+    return jsonify({"ok": True, "removed": removed, "count": 0})
 
 
 if __name__ == "__main__":

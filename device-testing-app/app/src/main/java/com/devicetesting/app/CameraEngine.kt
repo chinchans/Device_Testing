@@ -14,10 +14,12 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
 import android.util.Size
+import android.view.OrientationEventListener
 import android.view.Surface
 import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -62,12 +64,31 @@ class CameraEngine(
     private val thread = HandlerThread("device-testing-camera").apply { start() }
     private val handler = Handler(thread.looper)
     private val dir = File(app.filesDir, "shots").apply { mkdirs() }
+    private val savedMedia = mutableListOf<String>()
+    private val deviceOrientation = AtomicInteger(0)
+    private val orientationListener = object : OrientationEventListener(app) {
+        override fun onOrientationChanged(orientation: Int) {
+            if (orientation == ORIENTATION_UNKNOWN) return
+            deviceOrientation.set(orientation)
+        }
+    }
+
+    init {
+        if (orientationListener.canDetectOrientation()) orientationListener.enable()
+    }
+
+    fun mediaCount(): Int = synchronized(savedMedia) { savedMedia.size }
+
+    fun mediaFrom(index: Int): List<String> = synchronized(savedMedia) {
+        if (index < 0 || index >= savedMedia.size) emptyList() else savedMedia.subList(index, savedMedia.size).toList()
+    }
 
     private fun status(text: String) {
         onStatus?.invoke(text)
     }
 
     private fun saved(path: String) {
+        synchronized(savedMedia) { savedMedia += path }
         onStillSaved?.invoke(path)
     }
 
@@ -177,6 +198,7 @@ class CameraEngine(
         var ok = 0
         repeat(times) {
             if (shouldStop()) return ok
+            status("Open ${it + 1} of $times")
             try {
                 val device = openCamera(id)
                 device.close()
@@ -251,6 +273,7 @@ class CameraEngine(
             recorder.stop()
             val stopMs = SystemClock.elapsedRealtime() - stopMark
             status("Video saved")
+            if (file.length() > 0) saved(file.absolutePath)
             return Video(ok = file.length() > 0, path = file.absolutePath, startMs = startMs, stopMs = stopMs, bytes = file.length())
         } catch (e: Exception) {
             return Video(ok = false, error = e.message ?: e.javaClass.simpleName)
@@ -354,6 +377,7 @@ class CameraEngine(
         val request = device.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE).apply {
             addTarget(reader.surface)
             set(CaptureRequest.JPEG_QUALITY, 90.toByte())
+            set(CaptureRequest.JPEG_ORIENTATION, jpegOrientation(chars))
             set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
             if (flashMode != null) set(CaptureRequest.FLASH_MODE, flashMode)
             if (aeMode != null) set(CaptureRequest.CONTROL_AE_MODE, aeMode)
@@ -455,7 +479,18 @@ class CameraEngine(
             ?: sizes.firstOrNull()
     }
 
+    private fun jpegOrientation(chars: CameraCharacteristics): Int {
+        val sensor = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
+        var device = deviceOrientation.get()
+        if (device == OrientationEventListener.ORIENTATION_UNKNOWN) return sensor
+        device = ((device + 45) / 90) * 90
+        val front = chars.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT
+        if (front) device = -device
+        return (sensor + device + 360) % 360
+    }
+
     override fun close() {
+        orientationListener.disable()
         thread.quitSafely()
     }
 

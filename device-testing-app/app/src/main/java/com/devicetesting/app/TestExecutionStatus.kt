@@ -46,6 +46,8 @@ object TestExecutionStatus {
         failureCount.set(count.coerceAtLeast(0))
     }
 
+    fun isRunning(): Boolean = running.get()
+
     fun toJson(): JSONObject {
         val isRunning = running.get()
         val started = startedAtMs.get()

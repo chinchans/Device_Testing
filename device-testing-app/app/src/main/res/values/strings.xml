@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Device Testing</string>
+    <string name="app_name">TCS Device Testing</string>
     <string name="phone_diagnostics">Phone diagnostics</string>
     <string name="normal">Normal</string>
     <string name="action_required">Action required</string>

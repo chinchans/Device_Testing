@@ -78,3 +78,9 @@ def get_monitored_device(device_id: str) -> dict[str, Any]:
     if device is None:
         raise HTTPException(404, f"device {device_id} not found")
     return {"device": device}
+
+
+@router.delete("/api/monitor/devices")
+def clear_monitored_devices() -> dict[str, Any]:
+    removed = monitor_store.clear()
+    return {"ok": True, "removed": removed, "count": 0}

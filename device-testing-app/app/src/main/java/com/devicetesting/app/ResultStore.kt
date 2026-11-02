@@ -10,6 +10,7 @@ data class CaseResult(
     val suite: String,
     val verdict: String,
     val detail: String,
+    val media: List<String> = emptyList(),
 )
 
 data class RunRecord(
@@ -52,7 +53,8 @@ class ResultStore(context: Context) {
                     .put("title", r.title)
                     .put("suite", r.suite)
                     .put("verdict", r.verdict)
-                    .put("detail", r.detail),
+                    .put("detail", r.detail)
+                    .put("media", JSONArray(r.media)),
             )
         }
         return JSONObject()
@@ -65,12 +67,19 @@ class ResultStore(context: Context) {
         val arr = obj.getJSONArray("results")
         val results = (0 until arr.length()).map { i ->
             val item = arr.getJSONObject(i)
+            val mediaJson = item.optJSONArray("media")
+            val media = if (mediaJson == null) {
+                emptyList()
+            } else {
+                (0 until mediaJson.length()).map { mediaJson.getString(it) }
+            }
             CaseResult(
                 id = item.getString("id"),
                 title = item.getString("title"),
                 suite = item.getString("suite"),
                 verdict = item.getString("verdict"),
                 detail = item.optString("detail"),
+                media = media,
             )
         }
         return RunRecord(obj.optString("label"), obj.optLong("finishedAt"), results)

@@ -4,21 +4,22 @@ import android.hardware.camera2.CaptureRequest
 
 /**
  * Runs the bundled camera catalog on the phone.
- * Repeated suites are capped so a Galaxy J5 run can finish: photo loops stop at 20,
- * open/close loops at 10. The result text states the full-suite count.
+ * Cases titled as 1000 cycles run all 1000 iterations.
  */
 class CaseRunner(
     private val engine: CameraEngine,
     private val confirm: (prompt: String, imagePath: String?) -> Boolean,
     private val shouldStop: () -> Boolean,
+    private val onStatus: (String) -> Unit = {},
 ) {
     fun run(test: TestCase): CaseResult {
+        val mark = engine.mediaCount()
         val outcome = try {
             execute(test.id)
         } catch (e: Exception) {
             Outcome("FAIL", e.message ?: e.javaClass.simpleName)
         }
-        return CaseResult(test.id, test.title, test.suite, outcome.verdict, outcome.detail)
+        return CaseResult(test.id, test.title, test.suite, outcome.verdict, outcome.detail, engine.mediaFrom(mark))
     }
 
     private fun execute(id: String): Outcome {
@@ -67,11 +68,11 @@ class CaseRunner(
             "cam_per_019" -> na("CPU sampling is not part of the on-phone run")
             "cam_per_020" -> largest(rear)
 
-            "cam_rel_001" -> opens(rear, OPEN_CAP, "1000")
-            "cam_rel_002" -> photos(rear, PHOTO_CAP, "1000")
-            "cam_rel_003" -> photos(front, PHOTO_CAP, "1000")
-            "cam_rel_004" -> switches(rear, front, 5)
-            "cam_rel_005" -> videos(rear, 2)
+            "cam_rel_001" -> opens(rear, 1000)
+            "cam_rel_002" -> photos(rear, 1000)
+            "cam_rel_003" -> photos(front, 1000)
+            "cam_rel_004" -> switches(rear, front, 1000)
+            "cam_rel_005" -> videos(rear, 1000)
             "cam_rel_006" -> na("This phone has no ultrawide camera")
             "cam_rel_007" -> na("This phone has no telephoto camera")
             "cam_rel_008" -> zoomCycles(rear)
@@ -79,14 +80,14 @@ class CaseRunner(
             "cam_rel_010" -> flashCycles(rear)
             "cam_rel_011" -> previewHold(rear)
             "cam_rel_012" -> video(rear, 3, "Preview recording ran for 3 seconds")
-            "cam_rel_013" -> photos(rear, 5, "5")
-            "cam_rel_014" -> opens(rear, 2, "2")
-            "cam_rel_015" -> opens(rear, 5, "5")
-            "cam_rel_016" -> photos(rear, 2, "2")
+            "cam_rel_013" -> photos(rear, 5)
+            "cam_rel_014" -> opens(rear, 2)
+            "cam_rel_015" -> opens(rear, 5)
+            "cam_rel_016" -> photos(rear, 2)
             "cam_rel_017" -> ask("Lock and unlock the phone, then reopen the camera. Did it recover?")
             "cam_rel_018" -> na("This run does not rotate the phone")
-            "cam_rel_019" -> photos(rear, 5, "5")
-            "cam_rel_020" -> photos(rear, 5, "5")
+            "cam_rel_019" -> photos(rear, 5)
+            "cam_rel_020" -> photos(rear, 5)
 
             "cam_sec_001" -> pass("Camera permission is granted to this app")
             "cam_sec_002" -> na("Denial check needs a second app with no camera permission")
@@ -275,18 +276,18 @@ class CaseRunner(
         return pass("Saved ${burst.saved}. Heap $before MB to $after MB")
     }
 
-    private fun opens(id: String?, times: Int, fullCount: String): Outcome {
+    private fun opens(id: String?, times: Int): Outcome {
         if (id == null) return na("This camera is not on the phone")
         val ok = engine.openTimes(id, times, shouldStop)
-        val detail = "Opened $ok of $times (full suite asks for $fullCount)"
+        val detail = "Opened $ok of $times"
         if (shouldStop() && ok < times) return na("Stopped. $detail")
         return if (ok == times) pass(detail) else fail(detail)
     }
 
-    private fun photos(id: String?, times: Int, fullCount: String): Outcome {
+    private fun photos(id: String?, times: Int): Outcome {
         if (id == null) return na("This camera is not on the phone")
         val burst = engine.burst(id, times, shouldStop)
-        val detail = "Saved ${burst.saved} of $times photos (full suite asks for $fullCount)"
+        val detail = "Saved ${burst.saved} of $times photos"
         if (shouldStop() && burst.saved < times) return na("Stopped. $detail")
         return if (burst.saved == times) pass(detail) else fail(burst.error?.let { "$detail. $it" } ?: detail)
     }
@@ -296,9 +297,10 @@ class CaseRunner(
         var ok = 0
         repeat(times) {
             if (shouldStop()) return na("Stopped after $ok of $times switches")
+            onStatus("Switch ${it + 1} of $times")
             if (engine.switchLatency(rear, front).ok) ok++
         }
-        val detail = "Completed $ok of $times switches (full suite asks for 1000)"
+        val detail = "Completed $ok of $times switches"
         return if (ok == times) pass(detail) else fail(detail)
     }
 
@@ -307,9 +309,10 @@ class CaseRunner(
         var ok = 0
         repeat(times) {
             if (shouldStop()) return na("Stopped after $ok of $times clips")
+            onStatus("Clip ${it + 1} of $times")
             if (engine.record(id, 1).ok) ok++
         }
-        val detail = "Recorded $ok of $times clips (full suite asks for 1000)"
+        val detail = "Recorded $ok of $times clips"
         return if (ok == times) pass(detail) else fail(detail)
     }
 
@@ -327,7 +330,7 @@ class CaseRunner(
     private fun focusCycles(id: String?): Outcome {
         if (id == null) return na("This camera is not on the phone")
         if (!engine.facts(id).hasAutofocus) return na("This camera reports no autofocus")
-        return photos(id, 5, "5")
+        return photos(id, 5)
     }
 
     private fun flashCycles(id: String?): Outcome {
@@ -360,9 +363,4 @@ class CaseRunner(
     }
 
     private data class Outcome(val verdict: String, val detail: String)
-
-    companion object {
-        const val PHOTO_CAP = 20
-        const val OPEN_CAP = 10
-    }
 }

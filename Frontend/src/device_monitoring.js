@@ -3,8 +3,10 @@
 
   const $ = (id) => document.getElementById(id);
   const POLL_MS = 5000;
+  const POLL_FAST_MS = 3000;
 
   let pollTimer = null;
+  let currentPollMs = POLL_MS;
   let lastError = "";
 
   function apiBase() {
@@ -117,17 +119,34 @@
     return `<div class="dm-cell-main">${esc(temp)}</div><div class="dm-meta">${pill} ${esc(status)}</div>`;
   }
 
-  function testCell(te) {
+  function isLiveRunning(device) {
+    const te = device && device.test_execution;
+    return !!(device && device.online && te && te.state === "running");
+  }
+
+  function runningPill(text) {
+    return `<span class="status-pill is-running">${esc(text)}</span>`;
+  }
+
+  function testCell(te, live) {
     if (!te) return "—";
     const state = te.state || "idle";
-    const pill = state === "running" ? warnPill("Running") : okPill("Idle");
-    const current = te.current_test || te.current_suite || "—";
+    const running = live && state === "running";
+    const pill = running ? runningPill("Running") : state === "running" ? warnPill("Stale run") : okPill("Idle");
+    const suite = te.current_suite ? String(te.current_suite) : "";
+    const test = te.current_test ? String(te.current_test) : "";
+    const suiteLine = suite ? `Suite: ${suite}` : "";
+    const testLine = test ? `Case: ${test}` : running ? "Case: —" : "";
     const fails = te.failures != null ? `${te.failures} fail` : "";
     const dur =
       state === "running" && te.duration_sec != null
-        ? `${Math.round(Number(te.duration_sec))}s`
+        ? `${Math.round(Number(te.duration_sec))}s elapsed`
         : "";
-    return `<div class="dm-cell-main">${pill}</div><div class="dm-meta">${esc(current)}</div><div class="dm-meta muted">${esc([fails, dur].filter(Boolean).join(" · "))}</div>`;
+    const meta = [fails, dur].filter(Boolean).join(" · ");
+    return `<div class="dm-cell-main">${pill}</div>
+      ${suiteLine ? `<div class="dm-meta">${esc(suiteLine)}</div>` : ""}
+      ${testLine ? `<div class="dm-meta dm-test-case">${esc(testLine)}</div>` : (!running ? `<div class="dm-meta muted">—</div>` : "")}
+      ${meta ? `<div class="dm-meta muted">${esc(meta)}</div>` : ""}`;
   }
 
   function renderEmpty(message) {
@@ -142,27 +161,35 @@
     }
 
     const rows = devices
-      .map(
-        (d) => `<tr class="${d.online ? "" : "dm-row-offline"}">
+      .map((d) => {
+        const live = isLiveRunning(d);
+        const rowClass = [
+          d.online ? "" : "dm-row-offline",
+          live ? "dm-row-running" : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
+        return `<tr class="${rowClass}">
         <td>
           <div class="dm-name">${esc(d.device_name || d.device_id)}</div>
           <div class="dm-meta muted">${esc(d.model || d.device_id)}</div>
+          ${live ? `<div class="dm-meta dm-running-banner">Executing suite on device</div>` : ""}
         </td>
         <td>
-          <div>${statusPill(d)}</div>
+          <div>${statusPill(d)}${live ? ` ${runningPill("Busy")}` : ""}</div>
           <div class="dm-meta muted">${esc(formatAgo(d.last_seen_ago_sec))}</div>
         </td>
         <td>${networkCell(d.network)}</td>
         <td>${storageCell(d.storage)}</td>
         <td>${memoryCell(d.memory)}</td>
         <td>${thermalCell(d.thermal)}</td>
-        <td>${testCell(d.test_execution)}</td>
+        <td>${testCell(d.test_execution, live)}</td>
         <td>
           <div class="dm-cell-main">${esc(batteryLabel(d))}</div>
           <div class="dm-meta muted">hb ${esc(d.heartbeat_count ?? 0)}</div>
         </td>
-      </tr>`
-      )
+      </tr>`;
+      })
       .join("");
 
     return `<div class="tex-table-wrap dm-table-wrap">
@@ -184,16 +211,17 @@
     </div>`;
   }
 
-  function renderShell({ onlineCount = 0, count = 0, devices = [], loading = false } = {}) {
+  function renderShell({ onlineCount = 0, count = 0, devices = [], loading = false, pollMs = POLL_MS } = {}) {
     const root = $("device-monitoring-root");
     if (!root) return;
+    const runningCount = (devices || []).filter(isLiveRunning).length;
     const P = window.pipeline;
     const head =
       P && P.headPanel
         ? P.headPanel({
             title: "Device Monitoring",
           desc: "Live device health from phones via Catalyst AppSail (any network). Local FastAPI is unchanged for other pipeline features.",
-          side: `<div class="fl-progress-label">${onlineCount} online · ${count} total</div>`
+          side: `<div class="fl-progress-label">${onlineCount} online · ${count} total${runningCount ? ` · ${runningCount} running` : ""}</div>`
         })
       : `<section class="panel fl-head"><div class="fl-head-main"><h2 class="fl-title">Device Monitoring</h2></div></section>`;
 
@@ -201,7 +229,7 @@
       <section class="panel fl-section dm-panel">
         <div class="panel-head-row">
           <h3>Connected devices</h3>
-          <span class="muted dm-refresh">${loading ? "Refreshing…" : "Auto-refresh 5s"}</span>
+          <span class="muted dm-refresh">${loading ? "Refreshing…" : `Auto-refresh ${Math.round(pollMs / 1000)}s`}</span>
         </div>
         <div class="dm-meta muted" style="margin-bottom:10px;">Monitor API: ${esc(apiBase())}</div>
         ${lastError ? `<div class="callout warn dm-error">${esc(lastError)}</div>` : ""}
@@ -217,22 +245,32 @@
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
       lastError = "";
+      const devices = data.devices || [];
+      const anyRunning = devices.some(isLiveRunning);
+      const nextPoll = anyRunning ? POLL_FAST_MS : POLL_MS;
       renderShell({
-        devices: data.devices || [],
+        devices,
         count: data.count || 0,
         onlineCount: data.online_count || 0,
-        loading: false
+        loading: false,
+        pollMs: nextPoll
       });
+      if (pollTimer && currentPollMs !== nextPoll) {
+        currentPollMs = nextPoll;
+        clearInterval(pollTimer);
+        pollTimer = setInterval(refresh, currentPollMs);
+      }
     } catch (err) {
       lastError = `Could not reach the monitor API (${err.message}). Mode=${transportLabel()} URL=${apiBase()}.`;
-      renderShell({ devices: [], count: 0, onlineCount: 0, loading: false });
+      renderShell({ devices: [], count: 0, onlineCount: 0, loading: false, pollMs: POLL_MS });
     }
   }
 
   function startPolling() {
     stopPolling();
+    currentPollMs = POLL_MS;
     refresh();
-    pollTimer = setInterval(refresh, POLL_MS);
+    pollTimer = setInterval(refresh, currentPollMs);
   }
 
   function stopPolling() {

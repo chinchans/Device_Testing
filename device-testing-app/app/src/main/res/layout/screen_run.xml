@@ -73,11 +73,41 @@
     <ImageView
         android:id="@+id/run_last_shot"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:background="#1A1A1A"
+        android:adjustViewBounds="true"
         android:contentDescription="Last captured photo"
-        android:scaleType="centerCrop" />
+        android:scaleType="fitCenter" />
+
+    <LinearLayout
+        android:id="@+id/run_choice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/run_fail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_suite_idle"
+            android:text="Fail"
+            android:textAllCaps="false"
+            android:textColor="@color/ink" />
+
+        <Button
+            android:id="@+id/run_pass"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_test_all"
+            android:text="Pass"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/run_stop"

@@ -7117,3 +7117,27 @@ kbd {
 .dm-row-offline {
   opacity: 0.72;
 }
+
+.dm-row-running {
+  background: rgba(47, 123, 255, 0.08);
+  box-shadow: inset 3px 0 0 #2f7bff;
+}
+
+.dm-row-running .dm-name {
+  color: #2f7bff;
+}
+
+.dm-running-banner {
+  color: #2f7bff;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.dm-test-case {
+  font-weight: 600;
+}
+
+.dm-table th:nth-child(7),
+.dm-table td:nth-child(7) {
+  min-width: 160px;
+}
