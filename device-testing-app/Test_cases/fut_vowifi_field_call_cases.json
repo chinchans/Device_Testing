@@ -1,0 +1,4473 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "FUT_VOWIFI_FIELD_CALLS_V1",
+  "suite_name": "Field VoWiFi call cases",
+  "description": "Field-only voice-over-Wi-Fi call cases from Radio_Testcases-Global.xlsx. Lab rows are omitted. Emergency cases are listed and blocked so the app does not place them. Messaging cases are omitted.",
+  "validation_program": "FUT",
+  "feature": "calls",
+  "platform": "Android",
+  "source_workbook": "Excel_Sheets/Radio_Testcases-Global.xlsx",
+  "source_sheet": "Size",
+  "area_filter": "Radio_Field",
+  "safety_policy": {
+    "require_explicit_consent": true,
+    "allow_public_emergency_calls": false,
+    "allow_unapproved_numbers": false,
+    "no_call_audio_recording_by_default": true,
+    "dial_only_saved_test_number": true
+  },
+  "result_statuses": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT_APPLICABLE",
+    "NOT_VERIFIED",
+    "ERROR"
+  ],
+  "test_case_count": 60,
+  "counts_by_suite": {
+    "functionality": 37,
+    "reliability": 15,
+    "blocked_emergency": 8
+  },
+  "test_cases": [
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_25",
+        "title": "Communication Hold - WiFi to 3G: Originating party puts call on hold",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage 2) Call waiting enabled Note: Supplementry service settings can only be modified on non-VoWiFi i.e. VoLTE/LTE/3G"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_25-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT and UE-2 are connected to WiFi coverage and register on VoWiFi",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) UE-1 is connected and registered to a 3G network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT initiates voice call to UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-2 performs a voice call to DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT puts UE-1 on hold and answers the call from UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT finishes the voice call with UE-2 and disconnects the call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT resumes call with UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "Repeat 2nd iteration with the terminating party putting the call on hold rather than the orginating party",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_25-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "DUT hangs the call from UE-1",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Check active voice call in progress between DUT and UE-1",
+          "2)Speech is not present in UE-1 whilst on hold",
+          "3)Check UE-1 is on hold.",
+          "4) Ensure 2-way audio is present between DUT and UE-2",
+          "5) Ensure that the DUT resumes the call with UE-1",
+          "6) Verify Media exchange (IMS/SIP) message sequence",
+          "7) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_30",
+        "title": "Change SS settings while connected to WiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "Change SS settings while connected to WiFi"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_30-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Prerequiste",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_30-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "DUT is connected to VoWiFi service, no cellular available",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_30-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "Steps",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_30-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "WiFi: Good",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_30-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Cellular: None",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_30-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "1. Attempt to change several SS services settings via DUT menu while connected to VoWiFi service",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. Changing settings is not possible",
+          "2. If settings are available (i.e. not greyed out), attempting to change them will result in a graceful failure"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_01",
+        "title": "MO Long (30min): VoWiFi->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30min",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_01-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call on the MO side",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_02",
+        "title": "MO Short->VoWiFi (good RF)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_02-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_02-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_02-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow",
+          "6) Check that the 'Reason' header field is present in the BYE request message.",
+          "7) Report the \"text\" in the reason header field parameter"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_03",
+        "title": "MO Short: VoWiFi (poor RF)->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 2) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Poor Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_03-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_03-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_04",
+        "title": "MO Short: VoWiFi->VoLTE 800MHz",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_04-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to a device connected on LTE VoPS=1",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_04-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_04-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_04-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_04-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_05",
+        "title": "MO Short: VoWiFi->LTE 1800MHz",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live Paddington",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_05-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to a device connected on LTE VoPS=0",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_05-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_05-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_05-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_05-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_06",
+        "title": "MO Short: VoWiFi->3G 2100MHz",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3)Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to a device connected on 3G",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_06-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_06-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_06-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_06-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_08",
+        "title": "MO Short: VoWiFi->PSTN",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_08-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to a PSTN device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_08-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_08-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_08-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_08-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_11",
+        "title": "MO Short after OoS: VoWiFi->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Device is OOS 4) No VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_11-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Device moves from OOS to good WiFi coverage",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_11-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Once registered, make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_11-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_11-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_11-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_11-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Device connects to VoWiFi service (record time taken)",
+          "2) Correct UK ringtone heard",
+          "3) Successful voice call",
+          "4) Call maintained and speech quality acceptable",
+          "5) Call ends successfully and device returns to idle",
+          "6) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_12",
+        "title": "MO Short: call during airplane mode",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_12-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1)Switch device to Airplane mode, and re-enable WiFi",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_12-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_12-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_12-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_12-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Swith off Airplane mode and repeat",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_12-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) VoWiFi UI icon still present and serice still available",
+          "2) Correct UK ringtone heard",
+          "3) Successful voice call",
+          "4) Call maintained and speech quality acceptable",
+          "5) Call ends successfully and device returns to idle",
+          "6) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_13",
+        "title": "MO Short: MO in no service (after being in VoWiFi)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services WiFi: None Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_13-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Move from VoWiFi to no service area",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_13-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Attempt VoWiFi call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_13-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Repeat",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1a) Voice call not successful",
+          "1b) UE fails gracefully"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_14",
+        "title": "MO Short: MT in no service (voicemail)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_14-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device which doesn't have service",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_14-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Wait for voicemail",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_14-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call attempt",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Voice call goes to MT voicemail",
+          "2) Speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_15",
+        "title": "MO Short: MO no service during call",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) DUT in no service WiFi: None Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_15-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_15-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call setup completed",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_15-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) MO moves to no service",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) After no service the voice call ends gracefully"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_16",
+        "title": "MO Short: MT no service during call",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: None Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_16-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_16-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call setup completed",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_16-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) MT moves to no service",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) After no service the voice call ends gracefully"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_17",
+        "title": "MO Short: No answer from MT side",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_17-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_17-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) MT side doesn't answer",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_17-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Wait and observe behaviour",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Voice call attempt times out and goes to voicemail",
+          "2) Speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_18",
+        "title": "MO Short: Cancel during call setup",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_18-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_18-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Voice call alerting on MT side",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_18-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) MO side cancels before MT accepts",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_18-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "(for the iterations, try cancellin the call at different points - while ringing, before ringing etc)",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MT receives alerting of call",
+          "2) Call cancelled gracefully and device returns to idle",
+          "3) Correct SIP/IMS message flow",
+          "4) Check that the 'Reason' header field is present in the CANCEL request message.",
+          "5) Report the \"text\" in the reason header field parameter"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_19",
+        "title": "MO Short: MT Reject during call setup",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_19-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_19-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Voice call alerting on MT side",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_19-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) MO side rejects the call",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MT receives alerting of call",
+          "2) Call cancelled gracefully and device returns to idle",
+          "3) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_20",
+        "title": "MO Short: VoWiFi->DTMF number",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "MO Short: VoWiFi->DTMF number"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_20-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Prerequiste",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "Device/SIM supports VoWiFi/VoLTE services",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "Registered to VoWiFi",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "Steps",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "WiFi: Good",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "Cellular: None",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to conference calling service (e.g. 0800 1313330)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "2) After voice call is activated check that DTMF functionalities canbe used (enter a random string of numbers, ensure they are recognised)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_20-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) DTMF functionality working as expected - input numbers are recognised and read back to user correctly",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_22",
+        "title": "MO Short: Switch Off mobile network data before call setup",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_22-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Switch off mobile data using soft switch",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_22-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_22-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_22-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_23",
+        "title": "MO Short: VoWiFi not avalable in international roaming",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Device is roaming and has previously connected to a VPLMN 3) Camped on WiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live-Italy",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_23-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Note: Device must be in international roaming scenario, device IMS logging turned on",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_23-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "1) Attempt a voice call from the dialer",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_23-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2) Leave device idle for 5 minutes",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_23-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "3) Attempt another MO call",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) No VoWiFi UI Icon should be present when camped on WiFi",
+          "2) Voice call attempt should fail gracefully and the device should return to an idle state",
+          "3) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_24",
+        "title": "MO Short: similtaneous cancel -> VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_24-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_24-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Voice call alerting on MT side",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_24-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_24-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call on both devices simultaneously",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MO_30",
+        "title": "MO Short: VoWifi call when connected to both cellular and LTE 800",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MO_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P3",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Camped on WiFi WiFi: Good Cellular: Good (LTE VoPS=1)"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MO_30-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_30-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_30-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_30-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_MO_30-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call made over LTE VoPS=1",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_1",
+        "title": "MT Short->VoWiFi (good RF)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1)Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_1-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_1-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_1-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_1-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_1-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_2",
+        "title": "MT Short: VoWiFi (poor RF)->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Poor Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_2-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_2-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_2-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_2-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_2-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_3",
+        "title": "MT Short: VoLTE 800MHz->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_3-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_3-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_3-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_3-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_3-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MTsides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_4",
+        "title": "MT Short: LTE 1800MHz->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1)Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live Paddington",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_4-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_4-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_4-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_4-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_4-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_5",
+        "title": "MT Short: 3G 2100MHz->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_5-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) ake a call to a VoWiFi capable device",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_5-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_5-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_5-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_5-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_6",
+        "title": "MT Short: 2G->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1)Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_6-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_6-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_6-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_6-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_6-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_7",
+        "title": "MT Short: PSTN->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_7-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_7-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_7-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_7-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_7-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_9",
+        "title": "MT Short after OoS: VoWiFi->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Device is OOS 4) No VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_9-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Device moves from OOS to good WiFi coverage",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_9-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Once registered, receive a call from another VoWiFi capable device",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_9-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_9-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_9-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_9-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Device connects to VoWiFi service (record time taken)",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_10",
+        "title": "MT Short: call during airplane mode",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_10-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1)Switch device to Airplane mode",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_10-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_10-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_10-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_10-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Swith off Airplane mode and repeat",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_10-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) VoWiFi UI icon still present and serice still available",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_12",
+        "title": "MT Short: Don't answer call",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_12-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_12-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) MT side doesn't answer",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_12-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Wait and observe behaviour",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Voice call attempt times out, ends gracefuly and device returns to idle",
+          "2) Missed call logged correctly",
+          "3) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_13",
+        "title": "MT Short: Cancel during call setup",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_13-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_13-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Voice call alerting on MT side",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_13-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) MO side cancels before MT accepts",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MT receives alerting of call",
+          "2) Call cancelled gracefully and device returns to idle",
+          "3) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_14",
+        "title": "MT Short: MT Reject during call setup",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_14-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_14-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Voice call alerting on MT side",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_14-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) MT side rejects the call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_14-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "(for the iterations, try cancellin the call at different points - while ringing, before ringing etc)",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MT receives alerting of call",
+          "2) Call cancelled gracefully and device returns to idle",
+          "3) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_15",
+        "title": "MT Short: VoWiFi->VoWiFi after MT long idle",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_15-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Device In idle for 5mins",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_15-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_15-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_15-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_15-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_17",
+        "title": "MT Short: Switch Off mobile network data before call setup",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_17-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Switch off mobile data using soft switch",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_17-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_17-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_17-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End call",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_18",
+        "title": "MT Short: VoWiFi not avalable in roaming",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Device is roaming and has previously connected to a VPLMN 3) Camped on WiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live-Italy",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_18-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Note: Device must be in international roaming scenario, device IMS logging turned on",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_18-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "1) Attempt to call DUT from another device",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_18-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2) Leave device idle for 5 minutes",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_18-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "3) Attempt another MT call",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) No VoWiFi UI Icon should be present when camped on WiFi",
+          "2) No notification to user of incoming calls",
+          "3) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_21",
+        "title": "MT Short: VoWifi call from a device acting as a wifi hotspot",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1. MO DUT supports wifi hotspot 2. MT DUT camped on VoWifi Wifi: good Cellular: 3G"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_21-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Set up wifi hot spot on MO DUT and allow wifi to be switched off",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_21-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Connect separate device to wifi hotspot created by MO DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_21-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Call MT DUT from MO DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_21-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) maintain call for 60 seconds, checking voice quality, speaker and mute buttons",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_21-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) End call and check SIP/IMS logs",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully on both devices",
+          "4) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MT_22",
+        "title": "MT Short: VoWifi call from a device on a non-3UK cellular provider",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_MT_Calls",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) Registered to VoWiFi WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MT_22-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a call to a device on a non-3UK network",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_22-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for one minute",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_22-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_MT_22-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle, allowing call to go to voicemail",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully on both devices",
+          "4) Call connects to voicemail correctly",
+          "5) Correct SIP/IMS message flow"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_01",
+        "title": "Emergency call on WiFi (good RF)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live Paddington",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_02",
+        "title": "Emergency call on WiFi (poor RF)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live Paddington",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_04",
+        "title": "Emergency call on LTE 1800MHz",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P3",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live Paddington",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_12",
+        "title": "Emergency call after idle reselection: VoWiFi->VoLTE 800MHz",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_13",
+        "title": "Emergency call after idle reselection: VoLTE 800MHz->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_14",
+        "title": "Emergency call after idle reselection: VoWiFi->OOS->VoLTE 800MHz",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_15",
+        "title": "Emergency call on poor WiFi & poor network",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_EM_16",
+        "title": "Emergency call on good WiFi & poor network",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Emergency",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "Listed from the field catalog. Not executed on the device."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_3",
+        "title": "Voice IRAT: VoWiFi->OOS",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled WiFi: Good > None Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_3-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Powerup device on WiFi coverage",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_3-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Make a VoWiFi call",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_3-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. After call connection, gradually move towards OOS area noting the signal strength at which the call is dropped",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. DUT registers on VoWiFi with UI icon",
+          "2. VoWiFi voice call successful/voice call acceptable.",
+          "3. Call drops gracefully and device goes into no service state, VoWiFi UI Icon disappears (Note the wifi signal level when device goes OOS or Call drops using WiFi Analyser app + Visor - this can only be executed in Lab)"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_6",
+        "title": "Voice Call: VoWiFi--800--VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT has performed a PS attach and registered onto a VoWiFi with IMS VoPS flag indicating IMS supported , but is in the vicinity of a LTE VoPS=1 cell. WiFi: Good Cellular: None > LTE VoPS=1 > None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "10",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_6-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Initiate an MO voice call(VoWiFi. from the DUT to UE",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_6-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Move the UE into an area with good coverage LTE VoPS=1 cell.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_6-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Move back to WiFI",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_6-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4. End voice call 1 minute after handover is completed",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. The DUT should be connected without losing service",
+          "2. Following the call transition of the DUT from VoWiFi to LTE VoPS=1, the DUT should send an IMS Re-register message to the network (Call handover successful)",
+          "3. Call handover successful back to WiFi",
+          "3. All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_7",
+        "title": "Voice call VoWiFi --> 1800 (VoPS=0) --> VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT has performed a PS attach and registered onto a VoWiFi with IMS VoPS flag indicating IMS supported , but is in the vicinity of a LTE VoPS=0 cell. WiFi: Good Cellular: None > LTE VoPS=0 > None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "10",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_7-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Initiate an MO voice call(VoWiFi. from the DUT to UE-1",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_7-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Move the UE into an area with good coverage LTE VoPS=0 cell. Maintain call on LTE VoPS=0 for 3 minutes",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_7-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Move call back to WiFI",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1.The DUT should be connected without losing service",
+          "2. Following the call transition of the DUT from VoWiFi to VoPS=0, the DUT should send an IMS re-register message to the networK (Call handover successful to LTE VoPS=0)",
+          "3. Call handover back to WiFI successful with SIP reg on WiFI",
+          "4. All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_8",
+        "title": "Voice call VoWiFi-->2100",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT has performed a PS attach and registered onto a VoWiFi with IMS VoPS flag indicating IMS supported, moving into the vicinity of a 3G cell. WiFi: Good Cellular: None > 3G"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live Paddington",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_8-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Initiate VoWiFI MO voice call from the DUT.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_8-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Move the UE into an area with good 3G coverage on the test route.",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1.The DUT correctly tear down the active call, following the loss of PS bearers.",
+          "2. Following the transition of the DUT from VoWiFi to 3G, the DUT should send an IMS de-register message to the network. (Check for de-reg)",
+          "3. All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_9",
+        "title": "Voice call 2100-->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT is CS call 2) User is moving into service of 3G cell 3) Call drop will occur when user moves out of 3g coverage 4) IMS attaches via wifi WiFi: Good Cellular: 3G > None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_9-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Initiate a CS voice call from the DUT.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_9-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Move the UE into an area with good VoWiFi coverage.",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. The DUT correctly tear down the active call, following the loss of CS bearers.",
+          "2. Following the transition of the DUT from UMTS to VoWiFi(No-cellular coverage area, the DUT should send an IMS de-register message to the network.",
+          "3. All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_10",
+        "title": "Voice call VoWiFi --> VoWiFi (same SSID)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT is in VoWiFi call WiFi: Good on NW1 > Good on NW2 Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_10-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Initiate a CS voice call from the DUT.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_10-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. DUT moves from service of one WiFi network to another",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. Call is preserved while switching between WiFi networks",
+          "2. Check for PANI header updates"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_11",
+        "title": "idle_1800_FlightON_WifiON_VoWiFI_FlightOff_1800",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled WiFi: Good, Cellular Good Cellular: OOS > Cellular 3G"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_11-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Powerup device on LTE VoPS=0 coverage",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_11-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Enable Flight mode in LTE VoPS=0 coverage",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_11-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Enable WiFi",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_11-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4. After VoWiFi registered, with LTE VoPS=0 available, Switch off Flight mode",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. DUT attaches to LTE LTE VoPS=0 - Check logs for no bearer establishment",
+          "2. No radio connection with flight mode engaged",
+          "3. Connect to Wifi and VoWiFI registered with WiFi ON",
+          "4.Device deregisters when flight is off with explicit de-reg (Check IKE_delete, SIP de-reg in logs + WiFI PANI header);",
+          "4. NO Re-reg on moving back to LTE VoPS=0 ; No activation of IMS bearer; (Check signalling for handling of bearers)"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MOB_LIVE_12",
+        "title": "Idle VoWiFi > OOS > LTE 800 > OOS > VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Mobility_F",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "RELIABILITY",
+        "suite": "reliability",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled WiFi Good, Cellular None WiFi Good, LTE VoPS=1 GoodN.B. This HO sequence is to be performed at Hartley Wintney using a shielded box"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Note time of commencing test",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "1. Power up device in WiFi coverage only",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2. Await registration on VoWiFi",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "3. Place device in shielded box",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "4. Walk to area with LTE VoPS=1 coverage and wait 2 minutes",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "5. Open shielded box, and await camping on cellular",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "6. Close shileded box, and walk to WiFi-only coverage",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_MOB_LIVE_12-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "7. Wait 2 minutes, then open box",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. Device camps correctly on VoWiFi",
+          "2. Device camps correctly on LTE VoPS=1, with no long wait for registration",
+          "3. Device camps correctly on VoWiFi, with no long wait for registration",
+          "4. Device camps correctly on LTE VoPS=1, with no long wait for registration",
+          "N.B. This is a signalling test - network logs must be examined to ensure correct behaviour. Please provide timestamps",
+          "MSISDNs to test coordinator"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_CA_02",
+        "title": "MO Short->VoWiFi (good RF)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Captive_WiFi",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1)Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Good Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Live",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_CA_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call to another VoWiFi capable device",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_CA_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_CA_02-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_CA_02-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "eTinT_CA_02-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Correct UK ringtone heard",
+          "2) Successful voice call",
+          "3) Call maintained and speech quality acceptable",
+          "4) Call ends successfully and device returns to idle"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_CA_03",
+        "title": "MT Short: VoWiFi (poor RF)->VoWiFi",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Captive_WiFi",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled 3) Registered to VoWiFi 4) VoWiFi UI icon WiFi: Poor Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "YES",
+        "network_dependent": false,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_CA_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_CA_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Call answered and maintained for 30sec",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_CA_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) End call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_CA_03-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Repeat after 20sec idle",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "eTinT_CA_03-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Alternate ending the call between MO/MT sides over iterations",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Successful voice call",
+          "2) Call maintained and speech quality acceptable",
+          "3) Call ends successfully and device returns to idle"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_CA_07",
+        "title": "Idle Reselection: VoWiFi->VoWiFi (same SSID)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Captive_WiFi",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P3",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) Device/SIM supports VoWiFi/VoLTE services 2) WiFi enabled WiFi: Good on NW1 > Good on NW2 Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "YES",
+        "network_dependent": false,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_CA_07-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Powerup device on WiFi coverage",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_CA_07-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Wait for successful VoWiFi registration with UI icon",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_CA_07-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Move towards another AP and reselect to it",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_CA_07-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4. attempt a voice call after successful reselection",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. DUT registers on VoWiFi with UI icon",
+          "2. Successful reselection to different AP",
+          "3. Voice call successful/voice quality acceptable. (Check for any re-reg)"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_CA_08",
+        "title": "Voice call VoWiFi --> VoWiFi (same SSID)",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Captive_WiFi",
+        "feature": "calls",
+        "bearer": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT is in VoWiFi call WiFi: Good on NW1 > Good on NW2 Cellular: None"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "wifi_calling": true,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "YES",
+        "network_dependent": false,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_CA_08-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1. Initiate a CS voice call from the DUT.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "eTinT_CA_08-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. DUT moves from service of one WiFi network to another",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1. Call is preserved while switching between WiFi networks",
+          "2. Check for PANI header updates"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_wifi_calling_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    }
+  ]
+}

@@ -36,6 +36,17 @@
             android:layout_height="wrap_content"
             android:textColor="@color/ink"
             android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/case_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/muted"
+            android:textSize="12sp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView

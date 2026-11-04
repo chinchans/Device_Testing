@@ -1,0 +1,3394 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "FUT_SMS_AIRTEL_V1",
+  "suite_name": "Airtel SMS cases that can be run on the phone",
+  "description": "Field SMS and MMS cases that a normal Airtel SIM can run with Android SmsManager, the SMS database, android-smsmms, and MobileInsight or SCAT where the sheet asks for a radio log. Lab rows, roaming, band-to-band moves, captive Wi-Fi, and emergency cases are omitted.",
+  "validation_program": "FUT",
+  "feature": "sms",
+  "platform": "Android",
+  "sim": "Airtel",
+  "safety_policy": {
+    "require_explicit_consent": true,
+    "allow_public_emergency_messages": false,
+    "allow_unapproved_numbers": false,
+    "use_sim_smsc_only": true,
+    "send_only_to_saved_test_number": true
+  },
+  "result_statuses": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT_APPLICABLE",
+    "NOT_VERIFIED",
+    "ERROR"
+  ],
+  "test_case_count": 46,
+  "counts_by_radio": {
+    "2G": 2,
+    "3G": 9,
+    "LTE": 6,
+    "VoLTE": 6,
+    "Airtel cellular": 1,
+    "VoWiFi": 22
+  },
+  "counts_by_action": {
+    "wait_for_sms": 12,
+    "send_sms": 12,
+    "wait_for_sms_during_call": 3,
+    "wait_for_mms_during_call": 1,
+    "send_mms_during_call": 1,
+    "send_sms_during_data": 2,
+    "wait_for_sms_during_data": 1,
+    "send_sms_during_call": 2,
+    "send_long_sms": 2,
+    "wait_for_long_sms": 2,
+    "check_sms_setting": 1,
+    "send_sms_to_saved_numbers": 1,
+    "send_mms": 3,
+    "wait_for_mms": 3
+  },
+  "omitted": {
+    "lab": [
+      "SMS_Reg_09a",
+      "SMS_Reg_10a",
+      "SMS_Reg_13a",
+      "SMS_Reg_14a",
+      "Voice 19_03",
+      "Voice 20_03",
+      "IPv6_04"
+    ],
+    "roaming": [
+      "4G_Intl_Roaming_05",
+      "4G_Intl_Roaming_06"
+    ],
+    "band_moves": [
+      "eTinT_MSG_30",
+      "eTinT_MSG_31",
+      "eTinT_MSG_32",
+      "eTinT_MSG_33",
+      "eTinT_MSG_34",
+      "eTinT_MSG_35"
+    ],
+    "captive_wifi": [
+      "eTinT_CA_04",
+      "eTinT_CA_05"
+    ],
+    "emergency_not_executed": [
+      "eTinT_MSG_6",
+      "eTinT_EM_09"
+    ]
+  },
+  "test_cases": [
+    {
+      "test_metadata": {
+        "testCaseId": "GSM_5012_SMS",
+        "title": "MT SMS GSM in allowed area",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "GSM",
+        "feature": "sms",
+        "radio": "2G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS GSM in allowed area"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "2G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Twyford",
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "GSM_5012_SMS-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Manually select 2G NRP or, if available select 2G Only Mode on NW settings menu.",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "GSM_5012_SMS-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "Wait for registrationon 2G.",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "GSM_5012_SMS-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "Send an SMS from the UE.",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "The SMS is correctly received"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "GSM_5013_SMS",
+        "title": "MO SMS GSM in allowed area",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "GSM",
+        "feature": "sms",
+        "radio": "2G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS GSM in allowed area"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "2G",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Twyford",
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "GSM_5013_SMS-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Manually select 2G NRP or, if available select 2G Only Mode on NW settings menu.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "GSM_5013_SMS-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "Wait for registrationon 2G.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "GSM_5013_SMS-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "Send an SMS to the UE.",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "The SMS is correctly sent"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "UK_CSAMR_5001_SMS",
+        "title": "MT SMS delivery whilst in a 3G call",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "CSAMR",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms_during_call",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS delivery whilst in a 3G call"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Golden Route - Reading",
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "UK_CSAMR_5001_SMS-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "MT SMS in 3G call",
+          "app_action": "wait_for_sms_during_call"
+        },
+        {
+          "step_id": "UK_CSAMR_5001_SMS-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "1. UE-A calls 699",
+          "app_action": "wait_for_sms_during_call"
+        },
+        {
+          "step_id": "UK_CSAMR_5001_SMS-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2. Whilst in call, UE-B composes SMS and sends to UE-A",
+          "app_action": "wait_for_sms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "SMS is successfully delivered with no disruption to call"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "UK_CSAMR_5003_SMS",
+        "title": "MT MMS deliverywhilst in a 3G call",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "CSAMR",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_mms_during_call",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT MMS deliverywhilst in a 3G call"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Golden Route - Reading",
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "UK_CSAMR_5003_SMS-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "MT MMS in 3G call",
+          "app_action": "wait_for_mms_during_call"
+        },
+        {
+          "step_id": "UK_CSAMR_5003_SMS-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "1. UE-A calls 699",
+          "app_action": "wait_for_mms_during_call"
+        },
+        {
+          "step_id": "UK_CSAMR_5003_SMS-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2. Whilst in call, UE-B composes MMS and sends to UE-A",
+          "app_action": "wait_for_mms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "MMS is successfully delivered with no disruption to call"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "UK_CSAMR_5029_SMS",
+        "title": "MO MMS sending whilst in a 3G call",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "CSAMR",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "send_mms_during_call",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO MMS sending whilst in a 3G call"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Golden Route - Reading",
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "UK_CSAMR_5029_SMS-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "MO MMS in 3G call",
+          "app_action": "send_mms_during_call"
+        },
+        {
+          "step_id": "UK_CSAMR_5029_SMS-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "1. UE-A calls 699",
+          "app_action": "send_mms_during_call"
+        },
+        {
+          "step_id": "UK_CSAMR_5029_SMS-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2. Whilst in call, UE-A composes MMS and sends to UE-B",
+          "app_action": "send_mms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "MMS is successfully delivered with no disruption to call"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MO_SMS_IDLE_F",
+        "title": "MO SMS in Idle Mode on FDD 1800",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "LTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS in Idle Mode on FDD 1800"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "LTE",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Desk Location",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MO_SMS_IDLE_F-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Power-on the UE",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "MO_SMS_IDLE_F-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Verify the Attach procedure is successfully performed",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "MO_SMS_IDLE_F-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Verify the Attach Type (2 = combined EPS/IMSI)",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "MO_SMS_IDLE_F-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE triggers a Service Request (due to SMS sending)",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "MO_SMS_IDLE_F-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Verify SMS is successfully sent",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "All steps must be successfully executed"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MO_SMS_ACTIVE_F",
+        "title": "MO SMS in Active Mode (PS download on-going) on FDD 1800",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "LTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "send_sms_during_data",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS in Active Mode (PS download on-going) on FDD 1800"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "LTE",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Desk Location",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MO_SMS_ACTIVE_F-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Power-on the UE",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "MO_SMS_ACTIVE_F-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Verify the Attach procedure is successfully performed",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "MO_SMS_ACTIVE_F-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Verify the Attach Type (2 = combined EPS/IMSI)",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "MO_SMS_ACTIVE_F-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Start a PS download",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "MO_SMS_ACTIVE_F-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Send a SMS and Verify if it is successfully sent",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "MO_SMS_ACTIVE_F-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) verify if the PS download is kept (not interrupted)",
+          "app_action": "send_sms_during_data"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "All steps must be successfully executed"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MT_SMS_IDLE_F",
+        "title": "MT SMS in Idle Mode on FDD 1800",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "LTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS in Idle Mode on FDD 1800"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "LTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Desk Location",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MT_SMS_IDLE_F-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Power-on the UE",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "MT_SMS_IDLE_F-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Verify the Attach procedure is successfully performed",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "MT_SMS_IDLE_F-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Verify the Attach Type (2 = combined EPS/IMSI)",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "MT_SMS_IDLE_F-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Verify if paging is received /type of paging)",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "MT_SMS_IDLE_F-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE triggers a Service Request",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "MT_SMS_IDLE_F-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) Verify SMS is successfully received",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "All steps must be successfully executed"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MT_SMS_ACTIVE_F",
+        "title": "MT SMS in Active Mode (PS download on-going) on FDD 1800",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "LTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms_during_data",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS in Active Mode (PS download on-going) on FDD 1800"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "LTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Desk Location",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MT_SMS_ACTIVE_F-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Power-on the UE",
+          "app_action": "wait_for_sms_during_data"
+        },
+        {
+          "step_id": "MT_SMS_ACTIVE_F-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Verify the Attach procedure is successfully performed",
+          "app_action": "wait_for_sms_during_data"
+        },
+        {
+          "step_id": "MT_SMS_ACTIVE_F-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Verify the Attach Type (2 = combined EPS/IMSI)",
+          "app_action": "wait_for_sms_during_data"
+        },
+        {
+          "step_id": "MT_SMS_ACTIVE_F-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Start a PS download",
+          "app_action": "wait_for_sms_during_data"
+        },
+        {
+          "step_id": "MT_SMS_ACTIVE_F-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Verify if the SMS is successfully received",
+          "app_action": "wait_for_sms_during_data"
+        },
+        {
+          "step_id": "MT_SMS_ACTIVE_F-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) verify if the PS download is kept (not interrupted)",
+          "app_action": "wait_for_sms_during_data"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "All steps must be successfully executed"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 19_01",
+        "title": "IMS IDLE MT SMS from IMS subscriber on home network (3 UK IMS)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "IMS IDLE MT SMS from IMS subscriber on home network (3 UK IMS)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoLTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_19_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes IMS registration on a LTE cell (Cell A with IMS VoPS=1 -> IMS supported)",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "Voice_19_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Compose and send  a MO SMS from UE B to the to DUT with up to 160 characters.",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT receives a MT SMS via IMS from UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 19_02",
+        "title": "IMS IDLE MT SMS from handset on home (3UK ) 3G network",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "IMS IDLE MT SMS from handset on home (3UK ) 3G network"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_19_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes IMS registration on a LTE VoPS=1 cell with IMS VoPS flag indicating IMS is supported.",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "Voice_19_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Compose and send  a MO SMS from UE B to the to DUT with up to 160 characters..",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT receives a MT SMS via IMS from UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 20_01",
+        "title": "IMS IDLE MO SMS to IMS subscriber on home network",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "IMS IDLE MO SMS to IMS subscriber on home network"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoLTE",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Lab Location",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_20_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes IMS registration on a LTE cell (Cell A with IMS VoPS=1 -> IMS supported)",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "Voice_20_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Establish a VoLTE call between the DUT and UE B",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "Voice_20_01-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) While it is in an active call to UE B,  Compose and send  a MO SMS from the DUT to UE B with up to 160 characters.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "Voice_20_01-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Disconnect the voice call.",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT sends a MO SMS via IMS to UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 20_02",
+        "title": "IMS IDLE MO SMS to handset on home 3G cellular network",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "IMS IDLE MO SMS to handset on home 3G cellular network"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_20_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes IMS registration on a LTE VoPS=1 cell -> IMS supported.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "Voice_20_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Establish a VoLTE call between the DUT and UE B",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "Voice_20_02-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) While it is in an active call to UE B,  Compose and send  a MO SMS from UE B to the DUT with up to 160 characters.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "Voice_20_02-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Disconnect the voice call.",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT sends a MO SMS via IMS to UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 21",
+        "title": "SMS over IMS Call Connected (Mobile Originated)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "send_sms_during_call",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "SMS over IMS Call Connected (Mobile Originated)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoLTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_21-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) VoLTE call from DUT to UEB started",
+          "app_action": "send_sms_during_call"
+        },
+        {
+          "step_id": "Voice_21-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Compose and send a MO SMS from the DUT to UE B.",
+          "app_action": "send_sms_during_call"
+        },
+        {
+          "step_id": "Voice_21-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT returns to RRC idle state",
+          "app_action": "send_sms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1) that the DUT successfully sends a SMS to UE B via IMS and that the ongoing voice call is not dropped.",
+          "2) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 22",
+        "title": "SMS over IMS Call Connected (Mobile Terminated)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms_during_call",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "SMS over IMS Call Connected (Mobile Terminated)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoLTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_22-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes a LTE Attach on a LTE VoPS=0 cell with IMS is not supported..",
+          "app_action": "wait_for_sms_during_call"
+        },
+        {
+          "step_id": "Voice_22-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Compose and send  a MO SMS from UE B to the to DUT.",
+          "app_action": "wait_for_sms_during_call"
+        },
+        {
+          "step_id": "Voice_22-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT returns to RRC idle state",
+          "app_action": "wait_for_sms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2) that the DUT successfully establishes a VoLTE call to UE B",
+          "3) that the DUT successfully receives a SMS from UE B via IMS and that the ongoing voice call is not dropped.",
+          "4) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 23",
+        "title": "Concatenated SMS over IMS (Mobile Originated)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_long_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "Concatenated SMS over IMS (Mobile Originated)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoLTE",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_23-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes registration on a 3G cell (no IMS VoPS flag)",
+          "app_action": "send_long_sms"
+        },
+        {
+          "step_id": "Voice_23-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Compose and send a MO SMS from the DUT to UE B.",
+          "app_action": "send_long_sms"
+        },
+        {
+          "step_id": "Voice_23-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT returns to RRC idle state",
+          "app_action": "send_long_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT sends three pages of MO SMS to UE B via IMS.",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Voice 24",
+        "title": "Concatenated SMS over IMS (Mobile Terminated)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_long_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "Concatenated SMS over IMS (Mobile Terminated)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoLTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Voice_24-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Compose and send a long (3 message) MO SMS from UE B to the DUT.",
+          "app_action": "wait_for_long_sms"
+        },
+        {
+          "step_id": "Voice_24-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT returns to RRC idle state",
+          "app_action": "wait_for_long_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1) That the DUT receives three pages of MO SMS from UE B via IMS.",
+          "2) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SMS_Reg_03",
+        "title": "MO SMS via SGS on LTE 1800 cell",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "LTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS via SGS on LTE 1800 cell"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "LTE",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SMS_Reg_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes a LTE Attach on a LTE VoPS=0 cell",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "SMS_Reg_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Compose and send a MO SMS from the DUT to UE B.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "SMS_Reg_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3.DUT returns to RRC idle state",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes LTE Attach but not IMS registration.",
+          "2) that the DUT sent the SMS via SGS  to UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SMS_Reg_04",
+        "title": "MT SMS via SGS on LTE 1800 cell",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "LTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS via SGS on LTE 1800 cell"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "LTE",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SMS_Reg_04-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes a LTE Attach on a LTE VoPS=0 cell",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "SMS_Reg_04-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Compose and send  a MO SMS from UE B to the to DUT.",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "SMS_Reg_04-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3.DUT returns to RRC idle state",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes LTE Attach but not IMS registration.",
+          "2) that the DUT receives the SMS via SGS  from UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SMS_Reg_05",
+        "title": "MO SMS via CS on WCDMA 2100 cell",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS via CS on WCDMA 2100 cell"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SMS_Reg_05-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes registration on a 3G cell (no IMS VoPS flag)",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "SMS_Reg_05-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Compose and send a MO SMS from the DUT to UE B.",
+          "app_action": "send_sms"
+        },
+        {
+          "step_id": "SMS_Reg_05-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3.DUT returns to RRC idle state",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes Attach procedures  but not IMS registration.",
+          "2) that the DUT sent the SMS via CS bearers to UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SMS_Reg_06",
+        "title": "MT SMS via CS on WCDMA 2100 cell",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE SMS",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS via CS on WCDMA 2100 cell"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SMS_Reg_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes registration on a 3G cell (no IMS VoPS flag)",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "SMS_Reg_06-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Compose and send a MO SMS from UE B to the DUT.",
+          "app_action": "wait_for_sms"
+        },
+        {
+          "step_id": "SMS_Reg_06-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3.DUT returns to RRC idle state",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes Attach procedures  but not IMS registration.",
+          "2) that the DUT received the SMS via CS bearers from UE B.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "3UKCustomisation: 06",
+        "title": "User Preference for SMS",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Configurations and Setting",
+        "feature": "sms",
+        "radio": "Airtel cellular",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "check_sms_setting",
+        "open_source_tools": [
+          "phone settings screen"
+        ],
+        "uses_saved_test_number": false,
+        "objective": "User Preference for SMS"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "Airtel cellular",
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Desk location",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "3UKCustomisation_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT switched ON and has perform a EMM ATTACH",
+          "app_action": "check_sms_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Verify from the DUT that it is not possible to change the operators preference for selection of the domain to be used for SMS originated by the DUT"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_2",
+        "title": "MO SMS: VoWiFi-->VoWifi",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->VoWifi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_2-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to other VoWiFi supported device (160 character length)",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS",
+          "5) Check SMS is present in SIP logs"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_3",
+        "title": "MO SMS: VoWiFi-->VoLTE (IMS)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->VoLTE (IMS)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_3-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to VoLTE registered device (160 character length)",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS",
+          "5) Check SMS is present in SIP logs"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_4",
+        "title": "MO SMS: VoWiFi-->4G LTE (Non-IMS)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->4G LTE (Non-IMS)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_4-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to 4G registered device (160 character length)",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS",
+          "5) Check SMS is present in SIP logs"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_5",
+        "title": "MO SMS: VoWiFi-->3G",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->3G"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_5-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to 3G registered device (160 character length)",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS",
+          "5) Check SMS is present in SIP logs"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_7",
+        "title": "MT SMS: VoWiFi-->VoWifi",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: VoWiFi-->VoWifi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_7-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS",
+          "4) Check SIP logs for SMS present"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_8",
+        "title": "MT SMS: VoLTE (IMS)->VoWiFi",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: VoLTE (IMS)->VoWiFi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_8-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from LTE VoPS=1 registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS",
+          "4) Check SIP logs for SMS present"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_9",
+        "title": "MT SMS: 4G LTE (Non-IMS) ->VoWiFi",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: 4G LTE (Non-IMS) ->VoWiFi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_9-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from LTE VoPS=0 registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS",
+          "4) Check SIP logs for SMS present"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_10",
+        "title": "MT SMS: 3G-->VoWifi",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: 3G-->VoWifi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_10-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from 3G registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS",
+          "4) Check SIP logs for SMS present"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_19",
+        "title": "MO SMS: Multiple recipients",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms_to_saved_numbers",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: Multiple recipients"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": false,
+        "route": "Live",
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_19-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Compose a message, and select multiple contacts (5) as recipients",
+          "app_action": "send_sms_to_saved_numbers"
+        },
+        {
+          "step_id": "eTinT_MSG_19-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Send message",
+          "app_action": "send_sms_to_saved_numbers"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) All SMS's are received by the 5 recipients",
+          "2) Message contents are correct",
+          "3) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_20",
+        "title": "MO MMS: VoWiFi-->VoWifi (no cellular)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_mms",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO MMS: VoWiFi-->VoWifi (no cellular)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": false,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_20-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send MMS from VoWiFi DUT (no cellular) to another VoWiFi device",
+          "app_action": "send_mms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MMS not sent, device should fail to send MMS and no misbehaviour seen",
+          "2) MMS may be queued for later by the device; depends on device implementation",
+          "3) Please  specify behaviour in comments section"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_21",
+        "title": "MT MMS: VoWiFi-->VoWifi (no cellular)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_mms",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT MMS: VoWiFi-->VoWifi (no cellular)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": false,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_21-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send MMS from VoWiFi device to VoWiFi DUT (no cellular)",
+          "app_action": "wait_for_mms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MMS not received by DUT",
+          "2) No misbehaviour from DUT",
+          "2) Please indicate in comments section any specific device behaviour as a result"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_22",
+        "title": "MO MMS: VoWiFi-->VoWifi (cellular below threshold)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_mms",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO MMS: VoWiFi-->VoWifi (cellular below threshold)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": false,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_22-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send MMS from VoWiFi DUT to another VoWiFi device",
+          "app_action": "send_mms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MMS sent on cellular",
+          "2) No misbehaviour from DUT",
+          "3) Please indicate in comments sectionany specific device behaviour as a result",
+          "4) Check SIP logs & radio to confirm SMS is sent on cellular"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_23",
+        "title": "MT MMS: VoWiFi-->VoWifi (cellular below threshold)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_mms",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT MMS: VoWiFi-->VoWifi (cellular below threshold)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": false,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_23-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send MMS from VoWiFi device to VoWiFi DUT (on cellular below and close to rove in threshold)",
+          "app_action": "wait_for_mms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MMS not received by DUT- MMS should e received on cellular",
+          "2) No misbehaviour from DUT",
+          "3) Please indicate in comments sectionany specific device behaviour as a result",
+          "4) Check SIP logs & radio to confirm SMS is received on cellular"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_24",
+        "title": "MO SMS: VoWiFi-->VoWifi during VoWiFi Call",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "send_sms_during_call",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->VoWifi during VoWiFi Call"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_24-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to other VoWiFi supported device (160 character length)",
+          "app_action": "send_sms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS",
+          "5) No impact on VoWiFi voice call"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_25",
+        "title": "MT SMS: VoWiFi-->VoWifi during VoWiFi Call",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms_during_call",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: VoWiFi-->VoWifi during VoWiFi Call"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_25-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms_during_call"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS",
+          "4) No impact on VoWiFi voice call"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_26",
+        "title": "MO SMS: VoWiFi-->VoWifi (Airplane mode: On)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->VoWifi (Airplane mode: On)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_26-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to other VoWiFi supported device (160 character length)",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_27",
+        "title": "MT SMS: VoWiFi-->VoWifi (Airplane mode: On)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P1",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: VoWiFi-->VoWifi (Airplane mode: On)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_27-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_28",
+        "title": "MO SMS: VoWiFi-->VoWifi (Mobile Data Off)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO SMS: VoWiFi-->VoWifi (Mobile Data Off)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_28-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to other VoWiFi supported device (160 character length)",
+          "app_action": "send_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives SMS",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_29",
+        "title": "MT SMS: VoWiFi-->VoWifi (Mobile Data Off)",
+        "source": "Excel_Sheets/Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "eTinT_Messaging",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P2",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT SMS: VoWiFi-->VoWifi (Mobile Data Off)"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Live",
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_29-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi registered device to VoWiFi DUT (160 character length)",
+          "app_action": "wait_for_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SANITY_06",
+        "title": "3G MO MMS",
+        "source": "Excel_Sheets/Radio_Testcases.xlsx / SIZE",
+        "source_area": "FIELD",
+        "source_group": "MMS",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_mms",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "3G MO MMS"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SANITY_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Send an MO MMS.",
+          "app_action": "send_mms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "MMS successfully sent and received by MT device.",
+          "No abnormal behaviour from the DUT."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SANITY_07",
+        "title": "3G MT MMS",
+        "source": "Excel_Sheets/Radio_Testcases.xlsx / SIZE",
+        "source_area": "FIELD",
+        "source_group": "MMS",
+        "feature": "sms",
+        "radio": "3G",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_mms",
+        "open_source_tools": [
+          "android-smsmms",
+          "SMS and MMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "3G MT MMS"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "3G",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": false,
+        "modem_log_required": false,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SANITY_07-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Send an MMS to the DUT from another device.",
+          "app_action": "wait_for_mms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "MMS successfully received.",
+          "No abnormal behaviour from the DUT."
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_11",
+        "title": "MO Concatenated:  VoWiFi-->VoWifi",
+        "source": "Excel_Sheets/Radio_Testcases.xlsx / SIZE",
+        "source_area": "FIELD",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "",
+        "execution_mode": "AUTOMATED",
+        "app_action": "send_long_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MO Concatenated:  VoWiFi-->VoWifi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_11-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from VoWiFi DUT to other VoWiFi supported device (500 character length)",
+          "app_action": "send_long_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) SMS is sent by DUT",
+          "2) Other device receives all SMS parts",
+          "3) Message content is correct",
+          "4) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MSG_16",
+        "title": "MT Concatenated: LTE VoPS=1->VoWiFi",
+        "source": "Excel_Sheets/Radio_Testcases.xlsx / SIZE",
+        "source_area": "FIELD",
+        "source_group": "SMS",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_long_sms",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone",
+          "MobileInsight or SCAT for the radio or SIP log"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "MT Concatenated: LTE VoPS=1->VoWiFi"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "wifi_calling_required": true,
+        "modem_log_required": true,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MSG_16-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Send SMS from LTE VoPS=1 registered device to VoWiFi DUT (500 character length)",
+          "app_action": "wait_for_long_sms"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) All SMS parts are received by DUT",
+          "2) Message content is correct",
+          "3) No misbehaviour seen on DUT during or after SMS"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "eTinT_MC 15",
+        "title": "PS-Data+MO SMS: FTP DL+SMS",
+        "source": "Excel_Sheets/Radio_Testcases.xlsx / SIZE",
+        "source_area": "FIELD",
+        "source_group": "MULTI RAB",
+        "feature": "sms",
+        "radio": "VoWiFi",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "send_sms_during_data",
+        "open_source_tools": [
+          "Android SmsManager",
+          "SMS database on the phone"
+        ],
+        "uses_saved_test_number": true,
+        "objective": "PS-Data+MO SMS: FTP DL+SMS"
+      },
+      "prerequisites": {
+        "sim": "Airtel",
+        "smsc": "Use the SMSC already stored on the Airtel SIM. Do not set a private SMSC.",
+        "permissions": [
+          "SEND_SMS",
+          "RECEIVE_SMS",
+          "READ_SMS"
+        ],
+        "environment": "FIELD",
+        "radio_required": "VoWiFi",
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "wifi_calling_required": true,
+        "modem_log_required": false,
+        "route": "Hartley Whitney",
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "eTinT_MC_15-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT initiates a FTP download",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "eTinT_MC_15-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) After FTP is started send an SMS",
+          "app_action": "send_sms_during_data"
+        },
+        {
+          "step_id": "eTinT_MC_15-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Wait for FTP to complete",
+          "app_action": "send_sms_during_data"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) FTP starts correctly",
+          "2) SMS sent and receive correctly",
+          "3) SMS has no impact on FTP",
+          "5) Data call completes download"
+        ],
+        "pass_when": "The SMS or MMS database on this phone shows the message, and every check below is true.",
+        "status_if_radio_or_wifi_calling_unavailable": "BLOCKED",
+        "status_if_no_sim": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    }
+  ]
+}

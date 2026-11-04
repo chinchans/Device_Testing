@@ -49,12 +49,14 @@ import java.util.concurrent.atomic.AtomicReference
 class MainActivity : AppCompatActivity() {
     private lateinit var cases: List<TestCase>
     private lateinit var callCases: List<TestCase>
+    private lateinit var smsCases: List<TestCase>
     private lateinit var store: ResultStore
     private var feature = "camera"
     private var suite = "functionality"
     private var selectedFeatureId: String? = null
     @Volatile private var running = false
     private val stop = AtomicBoolean(false)
+    private val skip = AtomicBoolean(false)
     private val worker = Executors.newSingleThreadExecutor()
     @Volatile private var engine: CameraEngine? = null
     private var pendingRun: List<TestCase>? = null
@@ -79,7 +81,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         cases = Catalog.load(this)
-        callCases = CallsCatalog.load()
+        callCases = CallsCatalog.load(this)
+        smsCases = SmsCatalog.load(this)
         store = ResultStore(this)
         syncTestExecutionStatus()
         heartbeatReporter = HeartbeatReporter(applicationContext) { status ->
@@ -139,6 +142,10 @@ class MainActivity : AppCompatActivity() {
                 selectedFeatureId = feature.id
                 showCalls()
             }
+            "sms" -> {
+                selectedFeatureId = feature.id
+                showSms()
+            }
             else -> toast(getString(R.string.feature_not_ready, feature.name))
         }
     }
@@ -161,12 +168,24 @@ class MainActivity : AppCompatActivity() {
             DiagFeature("vibration", "Vibration", R.drawable.ic_feat_vibration, FeatureStatus.IDLE, false),
             DiagFeature("speaker", "Speaker", R.drawable.ic_feat_speaker, FeatureStatus.IDLE, false),
             DiagFeature("mic", "Microphone", R.drawable.ic_feat_mic, FeatureStatus.IDLE, false),
-            DiagFeature("calls", "Calls", R.drawable.ic_feat_calls, featureStatus("CALL-"), true),
+            DiagFeature("calls", "Calls", R.drawable.ic_feat_calls, callsFeatureStatus(), true),
+            DiagFeature("sms", "SMS", R.drawable.ic_feat_sms, smsFeatureStatus(), true),
             DiagFeature("camera", "Camera", R.drawable.ic_feat_camera, cameraStatus, true),
         )
     }
 
     private fun cameraFeatureStatus(): FeatureStatus = featureStatus("cam_")
+
+    private fun callsFeatureStatus(): FeatureStatus = catalogStatus(callCases)
+
+    private fun smsFeatureStatus(): FeatureStatus = catalogStatus(smsCases)
+
+    private fun catalogStatus(catalog: List<TestCase>): FeatureStatus {
+        val ids = catalog.map { it.id }.toSet()
+        val results = store.last?.results?.filter { it.id in ids }.orEmpty()
+        if (results.isEmpty() || results.none { it.verdict == "PASS" || it.verdict == "FAIL" }) return FeatureStatus.IDLE
+        return if (results.any { it.verdict == "FAIL" }) FeatureStatus.ACTION_REQUIRED else FeatureStatus.NORMAL
+    }
 
     private fun featureStatus(prefix: String): FeatureStatus {
         val results = store.last?.results?.filter { it.id.startsWith(prefix) }.orEmpty()
@@ -184,7 +203,16 @@ class MainActivity : AppCompatActivity() {
         showFeatureScreen("Calls")
     }
 
-    private fun activeCases(): List<TestCase> = if (feature == "calls") callCases else cases
+    private fun showSms() {
+        feature = "sms"
+        showFeatureScreen("SMS")
+    }
+
+    private fun activeCases(): List<TestCase> = when (feature) {
+        "calls" -> callCases
+        "sms" -> smsCases
+        else -> cases
+    }
 
     private fun showFeatureScreen(title: String) {
         val root = inflate(R.layout.screen_camera)
@@ -223,7 +251,7 @@ class MainActivity : AppCompatActivity() {
         }
         refreshSuites()
         val numberRow = root.findViewById<LinearLayout>(R.id.call_number_row)
-        if (feature == "calls") {
+        if (feature == "calls" || feature == "sms") {
             numberRow.visibility = View.VISIBLE
             val numberInput = root.findViewById<EditText>(R.id.call_number)
             numberInput.setText(CallNumberStore.get(this))
@@ -234,7 +262,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         root.findViewById<Button>(R.id.run_suite).setOnClickListener {
-            if (feature == "calls") requestCallsRun() else requestSuiteRun()
+            when (feature) {
+                "calls" -> requestCallsRun()
+                "sms" -> requestSmsRun()
+                else -> requestSuiteRun()
+            }
         }
         bindCases(root)
     }
@@ -264,6 +296,12 @@ class MainActivity : AppCompatActivity() {
         runPreviewHint = root.findViewById(R.id.run_preview_hint)
         runLastShot = root.findViewById(R.id.run_last_shot)
         runChoice = root.findViewById(R.id.run_choice)
+        root.findViewById<Button>(R.id.run_skip).setOnClickListener {
+            skip.set(true)
+            runChoice?.visibility = View.GONE
+            confirmDialog?.dismiss()
+            toast("Skipping this case")
+        }
         root.findViewById<Button>(R.id.run_stop).setOnClickListener {
             stop.set(true)
             runChoice?.visibility = View.GONE
@@ -473,13 +511,31 @@ class MainActivity : AppCompatActivity() {
         clearRunUi()
         val root = inflate(R.layout.screen_results)
         root.findViewById<TextView>(R.id.results_summary).text = summaryText(record)
+        val lines = resultLines(record.results)
         val list = root.findViewById<ListView>(R.id.results_list)
-        list.adapter = ResultAdapter(record.results, { orientedBitmap(it, 320, 320) }) { openMedia(it) }
+        list.adapter = ResultAdapter(lines, { orientedBitmap(it, 320, 320) }) { openMedia(it) }
         list.setOnItemClickListener { _, _, position, _ ->
-            val item = record.results[position]
-            showCaseDetail("${item.id} · ${label(item.verdict)}", item.detail, item.media)
+            when (val line = lines[position]) {
+                is ResultLine.Single -> {
+                    val item = line.result
+                    showCaseDetail("${item.id} · ${label(item.verdict)}", item.detail, item.media)
+                }
+                is ResultLine.RadioGroup -> {
+                    val names = line.results.joinToString("\n") { "${it.id}  ${it.title}" }
+                    showCaseDetail(
+                        "2G and 3G · Blocked",
+                        "${line.results.first().detail}\n\n$names",
+                        emptyList(),
+                    )
+                }
+            }
         }
         root.findViewById<Button>(R.id.results_done).setOnClickListener { showHome() }
+    }
+
+    private fun publishSuiteLog(suiteLog: SuiteLog, label: String) {
+        val saved = suiteLog.save(label)
+        if (saved != null) heartbeatReporter?.uploadSuiteLog(saved, label, feature, suiteLog.startedAtMs())
     }
 
     private fun requestSuiteRun() {
@@ -506,10 +562,13 @@ class MainActivity : AppCompatActivity() {
         if (running || selected.isEmpty()) return
         running = true
         stop.set(false)
-        syncTestExecutionStatus()
+        skip.set(false)
+        TestExecutionStatus.beginSuite("camera", suite, selected)
         heartbeatReporter?.pulse()
         ensureRunScreen()
         worker.execute {
+            val suiteLog = SuiteLog(this)
+            suiteLog.start(label, feature, this::setRunStatus)
             val cam = CameraEngine(
                 this,
                 previewSurface,
@@ -519,14 +578,17 @@ class MainActivity : AppCompatActivity() {
             engine = cam
             try {
                 waitForPreview(4_000)
-                val runner = CaseRunner(cam, this::confirmOnUi, { stop.get() }, { setRunStatus(it) })
+                val runner = CaseRunner(cam, this::confirmOnUi, { interrupted() }, { setRunStatus(it) })
                 val results = mutableListOf<CaseResult>()
                 selected.forEachIndexed { index, test ->
                     if (stop.get()) return@forEachIndexed
                     runOnUiThread { updateRunCase(index + 1, selected.size, test) }
-                    TestExecutionStatus.setRunning(suite, test.id, results.count { it.verdict == "FAIL" })
+                    TestExecutionStatus.markCaseRunning(test.id)
                     heartbeatReporter?.pulse()
-                    results += runner.run(test)
+                    val result = recorded(test, runner.run(test))
+                    results += result
+                    TestExecutionStatus.markCaseFinished(test.id, result.verdict)
+                    heartbeatReporter?.pulse()
                 }
                 val record = RunRecord(label, System.currentTimeMillis(), results)
                 store.save(record)
@@ -541,13 +603,14 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } finally {
+                publishSuiteLog(suiteLog, label)
                 try {
                     cam.close()
                 } catch (_: Exception) {
                 }
                 if (engine === cam) engine = null
                 running = false
-                syncTestExecutionStatus()
+                TestExecutionStatus.finishSuite()
                 heartbeatReporter?.pulse()
             }
         }
@@ -564,7 +627,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val label = Catalog.suiteLabel(suite)
-        if (selected.any { it.id in DIAL_CASES } && CallNumberStore.get(this).isBlank()) {
+        if (selected.any { CallsCatalog.needsSavedNumber(it) } && CallNumberStore.get(this).isBlank()) {
             toast("Save a test number first")
             return
         }
@@ -594,13 +657,16 @@ class MainActivity : AppCompatActivity() {
         if (running || selected.isEmpty()) return
         running = true
         stop.set(false)
-        syncTestExecutionStatus()
+        skip.set(false)
+        TestExecutionStatus.beginSuite("calls", suite, selected)
         heartbeatReporter?.pulse()
         ensureRunScreen()
         runPreviewHint?.text = "Call status"
         val watch = CallWatch(this)
         callWatch = watch
         worker.execute {
+            val suiteLog = SuiteLog(this)
+            suiteLog.start(label, feature, this::setRunStatus)
             val ready = CountDownLatch(1)
             runOnUiThread {
                 watch.start()
@@ -608,6 +674,7 @@ class MainActivity : AppCompatActivity() {
             }
             ready.await(2, TimeUnit.SECONDS)
             val evidence = CallEvidence(this)
+            val wifi = WifiConnector(this)
             val runner = CallsRunner(
                 watch,
                 evidence,
@@ -615,17 +682,47 @@ class MainActivity : AppCompatActivity() {
                 { placeSavedCall() },
                 { watch.endCall() },
                 { CallNumberStore.get(this) },
-                { stop.get() },
+                { interrupted() },
                 { setRunStatus(it) },
             )
             try {
                 val results = mutableListOf<CaseResult>()
+                var wifiKnown = false
+                var wifiBlock: String? = null
                 selected.forEachIndexed { index, test ->
                     if (stop.get()) return@forEachIndexed
                     runOnUiThread { updateRunCase(index + 1, selected.size, test) }
-                    TestExecutionStatus.setRunning(suite, test.id, results.count { it.verdict == "FAIL" })
+                    TestExecutionStatus.markCaseRunning(test.id)
                     heartbeatReporter?.pulse()
-                    results += runner.run(test)
+                    val result = if (CallsCatalog.isVoWifi(test)) {
+                        if (!wifiKnown) {
+                            val wifiResult = wifi.joinSavedNetwork({ interrupted() }, { setRunStatus(it) })
+                            if (stop.get()) {
+                                TestExecutionStatus.markCaseFinished(test.id, "NOT_VERIFIED")
+                                heartbeatReporter?.pulse()
+                                return@forEachIndexed
+                            }
+                            if (skip.get()) {
+                                val skipped = recorded(test, CaseResult(test.id, test.title, test.suite, "NOT_VERIFIED", "Skipped"))
+                                results += skipped
+                                TestExecutionStatus.markCaseFinished(test.id, skipped.verdict)
+                                heartbeatReporter?.pulse()
+                                return@forEachIndexed
+                            }
+                            wifiKnown = true
+                            wifiBlock = wifiResult
+                        }
+                        if (wifiBlock != null && test.action != "blocked_emergency") {
+                            recorded(test, CaseResult(test.id, test.title, test.suite, "BLOCKED", wifiBlock!!))
+                        } else {
+                            recorded(test, runner.run(test))
+                        }
+                    } else {
+                        recorded(test, runner.run(test))
+                    }
+                    results += result
+                    TestExecutionStatus.markCaseFinished(test.id, result.verdict)
+                    heartbeatReporter?.pulse()
                 }
                 val record = RunRecord(label, System.currentTimeMillis(), results)
                 store.save(record)
@@ -640,10 +737,116 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } finally {
+                publishSuiteLog(suiteLog, label)
                 runOnUiThread { watch.stop() }
                 if (callWatch === watch) callWatch = null
                 running = false
-                syncTestExecutionStatus()
+                TestExecutionStatus.finishSuite()
+                heartbeatReporter?.pulse()
+            }
+        }
+    }
+
+    private fun requestSmsRun() {
+        if (running) {
+            toast("A suite is already running")
+            return
+        }
+        val selected = smsCases.filter { it.suite == suite }
+        if (selected.isEmpty()) {
+            toast("This suite has no cases")
+            return
+        }
+        val label = Catalog.suiteLabel(suite)
+        if (selected.any { SmsCatalog.needsSavedNumber(it) } && CallNumberStore.get(this).isBlank()) {
+            toast("Save a test number first")
+            return
+        }
+        val missing = smsPermissions().filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missing.isNotEmpty()) {
+            pendingRun = selected
+            pendingLabel = label
+            ActivityCompat.requestPermissions(this, missing.toTypedArray(), SMS_REQUEST)
+            return
+        }
+        startSmsRun(selected, label)
+    }
+
+    private fun smsPermissions(): List<String> = listOf(
+        Manifest.permission.SEND_SMS,
+        Manifest.permission.RECEIVE_SMS,
+        Manifest.permission.READ_SMS,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.CALL_PHONE,
+        Manifest.permission.READ_CALL_LOG,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    )
+
+    private fun startSmsRun(selected: List<TestCase>, label: String) {
+        if (running || selected.isEmpty()) return
+        running = true
+        stop.set(false)
+        skip.set(false)
+        TestExecutionStatus.beginSuite("sms", suite, selected)
+        heartbeatReporter?.pulse()
+        ensureRunScreen()
+        runPreviewHint?.text = "Message status"
+        val watch = CallWatch(this)
+        callWatch = watch
+        worker.execute {
+            val suiteLog = SuiteLog(this)
+            suiteLog.start(label, feature, this::setRunStatus)
+            val ready = CountDownLatch(1)
+            runOnUiThread {
+                watch.start()
+                ready.countDown()
+            }
+            ready.await(2, TimeUnit.SECONDS)
+            val evidence = SmsEvidence(this)
+            val wifi = WifiConnector(this)
+            val runner = SmsRunner(
+                this,
+                evidence,
+                watch,
+                { placeSavedCall() },
+                { watch.endCall() },
+                { CallNumberStore.get(this) },
+                { interrupted() },
+                { setRunStatus(it) },
+                wifi,
+            )
+            try {
+                val results = mutableListOf<CaseResult>()
+                selected.forEachIndexed { index, test ->
+                    if (stop.get()) return@forEachIndexed
+                    runOnUiThread { updateRunCase(index + 1, selected.size, test) }
+                    TestExecutionStatus.markCaseRunning(test.id)
+                    heartbeatReporter?.pulse()
+                    val result = recorded(test, runner.run(test))
+                    results += result
+                    TestExecutionStatus.markCaseFinished(test.id, result.verdict)
+                    heartbeatReporter?.pulse()
+                }
+                val record = RunRecord(label, System.currentTimeMillis(), results)
+                store.save(record)
+                runOnUiThread {
+                    if (!isFinishing) showResults(record)
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    if (!isFinishing) {
+                        toast(e.message ?: "Run failed")
+                        showSms()
+                    }
+                }
+            } finally {
+                publishSuiteLog(suiteLog, label)
+                runOnUiThread { watch.stop() }
+                if (callWatch === watch) callWatch = null
+                running = false
+                TestExecutionStatus.finishSuite()
                 heartbeatReporter?.pulse()
             }
         }
@@ -718,8 +921,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun interrupted(): Boolean = stop.get() || skip.get()
+
+    private fun recorded(test: TestCase, result: CaseResult): CaseResult {
+        val chosen = if (skip.get() && !stop.get()) {
+            CaseResult(test.id, test.title, test.suite, "NOT_VERIFIED", "Skipped")
+        } else {
+            result
+        }
+        skip.set(false)
+        return chosen
+    }
+
     private fun confirmOnUi(prompt: String, imagePath: String?): Boolean {
-        if (stop.get()) return false
+        if (interrupted()) return false
         val latch = CountDownLatch(1)
         val answer = AtomicBoolean(false)
         val record: (Boolean) -> Unit = { pass ->
@@ -768,7 +983,7 @@ class MainActivity : AppCompatActivity() {
         }
         val deadline = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5)
         while (latch.count > 0 && System.currentTimeMillis() < deadline) {
-            if (stop.get()) {
+            if (interrupted()) {
                 runOnUiThread {
                     runChoice?.visibility = View.GONE
                     confirmDialog?.dismiss()
@@ -847,6 +1062,10 @@ class MainActivity : AppCompatActivity() {
         pendingRun = null
         if (requestCode == PHONE_REQUEST) {
             if (selected != null) startCallsRun(selected, label)
+            return
+        }
+        if (requestCode == SMS_REQUEST) {
+            if (selected != null) startSmsRun(selected, label)
             return
         }
         if (requestCode != CAMERA_REQUEST) return
@@ -945,6 +1164,7 @@ class MainActivity : AppCompatActivity() {
             val item = items[position]
             view.findViewById<TextView>(R.id.case_id).text = item.id
             view.findViewById<TextView>(R.id.case_title).text = item.title
+            showReason(view, store.resultFor(item.id)?.detail)
             bindThumb(view, store.resultFor(item.id)?.media, thumb, onOpen)
             val verdict = store.verdictFor(item.id)
             val pill = view.findViewById<TextView>(R.id.case_verdict)
@@ -969,7 +1189,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private class ResultAdapter(
-        private val items: List<CaseResult>,
+        private val items: List<ResultLine>,
         private val thumb: (String) -> Bitmap?,
         private val onOpen: (String) -> Unit,
     ) : BaseAdapter() {
@@ -978,20 +1198,37 @@ class MainActivity : AppCompatActivity() {
         override fun getItemId(position: Int) = position.toLong()
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.row_case, parent, false)
-            val item = items[position]
-            view.findViewById<TextView>(R.id.case_id).text = item.id
-            view.findViewById<TextView>(R.id.case_title).text = item.title
-            bindThumb(view, item.media, thumb, onOpen)
+            val line = items[position]
+            val id = view.findViewById<TextView>(R.id.case_id)
+            val title = view.findViewById<TextView>(R.id.case_title)
+            val verdict = when (line) {
+                is ResultLine.Single -> line.result.verdict
+                is ResultLine.RadioGroup -> "BLOCKED"
+            }
+            when (line) {
+                is ResultLine.Single -> {
+                    id.text = line.result.id
+                    title.text = line.result.title
+                    showReason(view, line.result.detail)
+                    bindThumb(view, line.result.media, thumb, onOpen)
+                }
+                is ResultLine.RadioGroup -> {
+                    id.text = "2G and 3G"
+                    title.text = "${line.results.size} cases were not run"
+                    showReason(view, line.results.first().detail)
+                    bindThumb(view, emptyList(), thumb, onOpen)
+                }
+            }
             val pill = view.findViewById<TextView>(R.id.case_verdict)
-            pill.text = when (item.verdict) {
+            pill.text = when (verdict) {
                 "PASS" -> "Pass"
                 "FAIL" -> "Fail"
                 "NOT_APPLICABLE" -> "N/A"
                 "BLOCKED" -> "Blocked"
                 "NOT_VERIFIED" -> "Unverified"
-                else -> item.verdict
+                else -> verdict
             }
-            val color = when (item.verdict) {
+            val color = when (verdict) {
                 "PASS" -> R.color.pass
                 "FAIL" -> R.color.fail
                 "NOT_APPLICABLE", "BLOCKED" -> R.color.na
@@ -1003,7 +1240,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private sealed class ResultLine {
+        data class Single(val result: CaseResult) : ResultLine()
+        data class RadioGroup(val results: List<CaseResult>) : ResultLine()
+    }
+
     companion object {
+        private fun resultLines(results: List<CaseResult>): List<ResultLine> {
+            val radio = results.filter { it.verdict == "BLOCKED" && "2G and 3G cases were not run" in it.detail }
+            if (radio.size < 2) return results.map { ResultLine.Single(it) }
+            val first = results.indexOf(radio.first())
+            val lines = ArrayList<ResultLine>()
+            results.forEachIndexed { index, result ->
+                if (result in radio) {
+                    if (index == first) lines += ResultLine.RadioGroup(radio)
+                } else {
+                    lines += ResultLine.Single(result)
+                }
+            }
+            return lines
+        }
+
+        private fun showReason(view: View, detail: String?) {
+            val reason = view.findViewById<TextView>(R.id.case_reason)
+            val text = detail?.substringBefore('\n')?.trim().orEmpty()
+            if (text.isEmpty()) {
+                reason.visibility = View.GONE
+            } else {
+                reason.visibility = View.VISIBLE
+                reason.text = text
+            }
+        }
+
         private fun bindThumb(
             view: View,
             media: List<String>?,
@@ -1026,12 +1294,6 @@ class MainActivity : AppCompatActivity() {
 
         private const val CAMERA_REQUEST = 21
         private const val PHONE_REQUEST = 22
-        private val DIAL_CASES = setOf(
-            "CALL-FUNC-002",
-            "CALL-PERF-001",
-            "CALL-PERF-003",
-            "CALL-REL-001",
-            "CALL-REL-002",
-        )
+        private const val SMS_REQUEST = 23
     }
 }

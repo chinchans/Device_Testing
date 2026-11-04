@@ -109,13 +109,31 @@
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/run_stop"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_test_all"
-        android:text="Stop"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/run_skip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_suite_idle"
+            android:text="Skip"
+            android:textAllCaps="false"
+            android:textColor="@color/ink" />
+
+        <Button
+            android:id="@+id/run_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_test_all"
+            android:text="Stop"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 </LinearLayout>

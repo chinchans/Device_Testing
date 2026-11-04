@@ -7,9 +7,12 @@ Startup must match Catalyst docs:
 
 from __future__ import annotations
 
+import gzip
 import os
 import sys
 import time
+import uuid
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 # pip install -t . packages live in this folder on AppSail
@@ -20,7 +23,11 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 OFFLINE_AFTER_SEC = float(os.getenv("MONITOR_OFFLINE_AFTER_SEC") or "90")
+MAX_GZIP_BYTES = 8 * 1024 * 1024
+MAX_TEXT_CHARS = 1_500_000
 _DEVICES: Dict[str, Dict[str, Any]] = {}
+_LOG_DIR = Path(os.getenv("MONITOR_LOG_DIR") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "monitor_logs"))
+_LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def _public(entry: Dict[str, Any], now: float) -> Dict[str, Any]:
@@ -46,7 +53,17 @@ def _public(entry: Dict[str, Any], now: float) -> Dict[str, Any]:
         "memory": entry.get("memory"),
         "thermal": entry.get("thermal"),
         "test_execution": entry.get("test_execution"),
+        "suite_logs": _public_logs(entry),
+        "suite_log": (_public_logs(entry)[:1] or [None])[0],
     }
+
+
+def _public_logs(entry: Dict[str, Any]):
+    logs = entry.get("suite_logs")
+    if isinstance(logs, list):
+        return logs
+    one = entry.get("suite_log")
+    return [one] if isinstance(one, dict) else []
 
 
 def _upsert(device_id: str, patch: Dict[str, Any]) -> Dict[str, Any]:
@@ -73,6 +90,8 @@ def root():
             "endpoints": [
                 "POST /api/monitor/register",
                 "POST /api/monitor/heartbeat",
+                "POST /api/monitor/logs",
+                "GET /api/monitor/logs/<id>",
                 "GET /api/monitor/devices",
                 "DELETE /api/monitor/devices",
                 "GET /health",
@@ -153,6 +172,81 @@ def device_heartbeat():
         },
     )
     return jsonify({"ok": True, "device": device})
+
+
+@app.post("/api/monitor/logs")
+def upload_suite_log():
+    device_id = (request.headers.get("X-Device-Id") or "").strip()
+    if not device_id:
+        return jsonify({"ok": False, "error": "device_id required"}), 400
+    feature = (request.headers.get("X-Feature") or "").strip()
+    suite = (request.headers.get("X-Suite-Label") or "suite").strip() or "suite"
+    file_name = (request.headers.get("X-File-Name") or "suite.txt").strip() or "suite.txt"
+    try:
+        started_at_ms = int(request.headers.get("X-Started-At-Ms") or "0")
+    except ValueError:
+        started_at_ms = 0
+    raw = request.get_data() or b""
+    if not raw:
+        return jsonify({"ok": False, "error": "empty log"}), 400
+    if len(raw) > MAX_GZIP_BYTES:
+        return jsonify({"ok": False, "error": "log is too large"}), 400
+    try:
+        text = gzip.decompress(raw).decode("utf-8", errors="replace")
+    except OSError:
+        return jsonify({"ok": False, "error": "log is not gzip"}), 400
+    log_id = uuid.uuid4().hex
+    (_LOG_DIR / f"{log_id}.gz").write_bytes(raw)
+    meta = {
+        "id": log_id,
+        "device_id": device_id,
+        "feature": feature,
+        "suite": suite,
+        "file_name": file_name,
+        "bytes": len(text.encode("utf-8")),
+        "saved_at": time.time(),
+        "started_at_ms": started_at_ms,
+    }
+    existing = _DEVICES.get(device_id) or {}
+    device = _upsert(
+        device_id,
+        {
+            "device_name": existing.get("device_name") or device_id,
+            "model": existing.get("model"),
+            "active": existing.get("active", True),
+            "battery_percent": existing.get("battery_percent"),
+            "charging": existing.get("charging"),
+            "app_state": existing.get("app_state") or "foreground",
+            "registered_at": existing.get("registered_at") or time.time(),
+            "heartbeat_count": int(existing.get("heartbeat_count") or 0),
+            "network": existing.get("network"),
+            "storage": existing.get("storage"),
+            "memory": existing.get("memory"),
+            "thermal": existing.get("thermal"),
+            "test_execution": existing.get("test_execution"),
+            "suite_logs": [meta] + [
+                item for item in _public_logs(existing) if item.get("id") != meta["id"]
+            ][:29],
+            "suite_log": meta,
+        },
+    )
+    return jsonify({"ok": True, "suite_log": meta, "device": device})
+
+
+@app.get("/api/monitor/logs/<log_id>")
+def read_suite_log(log_id: str):
+    if not log_id or "/" in log_id or ".." in log_id:
+        return jsonify({"error": "log not found"}), 404
+    path = _LOG_DIR / f"{log_id}.gz"
+    if not path.is_file():
+        return jsonify({"error": "log not found"}), 404
+    try:
+        text = gzip.decompress(path.read_bytes()).decode("utf-8", errors="replace")
+    except OSError:
+        return jsonify({"error": "log is not gzip"}), 400
+    if len(text) > MAX_TEXT_CHARS:
+        text = text[:MAX_TEXT_CHARS] + "\n\n… log truncated for display …\n"
+    return text, 200, {"Content-Type": "text/plain; charset=utf-8"}
 
 
 @app.get("/api/monitor/devices")

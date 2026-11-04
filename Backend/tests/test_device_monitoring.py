@@ -111,3 +111,56 @@ def test_monitor_api_register_heartbeat_list() -> None:
     assert payload["count"] >= 1
     ids = {d["device_id"] for d in payload["devices"]}
     assert "api-1" in ids
+
+
+def test_suite_log_upload_is_listed_without_the_text() -> None:
+    import gzip
+
+    client = TestClient(app)
+    payload = gzip.compress(b"Suite: Functionality\nradio line\n")
+    uploaded = client.post(
+        "/api/monitor/logs",
+        content=payload,
+        headers={
+            "Content-Type": "application/gzip",
+            "X-Device-Id": "log-phone",
+            "X-Feature": "camera",
+            "X-Suite-Label": "Functionality",
+            "X-Started-At-Ms": "1700000000000",
+            "X-File-Name": "Functionality_1700000000000.txt",
+        },
+    )
+    assert uploaded.status_code == 200
+    meta = uploaded.json()["suite_log"]
+    assert meta["suite"] == "Functionality"
+    assert meta["feature"] == "camera"
+    assert "radio line" not in uploaded.text
+
+    second = client.post(
+        "/api/monitor/logs",
+        content=gzip.compress(b"Suite: Security\n"),
+        headers={
+            "Content-Type": "application/gzip",
+            "X-Device-Id": "log-phone",
+            "X-Feature": "camera",
+            "X-Suite-Label": "Security",
+            "X-Started-At-Ms": "1700000001000",
+            "X-File-Name": "Security_1700000001000.txt",
+        },
+    )
+    assert second.status_code == 200
+    newer = second.json()["suite_log"]
+
+    client.post(
+        "/api/monitor/heartbeat",
+        json={"device_id": "log-phone", "device_name": "Log phone", "battery_percent": 80},
+    )
+    listed = client.get("/api/monitor/devices")
+    device = next(d for d in listed.json()["devices"] if d["device_id"] == "log-phone")
+    assert [item["id"] for item in device["suite_logs"]] == [newer["id"], meta["id"]]
+    assert [item["feature"] for item in device["suite_logs"]] == ["camera", "camera"]
+    assert "radio" not in str(device["suite_logs"])
+
+    body = client.get(f"/api/monitor/logs/{meta['id']}")
+    assert body.status_code == 200
+    assert "radio line" in body.text

@@ -27,6 +27,8 @@ Backend/data/documents/
 Backend/data/cache/
 Backend/data/indexes/
 Backend/data/logs/
+Backend/data/monitor_logs/
+cloud-monitor/data/monitor_logs/
 Backend/data/traces/
 Backend/data/generated_scripts/
 Backend/data/certifications/

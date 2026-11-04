@@ -115,6 +115,31 @@ class DeviceMonitorStore:
                 return None
             return self._public(entry, now)
 
+    def attach_suite_log(self, device_id: str, suite_log: dict[str, Any]) -> dict[str, Any]:
+        now = time.time()
+        with self._lock:
+            existing = self._devices.get(device_id) or {
+                "device_id": device_id,
+                "device_name": device_id,
+                "registered_at": now,
+                "heartbeat_count": 0,
+                "active": True,
+            }
+            prior = list(existing.get("suite_logs") or [])
+            if not prior and isinstance(existing.get("suite_log"), dict):
+                prior = [existing["suite_log"]]
+            logs = [suite_log] + [
+                item for item in prior if item.get("id") != suite_log.get("id")
+            ]
+            entry = {
+                **existing,
+                "suite_logs": logs[:30],
+                "suite_log": suite_log,
+                "last_seen": now,
+            }
+            self._devices[device_id] = entry
+            return self._public(entry, now)
+
     def clear(self) -> int:
         with self._lock:
             n = len(self._devices)
@@ -142,6 +167,12 @@ class DeviceMonitorStore:
         }
         for key in HEALTH_KEYS:
             out[key] = entry.get(key)
+        logs = entry.get("suite_logs")
+        if not isinstance(logs, list):
+            one = entry.get("suite_log")
+            logs = [one] if isinstance(one, dict) else []
+        out["suite_logs"] = logs
+        out["suite_log"] = logs[0] if logs else None
         return out
 
 

@@ -1,0 +1,3899 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "FUT_VOLTE_FIELD_CALLS_V1",
+  "suite_name": "Field VoLTE call cases",
+  "description": "Field-only VoLTE voice-call cases from Radio_Testcases-Global.xlsx. Lab rows are omitted. SMS, registration, and device-setting rows are omitted. Emergency cases are listed and blocked so the app does not place them.",
+  "validation_program": "FUT",
+  "feature": "calls",
+  "platform": "Android",
+  "source_workbook": "Excel_Sheets/Radio_Testcases-Global.xlsx",
+  "source_sheet": "Size",
+  "area_filter": "Radio_Field",
+  "package_filter": "VoLTE",
+  "safety_policy": {
+    "require_explicit_consent": true,
+    "allow_public_emergency_calls": false,
+    "allow_unapproved_numbers": false,
+    "no_call_audio_recording_by_default": true,
+    "dial_only_saved_test_number": true
+  },
+  "result_statuses": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT_APPLICABLE",
+    "NOT_VERIFIED",
+    "ERROR"
+  ],
+  "test_case_count": 45,
+  "counts_by_suite": {
+    "functionality": 34,
+    "blocked_emergency": 3,
+    "reliability": 8
+  },
+  "test_cases": [
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 01_01",
+        "title": "IMS IDLE MO Call_IMS subscriber on home network (VoLTE To VoLTE)[Originating Party terminates the call] - check local ringing",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "Two UEs are ready.\nHSS should have the subscriber's information. \nBoth UEs can support IP connectivity and IMS profile configuration.                                                                                       \nLTE cell (Cell A with IMS VoPS=1 -> IMS supported)\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "UK: Hartley Whitney; ITA: Desk location",
+        "network_dependent": true,
+        "repetitions": "3",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1)DUT is powered on and completes IMS registration on a LTE cell (Cell A with IMS VoPS=1 -> IMS supported)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Initiate MO voice call from the DUT to the target destination (IMS subscriber on home network - i.e. powered up UE B on VoLTE coverage)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Check that the DUT plays the correct local ring tone",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Answer the call from UE B",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Do some DTMF tones",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) End the voice call from the DUT after 20 seconds",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_01-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT returns to RRC idle state",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1) That the DUT completes IMS registration.",
+          "2) That the DUT established a VoLTE call to UE B",
+          "3) Verify that the DUT played the correct local ring tone  while establishing the call to UE B.",
+          "4) No noticable issue with voice quality",
+          "5) DTMF tones are generated and they are all heard on the DUT",
+          "6) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed.",
+          "ITA requirements: Report the call setup time and the speech code used"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 01_03",
+        "title": "IMS IDLE MO Call to 3G subscriber on home network",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1)HSS should have the subscriber's information. \n2) Both UEs can support IP connectivity and IMS profile configuration.                                                                                       \n3) LTE cell (Cell A with IMS VoPS=1 -> IMS supported)\n4) UE B is powered up and IMS registered \n5) DUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "UK: Hartley Whitney; ITA: Pre-anechoic chamber",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_01_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes IMS registration on a LTE VoPS=1 cell with IMS VoPS flag indicating IMS is supported.",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Initiate a MO voice call from the DUT to the target destination (3G subscriber on home network - i.e. powered up UE B)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Answer the call from UE B",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_03-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4.End the a voice call from  UE B after 20 seconds",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_03-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5. DUT returns to RRC idle state",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT established a VoLTE call to UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed.",
+          "ITA requirements: Report the call setup time and the speech code used. Check that AMR-WB codec is established on 3G NW"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 01_04",
+        "title": "IMS IDLE MO Call to PSTN",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) HSS should have the subscriber's information. \n2) DUT can support IP connectivity and IMS profile configuration.                                                                                          \n3) LTE cell (Cell A with IMS VoPS=1 -> IMS supported)\n4) UE B is powered up and 3G registered on the home network.\n5) DUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "UK: Hartley Whitney; ITA: Desk location",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_01_04-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes IMS registration on a LTE VoPS=1  with IMS VoPS flag indicating IMS is supported.",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_04-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Initiate MO voice call from the DUT to the target destination (IMS subscriber on home network - i.e. powered up UE B)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_04-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Answer the call from UE B",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_04-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End the voice call from  the DUT after 20 seconds",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_01_04-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT returns to RRC idle state",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT established a VoLTE call to the PSTN target number.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed.",
+          "ITA requirements: Report the call setup time and the speech code used"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 02_01",
+        "title": "IMS IDLE MT Call from IMS subscriber on home network",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "Two UEs are ready.\nHSS should have the subscriber's information. \nBoth UEs can support IP connectivity and IMS profile configuration.                                                                                       \nLTE cell (Cell A with IMS VoPS=1 -> IMS supported)\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "UK: Hartley Whitney; ITA: Desk location",
+        "network_dependent": true,
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_02_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes IMS registration on a LTE cell (Cell A with IMS VoPS=1 -> IMS supported)",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. An originating party (IMS subscriber on the home network  i.e. UE B) initiates a voice call to the DUT.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_01-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Answer the call from the DUT.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_01-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4.End the voice call on the DUT after 20 seconds.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_01-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5.DUT returns to RRC idle state",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT established a  MT VoLTE call from UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed.",
+          "ITA requirements: Report the call setup time and the speech code used"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 02_02",
+        "title": "IMS IDLE MT Call from 3G subscriber on home network",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) HSS should have the subscriber information. \n2) DUT can  support IP connectivity and IMS profile configuration.                                                                                  \n3) LTE cell (Cell A with IMS VoPS=1 -> IMS supported)                                                                                                   \n4) UE B is powered up and locked to 3G on home network                                             \n5) DUT is  switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_02_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1)DUT is powered on and completes IMS registration on a LTE VoPS=1 with IMS VoPS flag indicating IMS is supported.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) An originating party (3G subscriber on the home network  i.e. UE B) initiates a voice call to the DUT.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_02-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Answer the call from the DUT.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_02-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End the voice call on the DUT after 20 seconds.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_02-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT returns to RRC idle state",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT established a  MT VoLTE call from UE B",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 08",
+        "title": "IMS MO Call Setup Abort",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "1) HSS should have both UE's subscriber information. \n2) Both UEs can support IP connectivity and IMS profile configuration.                                                                 \n3) There must be a sufficient number of E-UTRAN (VoPS=1) and 3G (no VoPs) cells available on the same PLMN.\n4) UE B is powered up and IMS registered \n5) DUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_08-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes registration on a 3G cell (no IMS VoPS flag)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_08-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Make a MO voice call from the DUT to UE B.",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_08-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT returns to RRC idle state",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs to establish:",
+          "1)  that the DUT and UE-B complete IMS registration.",
+          "2)  that the  voice call setup is successfully aborted by the DUT",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed.",
+          "4) Ensure that the DUT does not crash or freeze.",
+          "5) Check that the 'Reason' header field is present in the CANCEL request message.",
+          "6) Report the \"text\" in the reason header field parameter"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice Radio_Reg_03",
+        "title": "MO CSFB call on a LTE cell not supporting VoLTE",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "Two UEs are ready.\nHSS should have the subscriber's information. \nBoth UEs can support IP connectivity and IMS profile configuration.                                                                       \nA LTE VoPS=0 cell (Cell A - VoLTE not supported) is available with underlying UTRAN cell (Cell B) coverage.                                                                                                                                                          \nThere must be a sufficient number of E-UTRAN (LTE VoPS=0) and UTRAN cells available on the same PLMN.\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "UK: Hartley Whitney; ITA: Appia-Capannelle (NO VoLTE)",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes LTE Attach on the LTE VoPS=0",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Initiate a MO voice call from the DUT to UE B.",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Answer the call from UE B",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_03-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4.End the voice call from  the DUT after 20 seconds",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_03-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5. DUT returns to RRC idle state",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT does NOT complete IMS registration on Cell A.",
+          "2)  that the DUT establishes a MO CSFB call  (using the CS carriers on Cell B) to UE B.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice Radio_Reg_04",
+        "title": "MT CSFB call on a LTE cell not supporting VoLTE",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "Two UEs are ready.\nHSS should have the subscriber's information. \nBoth UEs can support IP connectivity and IMS profile configuration.                                                                       \nA LTE VoPS=0 cell (Cell A, not supporting VoLTE) is available with underlying UTRAN cell (Cell B) coverage. There must be a sufficient number of E-UTRAN (LTE VoPS=0 & VoPS=1 cells) and UTRAN cells available on the same PLMN.\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "UK: Hartley Whitney; ITA: Appia-Capannelle (NO VoLTE)",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_04-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes LTE Attach on the LTE VoPS=0 cell with IMS VoPS flag indicating IMS is NOT supported.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_04-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2.Initiate a MO voice call from the UE B to the DUT.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_04-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3. Answer the call from the DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_04-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4.End the voice call from  the DUT after 20 seconds",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_04-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5. DUT returns to RRC idle state",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT does NOT complete IMS registration on Cell A.",
+          "2)  that the DUT establishes a MT CSFB call  (using the CS carriers on Cell B) to UE B.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice Radio_Reg_05",
+        "title": "MO CS call on a WCDMA 2100 cell",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number",
+        "remote_fut_supported": true,
+        "objective": "Two UEs are ready.\nHSS should have both UE's subscriber information. \nBoth UEs can support IP connectivity and IMS profile configuration.                                                                 \nThere must be a sufficient number of E-UTRAN (LTE VoPS=1) and UTRAN cells available on the same PLMN.\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_05-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes registration on a 3G cell (no IMS VoPS flag)",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_05-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Make a MO voice call from the DUT to UE B.",
+          "app_action": "place_saved_number"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_05-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3.DUT returns to RRC idle state",
+          "app_action": "place_saved_number"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes Attach procedures  but not IMS registration.",
+          "2) that the DUT successfully establishes a MO call to UE B via CS bearers.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice Radio_Reg_06",
+        "title": "MT CS call on a WCDMA 2100 cell",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Voice Radio",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "Two UEs are ready.\nHSS should have both UE's subscriber information. \nBoth UEs can support IP connectivity and IMS profile configuration.                                                                 \nThere must be a sufficient number of E-UTRAN (LTE VoPS=1) and UTRAN cells available on the same PLMN.\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1.DUT is powered on and completes registration on a 3G cell (no IMS VoPS flag)",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_06-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2. Make a MO voice call from UE B to the DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_Radio_Reg_06-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3.DUT returns to RRC idle state",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes Attach procedures  but not IMS registration.",
+          "2) that the DUT successfully establishes a MT call from UE B via CS bearers.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "EM-01",
+        "title": "IMS Emergency Call Services on LTE 800 cell with IMS VoPS flag indicating IMS is supported",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE<>3G Interworking",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "blocked_emergency",
+        "priority": "P0",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "1) DUT Powered off\n2) IMS emergency service is supported by  DUT\n3) LTE cell (Cell A with IMS VoPS=1 -> IMS supported)"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "EM-02",
+        "title": "Emergency Call Services on LTE 1800 cell",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE<>3G Interworking",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "blocked_emergency",
+        "priority": "P0",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "• DUT Powered off\n• IMS emergency service is supported by  DUT and Network                                                                                                \nThe DUT's IMS Voice Domain Preference is PS Voice preferred and CS Voice as secondary                 \n• LTE VoPS=0 cell                                                                      \nThe LTE VoPS=0 cell (Cell A) is available with underlying UTRAN cell (Cell B) coverage.                                                                                                                                                          \nThere must be a sufficient number of E-UTRAN (LTE VoPS=0 cell) and UTRAN cells available on the same PLMN.\nUE B is powered up and IMS registered \nDUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "IW 01",
+        "title": "SRVCC EUTRAN to UTRAN Handover",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE<>3G Interworking",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT and UE-1 are connected and registered to an IMS network.\n2) DUT and Network support SRVCC                                 \n3) There must be a sufficient number of E-UTRAN and UTRAN cells available on the same PLMN"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "IW_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "• DUT: dial a voice call to UE-1.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "• UE-1: answer the call.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_01-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "• Speech quality is good Uplink and Downlink",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_01-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "• DUT initiates SRVCC handover from EUTRAN to UTRAN by moving away from EUTRAN coverage to UTRAN coverage",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "• Check call flow message for SRVCC capabilities",
+          "• The voice call is established and in progress",
+          "• Verify that Handover from EUTRAN to UTRAN is successful",
+          "• All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "IW 02",
+        "title": "SRVCC EUTRAN to UTRAN with PS HO Support",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE<>3G Interworking",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT and UE-1 are connected and registered to an IMS network. LTE cell with VoPS=1\n2) DUT and Network supports SRVCC"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "IW_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT: Connect to a known FTP Server using an FTP client or using DOS command",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT: Download a sizeable file from the ftp server",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT: Whilst  the FTP download is in progress, Initiate a voice call to UE-1",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-1 : answer the call and voice call in progress",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Move the DUT away from EUTRAN coverage location to trigger Handover to 3G",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) Network: initiate SRVCC handover of DUT from E-UTRAN to UTRAN.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT: wait for the PS Download to finish before ending the voice call",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) PS Call established and in progress",
+          "2) The voice call is established and in progress",
+          "3) Verify that Handover from EUTRAN to UTRAN is successful and that both the PS transfer and voice call are still in progress following the SRVCC Handover.",
+          "4) Verify all call flow and call set up are correct in the Log",
+          "5) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "IW 02b",
+        "title": "SRVCC EUTRAN to UTRAN while in ringing",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE<>3G Interworking",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT and UE-1 are connected and registered to an IMS network. LTE cell with VoPS=1\n2) DUT and Network supports SRVCC"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "IW_02b-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT: Connect to a known FTP Server using an FTP client or using DOS command",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT: Download a sizeable file from the ftp server",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT: Whilst  the FTP download is in progress, Initiate a voice call to UE-1",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Do not answer the call, so ringing is in progress",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Move the DUT away from EUTRAN coverage location to trigger Handover to 3G",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) Network: initiate SRVCC handover of DUT from E-UTRAN to UTRAN.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) ANSWER CALL AFTER SRVCC COMPLETED",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_02b-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "8) DUT: wait for the PS Download to finish before ending the voice call",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) PS Call established and in progress",
+          "2) The voice call is established and in progress",
+          "3) Verify that Handover from EUTRAN to UTRAN is successful and that both the PS transfer and voice call are still in progress following the SRVCC Handover.",
+          "4) Verify all call flow and call set up are correct in the Log",
+          "5) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "EM-04",
+        "title": "3G Emergency Call following 4G to 3G Idle mode transition",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VoLTE<>3G Interworking",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "blocked_emergency",
+        "priority": "P0",
+        "execution_mode": "BLOCKED",
+        "app_action": "blocked_emergency",
+        "remote_fut_supported": false,
+        "objective": "• DUT Powered off\n• IMS emergency service is supported by  DUT and Network                                                                                                \nThe DUT's IMS Voice Domain Preference is PS Voice preferred and CS Voice as secondary"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "5",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [],
+      "expected_result": {
+        "status_if_run_attempted": "BLOCKED",
+        "reason": "This app does not place or receive emergency calls. The case stays in the catalog and is not executed."
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MM 06",
+        "title": "Intra-frequency (E-UTRAN VoLTE capable) handover, Mobility",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Mobility Management",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT has performed a PS attach and setup a PDN connection in the LTE VoPS=1 (IMS supported) network \n2) There must be a sufficient number of LTE VoPS=1 cells available on the same PLMN"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "3UK: Hartley Whitney; ITA: Long Call VoLTE route",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MM_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Initiate a PS  data session from the DUT (using both FTP and HTTP protocols)",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_06-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Move between the coverage areas of different cells on a test route",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1)The DUT should perform handover correctly, without losing service",
+          "2) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MM 09",
+        "title": "VoLTE inter frequency (E-UTRAN 1800 to E-UTRAN 800) handover, Mobility",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Mobility Management",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT has performed a PS attach and setup a PDN connection in the LTE VoPS=0 (Non-IMS) network \n2) There must be a sufficient number of LTE VoPS=1 cells available on the same PLMN"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MM_09-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Initiate a PS  data session from the DUT (using both FTP and HTTP protocols) on Cell A.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_09-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Move the UE into an area with good coverage from LTE VoPS=1 cell (Cell B) on the test route.",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "• Verify the successful Handover of the voice call from E-UTRAN VoPS=0 (Non-IMS) to LTE VoPS=1 (IMS supported)",
+          "• All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MM 14",
+        "title": "VoLTE Move out of Coverage -> WCDMA ->VoLTE Mobility",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Mobility Management",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "1) DUT has performed a PS attach and setup a PDN connection in the LTE network (VoPS=1 ->IMS Supported)\n2) DUT Powered off"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MM_14-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT powered on has performed VoLTE Attach and in Idle",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_14-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT has performed an IMS registration",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_14-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Move DUT from VoLTE coverage OOS (Out of Service location)",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_14-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Move DUT back from OOS to 3G coverage and let it register onto the network.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_14-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Move DUT back from 3G to LTE coverage and let it complete IMS registration",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_14-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) Once DUT is back in service, initiate MO and MT Call",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Verify that MO and MT calls are possible after the DUT has been in and out of network coverage",
+          "2) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MC 06",
+        "title": "PS Data (FTP Upload), MT Voice Call with MT Voice Released first",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "Multicall",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) DUT is rgistered in a LTE VoPS=1 (IMS supported) network.\n2) DUT is powered ON and in IDLE"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MC_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT Initiate PS Data and upload a large file (e.g. FTP)",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_06-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT: Whilst data call is in progress, receive MT Voice call from UE-1",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_06-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Monitor the data flow ensuring that there is no disconnection issues",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_06-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-1 :  Terminate voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_06-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT: Wait for the data transfer to complete and deactivate data connection.",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Verify that the speech call continues and the speech quality is undisturbed.",
+          "2) Verify that data call continues and the data stream is not interrupted",
+          "3) Ensure that the DUT does not drop voice call",
+          "4) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "IW 08",
+        "title": "SRVCC EUTRAN to UTRAN PS HO",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "MOB",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "To Verify that the DUT can support EUTRAN - UTRAN PS HO\n1) DUT is connected and registered to an IMS network."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "IW_08-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT: Connect to a known FTP Server using an FTP client or using DOS command",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_08-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT: Download a sizeable file from the ftp server",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_08-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Move the DUT away from EUTRAN coverage location to trigger Handover to UTRAN",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "IW_08-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Network: initiates PS Handover of DUT from E-UTRAN to UTRAN.",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Verify that Handover from EUTRAN to UTRAN is successful and that the PS transfer is still in progress following the transition from EUTRAN to UTRAN.",
+          "2) Verify all steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_01",
+        "title": "Call forwarding - unconditional",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_01-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Go into call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_01-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT enables default ' Always forward' settings with relevant number (UE2)",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_01-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE1 calls DUT and call is forwarded to UE2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_01-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_01-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Disable call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_01-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) UE1 calls DUT and receives the call with no forwarding",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_01-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Call forwarding enabled",
+          "2) Call forwarded successfully to UE2 with no issues. Voice call working without issues",
+          "3) Call forwarding successfully disabled",
+          "4) Call from UE1 to DUT successful without issues"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_02",
+        "title": "Call forwarding - after ringing",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_02-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Go into call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_02-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT enables  'Call forwarding when unanswered' settings with relevant number (UE2)",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_02-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE1 calls DUT and call rings on DUT. Once ring stops due to no answer the call is forwarded to UE2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_02-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Call answered by UE2 and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_02-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Disable call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_02-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) UE1 calls DUT and receives the call with no forwarding",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_02-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Call forwarding enabled",
+          "2) Call forwarded successfully to UE2 after ringing with no issues. Voice call working without issues",
+          "3) Call forwarding successfully disabled",
+          "4) Call from UE1 to DUT successful without issues"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_03",
+        "title": "Call forwarding - while busy",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Go into call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT enables ' Call forwarding on busy' settings with relevant number (UE2)",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE1 calls DUT. DUT is busy and call gets forwarded to UE2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_03-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_03-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Disable call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_03-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) UE1 calls DUT and receives the call with no forwarding",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_03-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Call forwarding enabled",
+          "2) Call forwarded successfully to UE2 with no issues. Voice call working without issues",
+          "3) Call forwarding successfully disabled",
+          "4) Call from UE1 to DUT successful without issues"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_04",
+        "title": "Call forwarding - not reachable",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_04-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Go into call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_04-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT enables 'Call forwarding - not reachable' settings with relevant number (UE2)",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_04-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE1 calls DUT and call is forwarded to UE2 (as DUT is not reachable)",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_04-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_04-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Disable call forwarding settings",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_04-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) UE1 calls DUT and receives the call with no forwarding",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_04-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) Call answered and ended after 5-10sec",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Call forwarding enabled",
+          "2) Call forwarded successfully to UE2 with no issues. Voice call working without issues",
+          "3) Call forwarding successfully disabled",
+          "4) Call from UE1 to DUT successful without issues"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_05",
+        "title": "Communication Waiting - enabled",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_05-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT initiates a voice call to UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_05-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) UE-2 calls DUT.",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_05-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT may optionally reject or answer the call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_05-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-2 hangs up",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_05-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Note: Vary rejecting/answering between iterations",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) DUT notified of incoming waiting tone",
+          "2) Rejecting /answering calls work with no issues seen"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_06",
+        "title": "Communication Waiting - disabled",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting disabled"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_06-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT initiates a voice call to UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_06-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) UE-2 calls DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_06-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) The DUT is not notified of incoming waiting tone",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_06-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-2 hangs up",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_06-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE-1 hangs up",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Call waiting disabled and no notification to the DUT is seen when UE2 calls DUT."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_07",
+        "title": "Communication Hold",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_07-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT, UE-1 and UE-2 are connected and registered to an IMS network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_07-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT initiates voice call to UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_07-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE-2 performs a voice call to DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_07-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) DUT puts UE-1 on hold and answered calls from UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_07-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT finished the voice call with UE-2 and disconnects the call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_07-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT resumes call with UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_07-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT hangs the call from UE-1",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Check active voice call in progress between DUT and UE-1",
+          "2) Speech is not present in UE-1 whilst on hold",
+          "3) Check UE-1 is on hold.",
+          "4) Ensure 2-way audio is present between DUT and UE-1",
+          "5) Ensure that the DUT resume call with UE-1",
+          "6) Verify  Media exchange (IMS/SIP) message sequence",
+          "7) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_08",
+        "title": "Communication Hold - VoLTE to 3G: Originating party puts call on hold",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_08-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT and UE-2 are connected and registered to an IMS network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) UE-1 is connected and registered to a 3G network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT initiates voice call to UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-2 performs a voice call to DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT puts UE-1 on hold and answers the call from UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT finishes the voice call with UE-2 and disconnects the call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT resumes call with UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "Repeat 2nd iteration with the terminating party putting the call on hold rather than the orginating party",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_08-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "• DUT hangs the call from UE-1",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Check active voice call in progress between DUT and UE-1",
+          "2)Speech is not present in UE-1 whilst on hold",
+          "3)Check UE-1 is on hold.",
+          "4) Ensure 2-way audio is present between DUT and UE-2",
+          "5) Ensure that the DUT resumes the call with UE-1",
+          "6) Verify  Media exchange (IMS/SIP) message sequence",
+          "7) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_09",
+        "title": "Communication Hold - VoLTE to 3G: Terminating party puts call on hold",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_09-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1)DUT and UE-2 are connected and registered to an IMS network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) UE-1 is connected and registered to a 3G network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) DUT initiates voice call to UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) UE-2 performs a voice call to UE1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE1  puts DUT on hold and answers the call from UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) UE1 finishes the voice call with UE-2 and disconnects the call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) UE1 resumes call with DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_09-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "• DUT hangs the call from UE-1",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Check active voice call in progress between DUT and UE-1",
+          "2) Speech is not present in DUTwhilst on hold",
+          "3) Check DUTis on hold.",
+          "4) Ensure 2-way audio is present between UE-1 and UE-2",
+          "5) Ensure that the DUT resumes the call with UE-1",
+          "6) Verify  Media exchange (IMS/SIP) message sequence",
+          "7) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_10",
+        "title": "Call barring - all incoming",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call barring of all incoming calls activated"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_10-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive MT voice call from UE",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MT voice call is not received on DUT"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_11",
+        "title": "Call barring - all outgoing",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call barring of all outgoing calls was activated"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_11-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Initiate MO voice call from DUT to UE",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "2) MO voice call fails and DUT displays a message to indicate the call is barred"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_12",
+        "title": "Call barring - incoming international",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call barring of all incoming international calls was activated"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_12-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive MT voice call from UE",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MT voice call is not received on DUT"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_13",
+        "title": "Call barring - outgoing international",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call barring of all outgoing international calls activated"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_13-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Initiate MO voice call from DUT to UE",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) MO voice call fails and DUT displays a message to indicate the call is barred"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_14",
+        "title": "Call Barring – All Outgoing call-National",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call barring of all outgoing national calls activated"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_14-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT performs a  voice call towards UE-1",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) A voice call is not established between the  DUT and UE",
+          "2) An error message is displayed to the user explaining the behaviour"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_15",
+        "title": "OIP settings - MT call",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) In UE menu of originating device, ensure setting set to \"hide number\""
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_15-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Receive a call from UE 1",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "SS_NEW_15-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Answer the call from DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "SS_NEW_15-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) In UE menu of originating device, ensure OIP setting set to \"Show Number\"",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "SS_NEW_15-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Receive a call from UE 1",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "SS_NEW_15-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Answer the call from DUT",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Confirm DUT displays 'Unknown Number' or 'private number' during ringing",
+          "2) Call connects correctly",
+          "3) Confirm DUT displays correct MSISDN during ringing",
+          "4)  Call connects correctly"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_16",
+        "title": "OIP settings - MO call",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) In UE menu of originating device, ensure setting set to \"hide number\""
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": false,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_16-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) Make a call from DUT to MT device",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_16-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Answer call from UE",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_16-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) In UE menu of DUT, set OIP setting set to \"Show Number\"",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_16-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) Make a call from DUT to MT device",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_16-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) Answer call from UE",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) Confirm MT device displays 'Unknown Number' or 'private number' during ringing",
+          "2) Call connects correctly",
+          "3) Confirm the MT device displays correct MSISDN during ringing",
+          "4) Call connects correctly"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_17",
+        "title": "IMS Conference Call-Mobile Originated",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled\n3) 6 devices required for this test"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_17-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is connected and registered to an VoWiFi network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT performs voice call towards UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE-1 answer call and is put on hold by DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) DUT performs voice call towards UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE-2 answer call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT creates conference via Menu",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT performs voice call towards UE-3 and join UE-3 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "8) DUT performs voice call towards UE-4 and join UE-4 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "9) DUT performs voice call towards UE-5 and join UE-5 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_17-STEP-10",
+          "action_type": "field_procedure",
+          "instruction": "10) DUT performs voice call towards PSTN and join PSTN to the conference",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) A conference session is successfully created between DUT and UE-1 to UE-E6",
+          "2) The DUT behaves as expected and able to maintain the conference call throughout the duration of the call",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed",
+          "4) Verify IMS/SIP message sequence",
+          "N.B. Subscribe request must be sent outside exosting dialogie"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_18",
+        "title": "IMS Conference Call DUT leaves Call, call maintained",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled\n3) 6 devices required for this test"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_18-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is connected and registered to an VoWiFi network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT performs voice call towards UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE-1 answer call and is put on hold by DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) DUT performs voice call towards UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE-2 answer call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT creates conference via Menu",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT performs voice call towards UE-3 and joins UE-3 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "8) DUT performs voice call towards UE-4 and joins UE-4 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "9) DUT performs voice call towards UE-5 and joins UE-5 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-10",
+          "action_type": "field_procedure",
+          "instruction": "10) DUT performs voice call towards PSTN and joins PSTN to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_18-STEP-11",
+          "action_type": "field_procedure",
+          "instruction": "11) The DUT leaves the established conference call.",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) A conference session is successfully created between DUT and UE-1 to UE-E6",
+          "2) The conference call between UEs UE-1 to UE-6 is maintained after the DUT leaves the call.",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed",
+          "4) Verify IMS/SIP message sequence"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_19",
+        "title": "IMS Conference Call participant leaves call, call maintained",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled\n3) 6 devices required for this test"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_19-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is connected and registered to an VoWiFi network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT performs voice call towards UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE-1 answer call and is put on hold by DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) DUT performs voice call towards UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE-2 answer call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT creates conference via Menu",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "7) DUT performs voice call towards UE-3 and join UE-3 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "8) DUT performs voice call towards UE-4 and join UE-4 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "9) DUT performs voice call towards UE-5 and join UE-5 to the conference",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_19-STEP-10",
+          "action_type": "field_procedure",
+          "instruction": "10) DUT performs voice call towards PSTN and join PSTN to the conference     • UE-4 leaves the established conference call.",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) A conference session is successfully created between DUT and UE-1 to UE-E6",
+          "2) The conference call is maintained after UE-4 leaves the call.",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed",
+          "4) Very IMS/SIP message sequence"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_20",
+        "title": "Conference call - two parties with private numbers",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled\n3) 3 devices required for this test"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_20-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is connected and registered to an VoWiFi network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_20-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT performs voice call towards UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_20-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE-1 answer call and is put on hold by DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_20-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) DUT performs voice call towards UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_20-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE-2 answer call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_20-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT creates conference via Menu",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) A conference session is successfully created between DUT and UE-1 and UE-2",
+          "2) The DUT behaves as expected and is able to maintain the conference call throughout the duration of the call",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed",
+          "4) Very IMS/SIP message sequence"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "SS_NEW_21",
+        "title": "Conference call with DUT having private number",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "SS",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "place_saved_number_after_setting",
+        "remote_fut_supported": true,
+        "objective": "1) Registered to IMS network (VoPS=1) on good cellular coverage\n2) Call waiting enabled"
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": true,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "1",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "SS_NEW_21-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is connected and registered to an VoWiFi network",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_21-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) DUT performs voice call towards UE-1",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_21-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) UE-1 answer call and is put on hold by DUT",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_21-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) DUT performs voice call towards UE-2",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_21-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) UE-2 answer call",
+          "app_action": "place_saved_number_after_setting"
+        },
+        {
+          "step_id": "SS_NEW_21-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "6) DUT creates conference via Menu",
+          "app_action": "place_saved_number_after_setting"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "1) A conference session is successfully created between DUT and UE-1 and UE-2",
+          "2) The DUT behaves as expected and is able to maintain the conference call throughout the duration of the call",
+          "3) All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed",
+          "4) Very IMS/SIP message sequence"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MM 05",
+        "title": "VoLTE Long Call Mobility",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "MOB",
+        "source_phase": [
+          "PAT"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "reliability",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "observe_call_while_radio_changes",
+        "remote_fut_supported": true,
+        "objective": "The purpose of this test is to verify that the DUT can successfully perform mobility with handovers during a long time and sustain a VoLTE call."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": false,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MM_05-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Prerequiste",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_05-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "• DUT has performed a VoLTE Attach and registered to IMS network.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_05-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "• There must be a sufficient number of E-UTRAN cells available on the same LTE frequency layer to permit multiple handovers during a VoLTE call.",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_05-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "Steps",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_05-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "• Initiate an MO voice call from the DUT to UE-1",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_05-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "• Move between the coverage areas of different cells on a test route",
+          "app_action": "observe_call_while_radio_changes"
+        },
+        {
+          "step_id": "MM_05-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "• Leave the call in progress for at least 1 hour",
+          "app_action": "observe_call_while_radio_changes"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "• The DUT should be connected without losing service",
+          "• DUT must not drop the call",
+          "• All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "MC 04",
+        "title": "PS Data (FTP Upload), MT Voice Call with PS Data Released first",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "MULTI",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "To demonstrate that the DUT and the network should perform a MultiRAB scenario as expected."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Hartley Whitney",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "MC_04-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "Prerequiste",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "• DUT has performed a PS attach and setup a PDN connection in the LTE network.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "• DUT has performed an IMS/SIP registration",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "• DUT is powered ON and in IDLE",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "Steps",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-06",
+          "action_type": "field_procedure",
+          "instruction": "• DUT Initiate PS Data and Upload a large file (e.g. with FTP)",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-07",
+          "action_type": "field_procedure",
+          "instruction": "• DUT: Whilst data call is in progress, establish Voice call from UE-1 to DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-08",
+          "action_type": "field_procedure",
+          "instruction": "• Monitor the data flow ensuring that there is no disconnection issues",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-09",
+          "action_type": "field_procedure",
+          "instruction": "• DUT: wait for the data transfer to finish before ending the voice call",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "MC_04-STEP-10",
+          "action_type": "field_procedure",
+          "instruction": "• DUT: Deactivate the PS connection after FTP Data has been completed.",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "• Verify that the speech call continues and the speech quality is undisturbed.",
+          "• Verify that data call continues and the data stream is not interrupted",
+          "• Ensure that the DUT does not drop the voice call",
+          "• All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed.",
+          "• Verify stability of the device during and after test completes"
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    },
+    {
+      "test_metadata": {
+        "testCaseId": "Test Case Voice 02_03",
+        "title": "IMS IDLE MT Call from PSTN",
+        "source": "Radio_Testcases-Global.xlsx / Size",
+        "source_area": "Radio_Field",
+        "source_group": "VOICE",
+        "source_phase": [
+          "PAT",
+          "ATP"
+        ],
+        "feature": "calls",
+        "bearer": "VoLTE",
+        "test_type": "FUNCTIONAL",
+        "suite": "functionality",
+        "priority": "P0",
+        "execution_mode": "SEMI_AUTOMATED",
+        "app_action": "wait_for_incoming",
+        "remote_fut_supported": true,
+        "objective": "1) PSTN line available\n2) HSS should have the subscriber's information. \n3) DUT can support IP connectivity and IMS profile configuration.                                                                                          \n4) LTE cell (Cell A with IMS VoPS=1 -> IMS supported)                                                                                             \n5) DUT is switched off."
+      },
+      "prerequisites": {
+        "permissions": [
+          "READ_PHONE_STATE",
+          "CALL_PHONE",
+          "READ_CALL_LOG"
+        ],
+        "environment": "FIELD",
+        "volte": true,
+        "wifi_calling": false,
+        "saved_test_number_required": false,
+        "second_phone_required": true,
+        "route": "Desk location",
+        "network_dependent": true,
+        "repetitions": "2",
+        "readiness_failure_status": "BLOCKED",
+        "prohibited_targets": [
+          "public emergency numbers",
+          "premium-rate numbers",
+          "unapproved destinations"
+        ]
+      },
+      "execution_procedure": [
+        {
+          "step_id": "Test_Case_Voice_02_03-STEP-01",
+          "action_type": "field_procedure",
+          "instruction": "1) DUT is powered on and completes IMS registration on a LTE VoPS=1 cell with IMS supported",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_03-STEP-02",
+          "action_type": "field_procedure",
+          "instruction": "2) Initiate MO voice call from the PSTN originating point to the DUT",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_03-STEP-03",
+          "action_type": "field_procedure",
+          "instruction": "3) Answer the call from the DUT.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_03-STEP-04",
+          "action_type": "field_procedure",
+          "instruction": "4) End the voice call on the DUT after 20 seconds.",
+          "app_action": "wait_for_incoming"
+        },
+        {
+          "step_id": "Test_Case_Voice_02_03-STEP-05",
+          "action_type": "field_procedure",
+          "instruction": "5) DUT returns to RRC idle state",
+          "app_action": "wait_for_incoming"
+        }
+      ],
+      "expected_result": {
+        "checks": [
+          "Examine UE logs from the DUT to establish:",
+          "1)  that the DUT completes IMS registration.",
+          "2)  that the DUT established a MT VoLTE call from the PSTN originating number.",
+          "All steps under test procedure are successfully executed, and the DUT returns to RRC idle state after the test is completed."
+        ],
+        "pass_when": "The field procedure is completed and the system call log agrees with the call that was placed or received.",
+        "status_if_no_sim_or_no_voice": "BLOCKED",
+        "status_if_volte_unavailable": "BLOCKED",
+        "status_if_behavior_misses_checks": "FAIL"
+      }
+    }
+  ]
+}

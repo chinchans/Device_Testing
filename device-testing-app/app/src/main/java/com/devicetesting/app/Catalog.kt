@@ -8,6 +8,8 @@ data class TestCase(
     val title: String,
     val suite: String,
     val execution: String,
+    val action: String = "",
+    val radio: String = "",
 )
 
 object Catalog {

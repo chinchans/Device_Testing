@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from services.device_monitoring import monitor_store
+from services.device_monitoring.suite_logs import suite_log_store
 
 router = APIRouter(tags=["device-monitoring"])
 
@@ -58,6 +60,42 @@ def device_heartbeat(body: HeartbeatRequest) -> dict[str, Any]:
         test_execution=body.test_execution,
     )
     return {"ok": True, "device": device}
+
+
+@router.post("/api/monitor/logs")
+async def upload_suite_log(request: Request) -> dict[str, Any]:
+    device_id = (request.headers.get("x-device-id") or "").strip()
+    if not device_id:
+        raise HTTPException(400, "device_id required")
+    feature = (request.headers.get("x-feature") or "").strip()
+    suite = (request.headers.get("x-suite-label") or "suite").strip() or "suite"
+    file_name = (request.headers.get("x-file-name") or "suite.txt").strip() or "suite.txt"
+    try:
+        started_at_ms = int(request.headers.get("x-started-at-ms") or "0")
+    except ValueError:
+        started_at_ms = 0
+    raw = await request.body()
+    try:
+        meta = suite_log_store.save(
+            device_id=device_id,
+            feature=feature,
+            suite=suite,
+            file_name=file_name,
+            started_at_ms=started_at_ms,
+            gzip_bytes=raw,
+        )
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    device = monitor_store.attach_suite_log(device_id, meta)
+    return {"ok": True, "suite_log": meta, "device": device}
+
+
+@router.get("/api/monitor/logs/{log_id}")
+def read_suite_log(log_id: str) -> PlainTextResponse:
+    text = suite_log_store.read_text(log_id)
+    if text is None:
+        raise HTTPException(404, "log not found")
+    return PlainTextResponse(text)
 
 
 @router.get("/api/monitor/devices")

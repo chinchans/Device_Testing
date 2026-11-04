@@ -12,9 +12,11 @@ import android.util.Log
 import org.json.JSONObject
 import java.io.BufferedOutputStream
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.zip.GZIPOutputStream
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -101,6 +103,39 @@ class HeartbeatReporter(
         Log.i(TAG, "HeartbeatReporter started mode=$transport → $baseUrl device=$deviceId")
     }
 
+    /**
+     * Uploads one finished suite log to the same monitor as the heartbeat.
+     * Failures stay on this phone; the suite result is already saved.
+     */
+    fun uploadSuiteLog(file: File, label: String, feature: String, startedAtMs: Long) {
+        if (!file.exists() || file.length() <= 0L) return
+        try {
+            val gzip = gzipFile(file)
+            try {
+                if (gzip.length() > MAX_LOG_BYTES) {
+                    Log.w(TAG, "suite log too large (${gzip.length()} bytes), not uploaded")
+                    return
+                }
+                postGzip(
+                    "/api/monitor/logs",
+                    gzip,
+                    mapOf(
+                        "X-Device-Id" to deviceId,
+                        "X-Feature" to asciiHeader(feature),
+                        "X-Suite-Label" to asciiHeader(label),
+                        "X-Started-At-Ms" to startedAtMs.toString(),
+                        "X-File-Name" to asciiHeader(file.name),
+                    ),
+                )
+                Log.i(TAG, "suite log uploaded ${file.name}")
+            } finally {
+                gzip.delete()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "suite log upload failed: ${e.message}")
+        }
+    }
+
     /** Push an immediate heartbeat (e.g. when the current test case changes). */
     fun pulse() {
         if (!started.get()) return
@@ -184,6 +219,48 @@ class HeartbeatReporter(
         return BatteryInfo(percent = (percent * 10).toInt() / 10.0, charging = charging)
     }
 
+    private fun gzipFile(source: File): File {
+        val out = File(source.parentFile, "${source.name}.gz")
+        GZIPOutputStream(out.outputStream()).use { gzip ->
+            source.inputStream().use { input -> input.copyTo(gzip) }
+        }
+        return out
+    }
+
+    private fun asciiHeader(value: String): String {
+        val cleaned = value.replace(Regex("[^\\x20-\\x7E]"), " ").trim()
+        return cleaned.take(120).ifEmpty { "suite" }
+    }
+
+    private fun postGzip(path: String, file: File, headers: Map<String, String>) {
+        val url = URL("$baseUrl$path")
+        val conn = (url.openConnection() as HttpURLConnection).apply {
+            requestMethod = "POST"
+            connectTimeout = 15_000
+            readTimeout = 60_000
+            doOutput = true
+            setRequestProperty("Content-Type", "application/gzip")
+            setRequestProperty("Accept", "application/json")
+            headers.forEach { (name, value) -> setRequestProperty(name, value) }
+        }
+        MonitorSsl.apply(context, conn)
+        try {
+            BufferedOutputStream(conn.outputStream).use { out ->
+                file.inputStream().use { input -> input.copyTo(out) }
+                out.flush()
+            }
+            val code = conn.responseCode
+            val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+            val text = stream?.let { BufferedReader(InputStreamReader(it)).use { r -> r.readText() } }
+            if (code !in 200..299) {
+                throw IllegalStateException("HTTP $code for $path: $text")
+            }
+            Log.d(TAG, "OK $path → $text")
+        } finally {
+            conn.disconnect()
+        }
+    }
+
     private fun postJson(path: String, body: JSONObject) {
         val url = URL("$baseUrl$path")
         val conn = (url.openConnection() as HttpURLConnection).apply {
@@ -217,5 +294,6 @@ class HeartbeatReporter(
         private const val TICK_SEC = 5L
         private const val IDLE_INTERVAL_MS = 30_000L
         private const val RUNNING_INTERVAL_MS = 5_000L
+        private const val MAX_LOG_BYTES = 8L * 1024L * 1024L
     }
 }
